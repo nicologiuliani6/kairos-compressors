@@ -1,0 +1,340 @@
+
+% ======================================================================
+\chapter{Introduzione}
+\label{sec:intro}
+% ======================================================================
+
+Un linguaggio di programmazione è \textbf{reversibile} quando ogni sua
+computazione può essere ripercorsa all'indietro fino a ritrovare esattamente lo
+stato di partenza. Non si tratta di registrare una traccia da cui ricostruire il
+passato: in un linguaggio reversibile l'informazione necessaria a tornare
+indietro è già contenuta nello stato corrente, perché ogni costrutto è
+progettato per non distruggerla. L'assegnamento distruttivo $x := e$, che
+cancella il valore precedente di $x$, non appartiene a un linguaggio di questo
+tipo; al suo posto compaiono aggiornamenti invertibili come $x \mathrel{+}= e$,
+il cui inverso $x \mathrel{-}= e$ è immediato.
+
+L'interesse per questo modo di calcolare ha tre radici indipendenti. La prima è
+fisica: il principio di Landauer lega la cancellazione di un bit a una
+dissipazione minima di energia, e un calcolo che non cancella può in linea di
+principio evitarla. La seconda è pragmatica: molti problemi si presentano
+naturalmente in coppie di trasformazioni inverse (compressione e
+decompressione, codifica e decodifica, serializzazione e parsing) e un
+linguaggio reversibile permette di scrivere \emph{un solo} programma invece di
+due, eliminando per costruzione la possibilità che le due metà divergano. La
+terza riguarda l'affidabilità: poter tornare indietro è il meccanismo di base
+del \emph{recovery}, e infatti il \emph{rollback} di una transazione non è altro
+che esecuzione all'indietro fino a un punto sicuro.
+
+\medskip
+\noindent
+È proprio la terza radice a rendere interessante il caso \textbf{concorrente},
+ed è qui che si colloca questo lavoro. In un sistema sequenziale l'esecuzione
+all'indietro è una nozione semplice, perché c'è un solo passato da ripercorrere.
+In presenza di più thread il passato non è più lineare: due rami che procedono
+in parallelo possono aver interagito, e disfare un passo di uno può richiedere
+di disfare prima i passi dell'altro che ne dipendono. Il capostipite dei
+linguaggi reversibili, \textbf{Janus}~\cite{YokoyamaGluck2007}, è puramente
+sequenziale; la reversibilità in contesto concorrente è stata studiata
+soprattutto su calcoli di processi~\cite{LaneseMezzinaSchmittStefani2011,%
+LaneseLienhardtMezzinaSchmittStefani2013}, che sono modelli e non linguaggi di
+programmazione. Il territorio in mezzo (un linguaggio imperativo strutturato,
+con la sintassi e i costrutti che un programmatore si aspetta, che sia insieme
+reversibile e concorrente) è poco popolato: i tentativi esistono, ma finora
+hanno definito i costrutti concorrenti attraverso la loro traduzione, senza una
+semantica formale su cui poggiare le proprietà che ci si aspetta da un
+linguaggio reversibile.
+
+\medskip
+\noindent
+\textbf{Kairos} sta in quel territorio. Il nome è il greco
+\kairosgr{} (\emph{kairós}): non il tempo che scorre, che è \chronosgr{}
+(\emph{chrónos}), ma il momento opportuno, l'istante in cui una cosa va fatta. La distinzione è
+pertinente a un linguaggio reversibile, dove il tempo non è una freccia ma una
+coordinata percorribile nei due versi, e ciò che conta di un passo non è
+\emph{quando} avviene ma che sia quello giusto: l'inversa di un programma non ne
+riavvolge la storia, ne esegue un altro che riporta allo stato di partenza.
+
+Al nucleo di Janus (assegnamenti invertibili, condizionali a doppia guardia,
+cicli \texttt{from\,\dots\,until}, procedure invocabili con \texttt{call} e
+\texttt{uncall}, interi e array) Kairos aggiunge il parallelismo esplicito
+\texttt{par\,\dots\,and\,\dots\,rap}, la comunicazione sincrona su canali
+\texttt{ssend}/\texttt{srecv} con protocolli ricostruiti dal programma, uno stack come struttura dati primitiva
+e le transazioni \texttt{try\,\dots\,rollback\,\dots\,yrt}.
+La scelta di progetto che tiene insieme il tutto è la \emph{disgiunzione}: rami
+paralleli operano su porzioni disgiunte dello store e comunicano solo per
+canali. Da questa singola ipotesi discende la confluenza degli interleaving che
+non toccano canali (\S\ref{sec:par-conf}), e quindi il fatto che il
+non-determinismo residuo non sia osservabile sullo store finale: la
+concorrenza di Kairos serve a esprimere il parallelismo dei problemi, non a
+introdurre corse critiche.
+
+\medskip
+\noindent
+Il contributo di questo documento è la semantica formale del linguaggio.
+Diamo una semantica operazionale strutturale in stile small-step, definita come
+\textbf{estensione} della semantica di Janus di Lami, Lanese e
+Stefani~\cite{LamiLaneseStefani2024}: ereditiamo da quella base la forma dei
+giudizi, i contesti di valutazione, la configurazione terminale e il
+trattamento degli errori, e aggiungiamo le regole per i costrutti che Kairos
+introduce. Definiamo poi l'operatore di inversione $\Inv{\cdot}$, sintattico e
+calcolabile in tempo lineare, e mostriamo in che senso realizza l'esecuzione
+all'indietro.
+
+\section{Notazione e convenzioni}
+\label{sec:notazione}
+
+I giudizi hanno la forma $\cfg{c}{\sigma} \to \cfg{c'}{\sigma'}$, con lo store a
+sinistra come nella semantica di base, non il turnstile big-step
+$\sigma \vdash e \Downarrow v$ usuale nella letteratura su Janus. Non è una
+variante stilistica: interleaving dei rami e sincronizzazione sui canali
+(\cref{sec:par}) si esprimono molto più naturalmente passo per passo, perché un
+big-step collassa l'intera esecuzione di un comando in un unico giudizio e i
+punti in cui intercalare l'altro ramo restano impliciti. È la stessa motivazione
+dichiarata in~\cite{LamiLaneseStefani2024}, che adotta lo small-step per Janus
+proprio in vista di una futura estensione concorrente.
+
+Una convenzione tipografica riguarda ciò che sta \emph{fuori} dalla relazione di
+transizione. Le regole d'errore, che producono $\err$, portano il nome in
+\textcolor{red!60!black}{rosso}. I vincoli di buona formazione sono distinti
+secondo il momento in cui li si verifica: \static{in verde} quelli controllati
+sul testo del programma, prima di eseguirlo; \dynamic{in arancio} quelli
+sorvegliati durante l'esecuzione, perché riguardano stato che il testo del
+programma non determina.
+
+\section{Struttura della tesi}
+
+Il \cref{chap:background} richiama Janus, la semantica small-step su cui ci
+basiamo e i lavori sulla reversibilità concorrente. Il \cref{chap:semantica} è
+il nucleo tecnico: sintassi astratta, sistema di transizione, il confine fra ciò
+che è ereditato dalla base e ciò che Kairos aggiunge, e le regole di riduzione
+dagli assegnamenti fino a \texttt{par} e alle transazioni, con gli errori a
+runtime. Il \cref{chap:reversibilita} definisce l'operatore di inversione, ne
+dimostra le proprietà e riassume in un quadro unico tutte le regole. Seguono il
+\cref{chap:programmare} sull'uso del linguaggio, il \cref{chap:interprete}
+sull'implementazione, il \cref{chap:correlati} sul confronto con i lavori
+esistenti e il \cref{chap:conclusioni} con le conclusioni.
+
+% ======================================================================
+\chapter{Background}
+\label{chap:background}
+\label{sec:back}
+% ======================================================================
+
+\subsubsection{Janus e la programmazione reversibile}
+
+\textbf{Janus} è stato definito intorno al 1982 da Lutz e Derby al
+Caltech~\cite{LutzDerby1982}, per curiosità, e riportato all'attenzione della comunità da Yokoyama e
+Glück~\cite{YokoyamaGluck2007}, che ne hanno dato la prima semantica formale e
+un self-interpreter invertibile. È un linguaggio imperativo strutturato in cui
+ogni costrutto è invertibile per costruzione, secondo due idee ricorrenti.
+
+La prima è l'\textbf{aggiornamento invertibile}. Al posto dell'assegnamento
+distruttivo Janus ha solo aggiornamenti della forma $x \mathrel{\odot}= e$ con
+$\odot \in \{+,-,\hat{\ }\}$, dove $x$ non compare in $e$: il vecchio valore di
+$x$ è recuperabile dal nuovo applicando l'operazione inversa, e la condizione
+sull'occorrenza di $x$ garantisce che il valore di $e$ sia lo stesso prima e
+dopo il passo.
+
+La seconda è la \textbf{doppia guardia}. Un condizionale irreversibile
+$\mathtt{if}\ e\ \mathtt{then}\ c_1\ \mathtt{else}\ c_2$ non è invertibile
+perché, arrivati alla fine, non si sa più quale ramo sia stato preso. Janus
+richiede allora una seconda espressione, l'\emph{asserzione} in coda:
+\[
+\mathtt{if}\ e_1\ \mathtt{then}\ c_1\ \mathtt{else}\ c_2\ \mathtt{fi}\ e_2 ,
+\]
+con l'obbligo che $e_2$ valga vero all'uscita se e solo se si è preso il ramo
+\texttt{then}. All'indietro è $e_2$ a decidere il ramo ed $e_1$ a fare da
+asserzione: il ruolo delle due espressioni si scambia. Lo stesso schema governa
+il ciclo
+\[
+\mathtt{from}\ e_1\ \mathtt{do}\ c_1\ \mathtt{loop}\ c_2\ \mathtt{until}\ e_2 ,
+\]
+dove $e_1$ deve valere solo alla prima iterazione ed $e_2$ solo all'ultima, così
+che la condizione di ingresso all'indietro sia $e_2$ e quella di uscita $e_1$.
+I due corpi sono eseguiti secondo la traccia $c_1\,[\,c_2\ c_1\,]^{*}$: $c_1$
+porta avanti il lavoro dell'iterazione, $c_2$ fa avanzare il contatore fra
+un'iterazione e la successiva. Kairos adotta la stessa forma, con le clausole
+$\mathtt{do}$ e $\mathtt{loop}$ facoltative: un corpo assente vale
+$\mathtt{skip}$.
+
+Su queste basi Janus è \emph{r-Turing completo}: calcola esattamente le funzioni
+iniettive computabili, senza generare spazzatura. Le sue procedure si invocano
+con \texttt{call} in avanti e \texttt{uncall} all'indietro, e l'inverso di un
+programma si ottiene per trasformazione puramente sintattica.
+
+\subsubsection{Una semantica small-step per Janus}
+
+Le presentazioni classiche di Janus, a partire da~\cite{YokoyamaGluck2007},
+usano una semantica \emph{big-step}: un giudizio $\sigma \vdash c \Downarrow
+\sigma'$ mette in relazione lo store prima e dopo l'esecuzione \emph{completa}
+di $c$. È una scelta comoda per un linguaggio sequenziale, ma collassa in un
+unico passo l'intera computazione, e con essa i punti in cui un'altra
+esecuzione potrebbe intercalarsi.
+
+Lami, Lanese e Stefani~\cite{LamiLaneseStefani2024} hanno dato una semantica
+\textbf{small-step} di Janus, con giudizi della forma $\langle \sigma, c\rangle
+\to \langle \sigma', c'\rangle$ fra configurazioni, contesti di valutazione per
+espressioni e comandi, configurazione terminale $\langle \sigma,
+\mathtt{skip}\rangle$ ed errori segnalati da un esito distinto $\bot$. Uno degli
+scopi dichiarati di quel lavoro è proprio predisporre il terreno per estensioni
+concorrenti, sulle quali le proprietà di interesse si definiscono più
+agevolmente in forma small-step. Kairos parte da lì: adottarne le convenzioni
+significa che le scelte di presentazione sono già state fatte e argomentate a
+monte, e che le regole nuove sono solo quelle dei costrutti nuovi. La
+\S\ref{sec:base} elenca esattamente il confine fra le due cose.
+
+Una semantica alternativa per Janus, in stile \emph{reversible}, è quella di
+Lanese e Vidal~\cite{LaneseVidal2026}, in cui le regole in avanti e quelle
+all'indietro sono date insieme sullo stesso sistema di transizione anziché
+derivare le seconde da un inverter sintattico.
+
+\subsubsection{Reversibilità e concorrenza}
+
+Fuori dai linguaggi imperativi, la reversibilità in presenza di concorrenza è
+stata studiata a fondo sui \emph{calcoli di processi}. Il punto delicato è che
+in un sistema concorrente non esiste un unico ordine di esecuzione da
+rovesciare: la nozione corretta è la \emph{reversibilità causalmente
+consistente}, per cui un passo può essere disfatto solo dopo che sono stati
+disfatti tutti i passi che da esso dipendono causalmente. In quest'ottica la
+reversibilità va anche \emph{controllata}, perché tornare indietro senza limiti
+non è utile a nulla: in $\rho\pi$ e in
+croll-$\pi$~\cite{LaneseMezzinaSchmittStefani2011,%
+LaneseLienhardtMezzinaSchmittStefani2013} il ritorno all'indietro è governato da
+primitive esplicite, e il meccanismo che ne risulta (si torna indietro fino a
+un punto scelto e da lì si prosegue diversamente) è esattamente quello delle
+transazioni con compensazione. Le transazioni
+\texttt{try\,\dots\,rollback\,\dots\,yrt} di Kairos (\S\ref{sec:try}) sono la
+versione a linguaggio di programmazione della stessa idea.
+
+Kairos adotta però una strada più restrittiva, e per questo più semplice: rami
+paralleli lavorano su porzioni \emph{disgiunte} dello store e interagiscono
+soltanto per comunicazione sincrona. Non c'è memoria condivisa, quindi non c'è
+dipendenza causale da tracciare fra passi che non comunicano, e la consistenza
+causale si riduce alla confluenza dimostrata in \S\ref{sec:par-conf}. Il prezzo
+è che alcuni schemi di programmazione a memoria condivisa non sono esprimibili;
+il guadagno è che un programma che rispetta la disgiunzione non ha corse
+critiche.
+
+Fra i calcoli di processo e i linguaggi di programmazione esiste comunque un
+precedente diretto: Janus è già stato esteso con un costrutto di composizione
+parallela e uno scambio di messaggi, e l'estensione è stata realizzata con un
+compilatore verso C++~\cite{Sammarchi2019}. Quel lavoro definisce i costrutti
+attraverso il codice in cui vengono tradotti, non attraverso regole di
+riduzione, e mantiene uno stato condiviso fra i rami; è quindi il punto di
+partenza più vicino a quello di questa tesi, e il \cref{chap:correlati} lo
+riprende per un confronto puntuale.
+
+\subsubsection{Canali e tipi di sessione}
+
+La comunicazione di Kairos avviene su canali \emph{sincroni}, con protocolli
+ricostruiti dal programma,
+con il vincolo che ogni canale abbia in ogni istante al più due titolari, una
+\emph{sessione binaria}. È una restrizione che viene dalla teoria dei
+\textbf{tipi di sessione}~\cite{HondaVasconcelosKubo1998,%
+HondaYoshidaCarbone2008}, dove il tipo di un canale non descrive solo i dati
+scambiati ma la \emph{sequenza} degli scambi, e i tipi dei due estremi devono
+essere duali. In Kairos il vincolo di sessione binaria serve a garantire che il
+partner di ogni comunicazione sia determinato: senza
+di esso un $\mathtt{ssend}$ potrebbe sincronizzarsi con più $\mathtt{srecv}$
+diversi, e la scelta sarebbe un non-determinismo osservabile sullo store, in
+contrasto con la confluenza.
+
+Il vincolo ha due forme, e la scelta fra le due non è di dettaglio. Nella forma
+\emph{statica} un canale appartiene agli stessi due rami per tutta la sua vita,
+e questo si legge dal testo del programma. Nella forma \emph{dinamica} un canale
+può stare prima fra due rami e poi fra altri due, purché il primo titolare
+smetta di usarlo prima che il nuovo cominci: è ciò che nella teoria dei tipi di
+sessione si chiama \textbf{delega}, il meccanismo con cui, in stile
+$\pi$-calcolo, un processo passa a un terzo il canale su cui sta parlando. La
+seconda è strettamente più espressiva, e Kairos adotta quella: il vincolo è
+sorvegliato osservando l'esecuzione (\S\ref{sec:chan}), non leggendo il testo del
+programma, perché il testo non basta a seguire un canale che cambia titolare.
+
+\medskip
+\noindent
+Va detto dove sta il confine di questo lavoro. Nella semantica il vincolo di
+sessione binaria e l'ipotesi di disgiunzione sono \emph{assunzioni} sotto cui
+vale la confluenza, non un sistema di tipi: le regole delle
+\S\S\ref{sec:esp}--\ref{sec:cmd} non impediscono di scrivere un programma con
+una corsa critica, si limitano a non garantire nulla su di esso. Il compilatore
+ne applica una verifica conservativa (nessun intero o array scritto in un ramo
+e usato in un altro, anche tramite chiamate; nessuno stack condiviso), e
+l'interprete segnala, quando se ne accorge, due aggiornamenti simultanei della
+stessa variabile intera, senza che questo sia una garanzia; un sistema di tipi
+completo resta da fare. La separazione è
+deliberata e segue la pratica corrente, in cui il calcolo si definisce senza
+preoccuparsi delle corse e un sistema di tipi sovrapposto le esclude; i tipi di
+sessione, binari o multiparty, sono precisamente una famiglia di sistemi di tipi
+di questo genere. In \S\ref{sec:chan} diamo la disciplina binaria per i canali di
+Kairos, delega compresa, e i tipi di sessione che ne descrivono il protocollo:
+i tipi non si dichiarano ma si ricostruiscono dal programma, e il compilatore
+rifiuta due estremi di un canale con protocolli in conflitto dimostrabile. Restano fuori la scelta etichettata e i canali
+con più di due partecipanti.
+
+% ======================================================================
+\chapter{Kairos: sintassi e semantica operazionale}
+\label{chap:semantica}
+
+\section{Sintassi astratta}
+\label{sec:sintassi}
+% ======================================================================
+
+Insiemi di base: numeri interi $m \in \mathbb{Z}$, variabili $v \in \mathit{Var}$.
+Categorie derivate:
+
+\paragraph{Espressioni aritmetiche $e \in \mathit{Exp}$.}
+\begin{align*}
+e ::= m \mid v \mid a[e] \mid e \oplus e
+\qquad
+\oplus \in \{+,\,-,\,*,\,/,\,\%\}
+\end{align*}
+
+\noindent
+$a[e]$ è la lettura della cella di indice $e$ dell'array $a$. Gli operatori
+moltiplicativi compaiono solo dentro le espressioni, mai come assegnamento:
+$*$ e $/$ non hanno un'inversa che restituisca l'operando, mentre a destra di
+$\mathbin{+\!\!=}$ non tolgono nulla, perché l'inversa dell'assegnamento è
+$\mathbin{-\!\!=}$ con la \emph{stessa} espressione, e questa dipende da
+variabili che il comando non tocca. $/$ e $\%$ sono la divisione intera e il
+resto; il divisore nullo non ha risultato e produce un errore:
+\[
+\dfrac{}{\cfg{m / 0}{\sigma} \toe \err}\ \rnameerr{Div-Err}
+\]
+con la regola gemella per $\%$. È un fallimento come gli altri
+(\S\ref{sec:err}), non un valore convenzionale: un valore convenzionale
+renderebbe l'operazione non iniettiva proprio dove serve che lo sia.
+Nel testo dei programmi i letterali sono non negativi (un valore negativo si
+scrive $0 - m$), salvo i valori di $\mathtt{local}$ e $\mathtt{delocal}$;
+l'interprete rappresenta gli interi con segno a 64 bit in complemento a due.
+Le operazioni sono quindi modulo $2^{64}$: un risultato che trabocca si
+riavvolge (anche $-2^{63} / -1$, che vale $-2^{63}$), e un letterale si legge
+modulo $2^{64}$, così che si scrivono anche le costanti senza segno fino a
+$2^{64}-1$; un letterale più grande è un errore di compilazione.
+
+\paragraph{Condizioni $b \in \mathit{Cond}$.}
+\begin{align*}
+b ::= e = e \mid e \neq e \mid e \geq e \mid e \leq e \mid e > e \mid e < e
+  \mid b \land b \mid b \lor b
+\end{align*}
+
+\noindent
+I connettivi $\land$ e $\lor$ sono quelli di Janus: una guardia può combinare
+più confronti, come in $(t = 0) \land (\mathit{num} > 1)$. Nell'implementazione confronti e connettivi sono a
+loro volta espressioni che valgono $1$ o $0$, e una guardia è vera quando è
+diversa da zero: si può quindi scrivere anche $x \mathbin{+\!\!=} (a < b)$. I
+connettivi non cortocircuitano: entrambi gli operandi sono sempre valutati, e
+ciascuno può produrre \textsc{Idx-Err} o \textsc{Div-Err}.
+
+\paragraph{Comandi $c \in \mathit{Com}$.}
+\begin{align*}
+c ::={}& \mathtt{skip} && \text{(comando vuoto)}\\
+   \mid{}& \ell \mathbin{+\!\!=} e \mid \ell \mathbin{-\!\!=} e \mid \ell \mathbin{\hat{}\!=} e \mid \ell \mathbin{<\!=\!>} \ell && \text{(assegnamenti reversibili)}\\
+   \mid{}& \mathtt{local}\ v = m \mid \mathtt{delocal}\ v = m && \text{(scope)}\\
+   \mid{}& \mathtt{local}\ a[n] = m \mid \mathtt{delocal}\ a[n] = m && \text{(scope, array)}\\
+   \mid{}& c\ ;\ c && \text{(sequenza)}\\
+   \mid{}& \mathtt{if}\ b\ [\mathtt{then}\ c]\ [\mathtt{else}\ c]\ \mathtt{fi}\ b' && \text{(condizionale)}\\
+   \mid{}& \begin{array}[t]{@{}l@{}}\mathtt{from}\ b_1\ [\mathtt{do}\ c_1]\\ \quad[\mathtt{loop}\ c_2]\ \mathtt{until}\ b_2\end{array} && \text{(ciclo)}\\
+   \mid{}& \mathtt{call}\ f(\bar v) \mid \mathtt{uncall}\ f(\bar v) && \text{(chiamata / inversa)}\\
+   \mid{}& \mathtt{push}(v,s) \mid \mathtt{pop}(v,s) && \text{(stack)}\\
+   \mid{}& \mathtt{ssend}(\langle \bar v \rangle, \mathit{ch}) \mid \mathtt{srecv}(\langle \bar v \rangle, \mathit{

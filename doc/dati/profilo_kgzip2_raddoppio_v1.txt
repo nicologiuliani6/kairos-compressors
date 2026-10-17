@@ -1,0 +1,8 @@
+blocco di 8192 byte da tesi8k.tex
+  (carico e scarico)                     0.01 s   (cumulato   0.01 s)
+  RLE iniziale                           2.37 s   (cumulato   2.38 s)
+  BWT: ordinamento                      15.93 s   (cumulato  18.31 s)
+  BWT: estrazione, inversa, pulizia     17.25 s   (cumulato  35.56 s)
+  move-to-front                          3.10 s   (cumulato  38.66 s)
+  RLE degli zeri                         0.83 s   (cumulato  39.49 s)
+  Elias gamma                            1.67 s   (cumulato  41.16 s)

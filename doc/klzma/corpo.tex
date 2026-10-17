@@ -1,0 +1,186 @@
+
+\title{\textbf{klzma: LZMA reversibile in Kairos}\\[4pt]
+\large Dizionario, modelli di contesto e rANS, con la decompressione come \texttt{uncall}}
+\author{Nicolò Giuliani\\[2pt]\small Università di Bologna, relazione tecnica, ottobre 2026}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+kgzip2 ha mostrato che una pipeline in stile bzip2 si scrive in Kairos una volta sola: \kw{call} comprime, \kw{uncall} decomprime. Questo lavoro fa lo stesso con l'algoritmo di 7-Zip, LZMA: un LZ77 con catene di hash e ripetizione dell'ultima distanza, seguito da un codificatore binario adattivo con i modelli di contesto di LZMA (macchina a 12 stati, letterali ad albero sul byte precedente, codificatore delle lunghezze, slot di distanza). Il range coder di LZMA non si può invertire, perché il suo aggiornamento delle probabilità perde informazione; lo sostituisce un rANS binario, che è una biiezione esatta sugli interi. Il punto che rende pulito un codificatore adattivo reversibile è l'ordine: i gettoni si codificano dall'ultimo al primo, partendo dall'istogramma completo delle decisioni e consumandolo, così che \kw{uncall comprimi} sia esattamente un decodificatore LZMA che parte da un modello vuoto. La parse è golosa con un passo di lazy matching, scelto misurando sul modello Python le varianti di LZMA (lazy, rep1-3, letterale ``matched'', stimatore delle probabilità). @@ABS@@
+\end{abstract}
+
+\section{Introduzione}
+
+LZMA, il formato di 7-Zip e di xz, combina due idee. La prima è LZ77~\cite{lz77}: il testo si descrive come una sequenza di letterali e di copie ``ripeti $\ell$ byte da $d$ posizioni indietro''. La seconda è una codifica entropica molto fine: ogni decisione (letterale o copia? quale lunghezza? quale distanza?) diventa una serie di bit, e ogni bit si codifica con una probabilità adattiva scelta in base al contesto. Pavlov la realizza con un range coder~\cite{lzmasdk}.
+
+kgzip2 ha seguito bzip2, che trasforma il blocco e poi usa un codice fisso. Qui la sfida è diversa: un modello adattivo cambia a ogni bit, e il suo stato finale dipende da tutti i dati. Un inverso che parte dallo stato finale avrebbe bisogno di quello stato, che un file compresso non contiene. I contributi:
+\begin{enumerate}
+\item un \textbf{LZ77 reversibile e pulito}: catene di hash, parse golosa con rep0, tutta la ricerca disfatta dopo ogni decisione;
+\item la sostituzione del range coder con \textbf{rANS binario}~\cite{ans}, e perché è necessaria;
+\item l'\textbf{ordine di codifica} che rende pulito un codificatore adattivo: istogramma completo, gettoni dall'ultimo al primo, modello che torna a zero;
+\item i \textbf{contesti di LZMA} codificati in ordine inverso a quello del decodificatore, che l'\kw{uncall} rovescia di nuovo;
+\item una \textbf{valutazione} contro xz, LZMA puro, bzip2 e kgzip2 sugli stessi file.
+\end{enumerate}
+
+\section{Perché non il range coder di LZMA}
+
+Il range coder di LZMA tiene una probabilità $p$ (su 2048) per ogni contesto e dopo ogni bit la aggiorna con uno scorrimento: $p \mathrel{+}= (2048 - p) \gg 5$ dopo uno zero, $p \mathrel{-}= p \gg 5$ dopo un uno. L'aggiornamento non è iniettivo: per esempio, dopo uno zero, $p = 2016$ e $p = 2017$ finiscono entrambi a 2017. All'indietro non si saprebbe da quale probabilità ripartire. Anche il passo di codifica perde informazione, perché il limite si calcola come $(\mathit{range} \gg 11)\cdot p$ e gli 11 bit bassi dell'intervallo si buttano. Rendere reversibile questo codificatore richiederebbe spazzatura a ogni bit, cioè un'uscita più lunga.
+
+\paragraph{rANS.} I sistemi numerici asimmetrici di Duda~\cite{ans} codificano un simbolo $s$ di frequenza $f_s$ e cumulata $c_s$ (su $M = 4096$) trasformando lo stato intero
+\[ x' = \left\lfloor x / f_s \right\rfloor \cdot M + c_s + (x \bmod f_s). \]
+È una biiezione esatta: da $x'$ si legge il simbolo ($x' \bmod M$ cade nell'intervallo di $s$) e si ricompone $x = f_s \lfloor x'/M \rfloor + (x' \bmod M) - c_s$. Per tenere $x$ limitato, prima di codificare si emettono bit bassi finché $x < 32 f_s$; dopo la codifica $x \in [2^{16}, 2^{17})$. In Kairos un passo è:
+\begin{lstlisting}
+from x >= 65536 loop                // si emettono bit finche' x < 32 f
+    h += x / 2   x -= h   x -= h   push(x, bitst)   x <=> h
+until x < (32 * f)
+q += x / f   x -= q * f   x += c   x += q * 4096   q -= x / 4096
+v -= (x % 4096) >= p0               // il bit si azzera decodificandolo
+\end{lstlisting}
+L'inverso, generato da \kw{uncall}, è il decodificatore rANS: legge il bit da $x \bmod 4096$, ricompone $x$, e rilegge bit finché $x \ge 2^{16}$. Il ciclo di rinormalizzazione è un ciclo di Janus valido in entrambi i versi: all'ingresso $x \ge 2^{16}$, dopo un dimezzamento non più.
+
+\paragraph{Probabilità dai conteggi.} Al posto dello scorrimento, ogni contesto tiene due conteggi $n_0, n_1$ e la probabilità dello zero è $p_0 = 1 + \lfloor (n_0+1)(M-2) / (n_0+n_1+2) \rfloor$, sempre in $[1, M-1]$. Contare è iniettivo dato il bit: all'indietro si sottrae. Il prezzo è un modello stazionario dentro il blocco, che non dimentica.
+
+\section{\texttt{klzma file.txt}, passo per passo}
+\label{sec:pipeline}
+
+Come per kgzip2 si segue l'eseguibile, che esiste: \kw{dist/bin/klzma}, un file unico con dentro frontend di Kairos, VM e libreria \kw{klzma.kairos}, con le opzioni di xz (\kw{-d}, \kw{-t}, \kw{-k}, \kw{-c}, \kw{-f}, \kw{-v}) più \kw{-D} per la profondità della ricerca. Il frontend traduce solo la libreria e un \kw{main} senza dati; i byte e i bit entrano come istruzioni di bytecode scritte dall'involucro.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  box/.style={draw, rounded corners=2pt, minimum height=8mm, align=center, font=\small, inner sep=3pt},
+  kai/.style={box, fill=blue!6}, py/.style={box, fill=black!4},
+  >={Stealth[length=2mm]}, node distance=3.5mm]
+\node[py] (in) {\kw{file}};
+\node[kai, right=of in] (cat) {catene\\di hash};
+\node[kai, right=of cat] (par) {parse\\LZ77};
+\node[kai, right=of par] (ist) {istogramma\\del modello};
+\node[kai, right=of ist] (cod) {codifica\\all'indietro};
+\node[py, right=of cod] (out) {\kw{.klz}};
+\draw[->] (in) -- (cat); \draw[->] (cat) -- (par); \draw[->] (par) -- (ist); \draw[->] (ist) -- (cod); \draw[->] (cod) -- (out);
+\node[font=\footnotesize, align=center, below=5mm of ist] {decompressione: \kw{uncall comprimi} percorre la catena da destra a sinistra};
+\end{tikzpicture}
+\caption{Il percorso di \kw{klzma}. In azzurro ciò che esegue Kairos; le catene di hash servono solo alla parse e spariscono (\kw{uncall catene}) prima dell'istogramma.}
+\label{fig:pipeline}
+\end{figure}
+
+\subsection{Compressione}
+
+\paragraph{1. Blocchi e caricamento.} Il file si divide in blocchi (8 KiB predefiniti, \kw{-b} per cambiarli); ogni blocco è un ramo di un \kw{par}. I byte entrano nello store come istruzioni \kw{PUSHEQ b0[k] v}, insieme a due tabelle costanti, le potenze di 2 e le basi degli slot di distanza.
+
+\paragraph{2. Catene di hash.} Per ogni posizione $i$ si calcola l'hash dei tre byte che partono da lì e si collega $i$ all'occorrenza precedente dello stesso hash: \kw{prev[i] += head[h]; head[h] -= prev[i]; head[h] += i + 1}. Tre assegnamenti reversibili: \kw{head[h]} si azzera sottraendo il vecchio valore, appena copiato in \kw{prev[i]}. Le catene servono solo alla parse, e alla fine si disfano con \kw{uncall catene}.
+
+\paragraph{3. Parse.} Da sinistra a destra, in ogni posizione si sceglie un gettone: \emph{letterale}; \emph{match} con lunghezza $\ell \ge 3$ e distanza $d$; oppure \emph{rep0}, una copia alla stessa distanza dell'ultimo match, che LZMA codifica senza ripetere la distanza. \kw{cerca} percorre al più $D$ candidati della catena (32 per default) e tiene il più lungo; \kw{lung} misura una corrispondenza con l'uscita anticipata già usata per le rotazioni in kgzip2. La regola: rep0 se lunga almeno 2 e non più corta di uno del miglior match, altrimenti match se lungo almeno 3, altrimenti letterale. In più c'è un passo di \emph{lazy matching}, come in zlib: se conviene un match ma in $i+1$ ce n'è uno più lungo, in $i$ si emette un letterale. La seconda ricerca e l'indicatore che ne deriva sono funzioni pure dello stato, e si disfano subito dopo la scelta come il resto. Ogni sostituzione del migliore lascia il vecchio valore su \kw{scarto}, e \kw{decidi} disfa la ricerca subito dopo aver scritto il gettone: la parse è pulita, restano solo i gettoni. Per ciascuno si conservano anche i contesti in vigore prima di esso, lo stato della macchina di LZMA (\kw{st[k]}) e la distanza rep0 (\kw{rp[k]}).
+
+\paragraph{4. Istogramma del modello.} Prima di codificare, una passata calcola i conteggi di tutte le decisioni di tutti i gettoni. Le procedure di conteggio (\kw{conta\_gettone}, \kw{conta\_albero}, \dots) seguono lo stesso schema della codifica ma in sola lettura: per ogni bit calcolano contesto e valore dal gettone, senza consumarlo, e fanno \kw{cnt[2 ctx + bit] += 1}. Un assegnamento di questa forma è reversibile da solo, quindi la passata non ha bisogno di nient'altro. Una prima versione rieseguiva la codifica in un ``modo conteggio'' e poi la disfaceva: @@ISTO@@.
+
+\paragraph{5. Codifica all'indietro.} I gettoni si codificano dall'ultimo al primo. Per ognuno:
+\begin{enumerate}
+\item si sposta in variabili locali (tipo, lunghezza, distanza, contesti);
+\item i suoi byte escono dal blocco: un letterale \emph{è} il byte \kw{b[p]}, che diventa il valore da codificare; un match si toglie dall'ultimo byte al primo, \kw{b[p+j] -= b[p+j-d]}, perché la sorgente è sempre ancora piena;
+\item le sue decisioni si codificano in ordine inverso a quello del decodificatore di LZMA: prima il corpo (distanza, lunghezza o letterale), poi \kw{is\_rep}, poi \kw{is\_match}. Ogni bit decrementa il proprio conteggio e poi passa per il rANS con il modello senza di sé;
+\item i contesti \kw{st[k]} e \kw{rp[k]} si azzerano ricalcolandoli dal gettone $k-1$, che è ancora lì.
+\end{enumerate}
+Gli alberi di bit seguono la stessa logica. Un letterale nel decodificatore si legge dal bit alto, con contesto il prefisso già letto: qui si codifica dal bit basso, e con $v + 256$ il dimezzamento lascia il bit in $v$ e il prefisso, cioè il contesto, nella metà. Gli alberi inversi di LZMA (slot bassi e align) si trattano allo stesso modo, specularmente. La distanza segue LZMA: lo slot (albero di 6 bit nel contesto della lunghezza), poi il resto, con albero inverso per gli slot fino a 11 e bit diretti più 4 bit di align oltre.
+
+\paragraph{6. Fine.} Blocco, gettoni, contesti e conteggi sono a zero, \kw{scarto} è vuoto, e restano i bit, lo stato rANS finale $x$ e il numero di bit. Il contenitore \kw{KLZ3} tiene per ogni blocco il modo, la lunghezza, $x$ e il numero di bit, poi i bit, e in fondo il CRC32 dei dati originali e quello del file; se i bit di un blocco non sono più corti dei suoi byte, il blocco si memorizza tale e quale, come i blocchi non compressi di LZMA2.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{@{}rlrrrrl@{}}
+\toprule
+pos. & gettone & $\ell$ & $d$ & stato & rep0 & nota\\
+\midrule
+0--4 & 5 letterali & 1 & -- & 0 & 0 & \kw{b a r b a}: \kw{ba} in 3 è lungo 2, troppo poco per un match \\
+5 & match & 4 & 1 & 0 & 0 & quattro \kw{a} copiate dalla precedente: la copia si sovrappone \\
+9 & letterale & 1 & -- & 7 & 1 & \kw{r}: lo stato dopo un match è 7 \\
+10 & letterale & 1 & -- & 4 & 1 & \kw{a} \\
+11 & letterale & 1 & -- & 1 & 1 & \kw{!} \\
+\bottomrule
+\end{tabular}
+\caption{La parse di \kw{barbaaaaara!}: 9 gettoni, 84 decisioni binarie, 70 bit dopo il rANS. 70 bit non sono meno di 12 byte, e il blocco viene memorizzato: su file così corti vale la regola di LZMA2.}
+\label{tab:esempio}
+\end{table}
+
+\subsection{Decompressione: \texttt{klzma -d file.txt.klz}}
+
+L'involucro controlla il CRC del file prima di avviare la VM: un file alterato non arriva all'\kw{uncall}. Il secondo programma carica i bit, $x$ e il numero di bit, ed esegue \kw{uncall comprimi}; alla fine si controlla il CRC dei dati ricostruiti. L'inverso della codifica all'indietro è una decodifica in avanti, e coincide passo per passo con un decodificatore LZMA:
+\begin{itemize}
+\item l'istogramma iniziale, all'indietro, è il punto d'arrivo: si parte da conteggi a zero e ogni bit decodificato li incrementa, come in qualunque decodificatore adattivo;
+\item i gettoni si decodificano dal primo, e quando si decodifica il gettone $k$ i precedenti sono già ricostruiti: lo stato, rep0 e il byte precedente, che servono come contesti, sono disponibili;
+\item ogni gettone si legge nell'ordine di LZMA: \kw{is\_match}, poi \kw{is\_rep}, poi lunghezza e distanza o il letterale dal bit alto;
+\item i byte di un match tornano nel blocco con \kw{b[p+j] += b[p+j-d]} dal primo all'ultimo: è la copia LZ77, sovrapposizioni comprese, ottenuta disfacendo la sottrazione della compressione;
+\item alla fine \kw{uncall analizza} ricalcola la parse dal blocco ricostruito e cancella i gettoni: il blocco resta.
+\end{itemize}
+Nessun decodificatore è scritto. Rispetto a kgzip2 qui non serve nemmeno una coppia di procedure: ogni stadio si azzera da sé, per costruzione.
+
+\section{L'ordine è la chiave}
+
+Un codificatore adattivo reversibile che procedesse in avanti finirebbe con il modello nello stato ``dopo tutti i dati'', e il suo inverso partirebbe da lì: servirebbe trasmettere tutti i conteggi. Codificando all'indietro a partire dall'istogramma, il modello di partenza dell'inverso è vuoto. In più il rANS è una pila, l'ultimo bit scritto è il primo letto, e la pila si accorda con l'\kw{uncall}, che disfa per primo l'ultimo passo: le due inversioni si compensano, e ne esce un decodificatore nell'ordine naturale. È lo stesso motivo per cui i codificatori rANS ordinari scorrono i dati al contrario; qui lo impone la reversibilità invece dell'efficienza.
+
+\section{Valutazione}
+
+\paragraph{Ambiente.} Lo stesso di kgzip2: Kairos al commit \kw{1aa59fb}, 2 vCPU Xeon, VM con \kw{-O3}. Riferimenti: bzip2 1.0.8 \kw{-9}, xz con \kw{-9e}, e LZMA puro (\kw{FORMAT\_RAW}, \kw{-9e}), cioè lo stesso codificatore di 7-Zip senza l'intestazione di xz. Profondità $D = 32$, blocchi da 8 KiB.
+
+\paragraph{Correttezza.} Ogni uscita di Kairos è confrontata con un modello Python indipendente (\kw{modello.py}), che contiene anche un decodificatore scritto a parte. La suite di test della repository (281 controlli, nessuno fallito, in comune con kgzip2) copre i file della Tabella~\ref{tab:corpus} e 13 casi limite (file vuoto, di 1 e 2 byte, corse lunghe, tutti i 256 byte, due blocchi in \kw{par}): l'uscita compressa coincide byte per byte con il modello, il ritorno con l'originale, e i file alterati o troncati vengono rifiutati dal CRC prima della VM.
+
+@@TAB@@
+
+@@COMMENTO@@
+
+@@VARIANTI@@
+
+\paragraph{Profondità della ricerca.} Dal modello Python, con la parse golosa, sulla tesi: 3578 byte con $D = 8$, 3535 con $D = 32$, 3536 con $D = 128$; sull'immagine 64$\times$64 rispettivamente 179, 111 e 107. Oltre 32 candidati il guadagno è trascurabile.
+
+@@PROFILO@@
+
+@@BLOCCHI@@
+
+\section{Che cosa manca rispetto a LZMA}
+
+\begin{itemize}
+\item \textbf{Parse ottima.} LZMA in modalità normale sceglie i gettoni minimizzando il costo stimato in bit; qui la parse è golosa con un passo di lazy matching, che basta già a portare klzma a ridosso di LZMA sul testo.
+\item \textbf{Ripetizioni.} LZMA ricorda le ultime quattro distanze (rep0--rep3) e ha la ``short rep'' di un byte; qui solo rep0 con lunghezza $\ge 2$. Misurate sul modello, rep1--rep3 non pagano su blocchi da 8 KiB (Tabella~\ref{tab:varianti}).
+\item \textbf{Letterali dopo un match.} LZMA codifica il letterale che segue un match confrontandolo con il byte alla distanza rep0 (\emph{matched literal}); qui il letterale ha sempre il solo contesto del byte precedente. Anche questa variante, misurata, non paga: più contesti si dividono gli stessi pochi dati.
+\item \textbf{Adattività.} I conteggi non dimenticano; lo scorrimento di LZMA segue meglio i dati non stazionari.
+\item \textbf{Dizionario.} Blocchi indipendenti da 8 KiB contro dizionari da megabyte.
+\item \textbf{Slot 12 e 13} con un bit diretto e l'align invece dell'albero inverso completo.
+\end{itemize}
+
+\section{Limiti e lavori futuri}
+
+\begin{itemize}
+\item \textbf{Velocità.} Uno o due KB al secondo: è un interprete di un linguaggio reversibile, e la pulizia raddoppia parte del lavoro.
+\item \textbf{Dizionario continuo fra blocchi}, come in LZMA2 vero, al posto dei blocchi indipendenti: rinuncia al \kw{par} in cambio di rapporto.
+\item \textbf{Parse ottima reversibile}: i costi si possono calcolare dai conteggi, e la scelta di ogni gettone resterebbe una funzione pura disfatta subito, come ora.
+\item \textbf{Adattività}: uno stimatore che dimentichi, reversibile, per esempio conteggi dimezzati con il bit perso messo nel flusso compresso.
+\end{itemize}
+
+\section{Conclusioni}
+
+Anche l'algoritmo di 7-Zip si scrive in Kairos una volta sola. Il codificatore entropico adattivo, che sembrava il pezzo più difficile da invertire, diventa pulito scegliendo il codificatore giusto (rANS invece del range coder) e l'ordine giusto (all'indietro, dall'istogramma). Sugli stessi file klzma comprime molto meglio di kgzip2, fa meglio di xz sul testo ripetuto e sui dati molto regolari, e resta a pochi punti da LZMA puro sul testo, dove la differenza viene dalla parse golosa e dai contesti mancanti più che dalla reversibilità.
+
+\begin{thebibliography}{9}
+\bibitem{lz77} J.~Ziv, A.~Lempel. \emph{A Universal Algorithm for Sequential Data Compression}. IEEE Transactions on Information Theory 23(3), 1977.
+\bibitem{lzmasdk} I.~Pavlov. \emph{LZMA SDK} e 7-Zip, \url{https://www.7-zip.org/sdk.html}.
+\bibitem{ans} J.~Duda. \emph{Asymmetric Numeral Systems: Entropy Coding Combining Speed of Huffman Coding with Compression Rate of Arithmetic Coding}. arXiv:1311.2540, 2013.
+\bibitem{lyngby} M.~Lyngby, J.~Nylandsted, R.~Glück, T.~Yokoyama. \emph{Towards Clean Reversible Lossless Compression: A Reversible Programming Experiment with Zip}. RC 2024, LNCS 14680, pp.~94--102.
+\bibitem{bennett} C.~H.~Bennett. \emph{Logical Reversibility of Computation}. IBM Journal of Research and Development 17(6), 1973.
+\bibitem{xz} L.~Collin et al. \emph{XZ Utils}, \url{https://tukaani.org/xz/}.
+\end{thebibliography}
+
+\appendix
+\section{File e comandi}
+
+Tutto è in \kw{klzma/} nella repository \kw{kairos-compressori}: \kw{klzma.kairos} (la libreria), \kw{driver.py} (programmi, dati come bytecode, contenitore \kw{KLZ3}), \kw{modello.py} (la stessa pipeline in Python, con un decodificatore indipendente), \kw{\_\_main\_\_.py} (il comando). In \kw{bench/}: \kw{misura.py}, \kw{esperimenti\_klzma.py} (le varianti della Tabella~\ref{tab:varianti}), \kw{profilo\_klzma.py}, \kw{concorrenza.py}.
+\begin{lstlisting}[language={}, basicstyle=\ttfamily\footnotesize]
+make eseguibili                       # dist/bin/klzma, dist/bin/kgzip2
+klzma -v file.txt                     # file.txt.klz, poi rimuove file.txt
+klzma -d file.txt.klz                 # uncall dello stesso programma
+klzma -k -D 128 file.txt              # ricerca piu' profonda, tiene l'ingresso
+python3 bench/esperimenti_klzma.py test/corpus/*
+\end{lstlisting}
+
+\end{document}

@@ -1,0 +1,142 @@
+// ---------------------------------------------------------------------------
+//  Ordinamento delle rotazioni per fusione, con il confronto a uscita
+//  anticipata di kgzip.kairos. Era l'ordinamento di kgzip.kairos prima del
+//  raddoppio dei prefissi; resta qui per il confronto (ordinamenti.py).
+//  Interfaccia: ordina(offs, tmp, blocco, scarto, n) con offs = 0..n-1.
+// ---------------------------------------------------------------------------
+
+// --- confronto lessicografico di due rotazioni -----------------------------
+//
+//  gt vale 1 se la rotazione da o1 e' maggiore di quella da o2; pref conta le
+//  posizioni iniziali in cui coincidono.
+//
+//  In bwt.kairos il ciclo scandisce sempre tutti gli n caratteri. Qui esce al
+//  primo carattere diverso, e pref fa da testimone anche per questo: finche' le
+//  rotazioni coincidono vale esattamente k, quindi il ciclo continua finche'
+//  k == pref e si ferma quando k > pref (oppure a k == n se coincidono del
+//  tutto). Lo stato finale dice da solo quante volte si e' girato, k = pref + 1
+//  oppure k = n, ed e' cio' che serve a riportare k a zero. All'indietro il
+//  ciclo riparte da li' e gira lo stesso numero di volte. Il costo di un
+//  confronto passa da n al prefisso comune piu' uno.
+procedure maggiore(int blocco[], int n, int o1, int o2, int gt, int pref)
+    local int k = 0
+    from k == 0 do
+        local int c1 = 0
+        local int c2 = 0
+            call car(blocco, n, o1, k, c1)
+            call car(blocco, n, o2, k, c2)
+            if c1 > c2 then
+                gt += 1
+            fi gt == 1
+            if c1 == c2 then
+                pref += 1
+            fi pref > k
+            uncall car(blocco, n, o2, k, c2)
+            uncall car(blocco, n, o1, k, c1)
+        delocal int c2 = 0
+        delocal int c1 = 0
+        k += 1
+    loop until (k > pref) || (k == n)
+    if pref == n then
+        k -= n
+    else
+        k -= pref
+        k -= 1
+    fi pref == n
+    delocal int k = 0
+
+// --- ordinamento per fusione delle rotazioni --------------------------------
+//
+// Fonde offs[lo..mid) e offs[mid..hi), gia' ordinati, in tmp[lo..hi), poi
+// riporta il risultato in offs con degli scambi. Ogni scelta d (1 = si prende
+// da destra) finisce su `scarto`: e' il dato ausiliario della fusione, e lo
+// ripulisce chi disfa l'ordinamento. A parita' si prende da sinistra, quindi
+// l'ordinamento e' stabile come il bubble sort che sostituisce: stesso idx.
+procedure fondi(int offs[], int tmp[], int blocco[], stack scarto, int n,
+                int lo, int mid, int hi)
+    local int i = 0
+    local int j = 0
+    local int k = 0
+        i += lo
+        j += mid
+        k += lo
+        from k == lo do
+            local int d = 0
+                if i == mid then
+                    d += 1
+                else
+                    if j < hi then
+                        local int o1 = 0
+                        local int o2 = 0
+                            o1 += offs[i]
+                            o2 += offs[j]
+                            local int gt = 0
+                            local int pref = 0
+                                call maggiore(blocco, n, o1, o2, gt, pref)
+                                d += gt
+                                uncall maggiore(blocco, n, o1, o2, gt, pref)
+                            delocal int pref = 0
+                            delocal int gt = 0
+                            o2 -= offs[j]
+                            o1 -= offs[i]
+                        delocal int o2 = 0
+                        delocal int o1 = 0
+                    fi j < hi
+                fi i == mid
+                if d == 1 then
+                    tmp[k] += offs[j]
+                    offs[j] -= tmp[k]
+                    j += 1
+                else
+                    tmp[k] += offs[i]
+                    offs[i] -= tmp[k]
+                    i += 1
+                fi d == 1
+                push(d, scarto)
+            delocal int d = 0
+            k += 1
+        loop until k == hi
+        k -= hi
+        j -= hi
+        i -= mid
+    delocal int k = 0
+    delocal int j = 0
+    delocal int i = 0
+    local int q = 0
+        q += lo
+        from q == lo do
+            offs[q] <=> tmp[q]
+            q += 1
+        loop until q == hi
+        q -= hi
+    delocal int q = 0
+
+procedure msort(int offs[], int tmp[], int blocco[], stack scarto, int n, int lo, int hi)
+    local int w = 0
+        w += hi
+        w -= lo
+        if w > 1 then
+            local int mid = 0
+                mid += w / 2
+                mid += lo
+                call msort(offs, tmp, blocco, scarto, n, lo, mid)
+                call msort(offs, tmp, blocco, scarto, n, mid, hi)
+                call fondi(offs, tmp, blocco, scarto, n, lo, mid, hi)
+                mid -= lo
+                mid -= w / 2
+            delocal int mid = 0
+        fi w > 1
+        w -= hi
+        w += lo
+    delocal int w = 0
+
+// O(n log n) confronti invece di O(n^2). tmp deve essere a zero e ci torna.
+procedure ordina(int offs[], int tmp[], int blocco[], stack scarto, int n)
+    local int lo = 0
+    local int hi = 0
+        hi += n
+        call msort(offs, tmp, blocco, scarto, n, lo, hi)
+        hi -= n
+    delocal int hi = 0
+    delocal int lo = 0
+

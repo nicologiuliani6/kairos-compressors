@@ -1,0 +1,9 @@
+                              tesi8k.tex   janus8k.c readme8k.md doppio8k.te cerchio64.p periodico8k
+golosa (prima versione)             3545        3183        3414        1856         122          43
++ lazy, b2 > best (scelta)          3483        3124        3340        1831         124          43
++ lazy, b2 > best + 1               3495        3140        3354        1833         127          43
++ stimatore KT (a = 1/2)            3549        3194        3424        1858         119          40
++ letterale matched                 3552        3186        3420        1868         122          43
++ rep0..rep3                        3553        3189        3415        1864         114          43
+lazy + tutto il resto               3498        3141        3361        1852         112          41
+LZMA (7-Zip, raw)                   3485        3113        3321        1899         109          54

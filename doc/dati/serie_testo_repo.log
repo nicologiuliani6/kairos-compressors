@@ -1,0 +1,12 @@
+bolle_ae testo n=32 vm_min=0.070
+bolle_ae testo n=64 vm_min=0.290
+bolle_ae testo n=128 vm_min=1.440
+bolle_ae testo n=256 vm_min=6.030
+fusione testo n=64 vm_min=0.060
+fusione testo n=128 vm_min=0.150
+fusione testo n=256 vm_min=0.370
+fusione testo n=512 vm_min=0.880
+fusione testo n=1024 vm_min=2.100
+fusione testo n=2048 vm_min=5.170
+fusione testo n=4096 vm_min=11.780
+FINE

@@ -1,0 +1,140 @@
+
+% ======================================================================
+\chapter{Introduzione}
+\label{sec:intro}
+% ======================================================================
+
+Un linguaggio di programmazione è \textbf{reversibile} quando ogni sua
+computazione può essere ripercorsa all'indietro fino a ritrovare esattamente lo
+stato di partenza. Non si tratta di registrare una traccia da cui ricostruire il
+passato: in un linguaggio reversibile l'informazione necessaria a tornare
+indietro è già contenuta nello stato corrente, perché ogni costrutto è
+progettato per non distruggerla. L'assegnamento distruttivo $x := e$, che
+cancella il valore precedente di $x$, non appartiene a un linguaggio di questo
+tipo; al suo posto compaiono aggiornamenti invertibili come $x \mathrel{+}= e$,
+il cui inverso $x \mathrel{-}= e$ è immediato.
+
+L'interesse per questo modo di calcolare ha tre radici indipendenti. La prima è
+fisica: il principio di Landauer lega la cancellazione di un bit a una
+dissipazione minima di energia, e un calcolo che non cancella può in linea di
+principio evitarla. La seconda è pragmatica: molti problemi si presentano
+naturalmente in coppie di trasformazioni inverse (compressione e
+decompressione, codifica e decodifica, serializzazione e parsing) e un
+linguaggio reversibile permette di scrivere \emph{un solo} programma invece di
+due, eliminando per costruzione la possibilità che le due metà divergano. La
+terza riguarda l'affidabilità: poter tornare indietro è il meccanismo di base
+del \emph{recovery}, e infatti il \emph{rollback} di una transazione non è altro
+che esecuzione all'indietro fino a un punto sicuro.
+
+\medskip
+\noindent
+È proprio la terza radice a rendere interessante il caso \textbf{concorrente},
+ed è qui che si colloca questo lavoro. In un sistema sequenziale l'esecuzione
+all'indietro è una nozione semplice, perché c'è un solo passato da ripercorrere.
+In presenza di più thread il passato non è più lineare: due rami che procedono
+in parallelo possono aver interagito, e disfare un passo di uno può richiedere
+di disfare prima i passi dell'altro che ne dipendono. Il capostipite dei
+linguaggi reversibili, \textbf{Janus}~\cite{YokoyamaGluck2007}, è puramente
+sequenziale; la reversibilità in contesto concorrente è stata studiata
+soprattutto su calcoli di processi~\cite{LaneseMezzinaSchmittStefani2011,%
+LaneseLienhardtMezzinaSchmittStefani2013}, che sono modelli e non linguaggi di
+programmazione. Il territorio in mezzo (un linguaggio imperativo strutturato,
+con la sintassi e i costrutti che un programmatore si aspetta, che sia insieme
+reversibile e concorrente) è poco popolato: i tentativi esistono, ma finora
+hanno definito i costrutti concorrenti attraverso la loro traduzione, senza una
+semantica formale su cui poggiare le proprietà che ci si aspetta da un
+linguaggio reversibile.
+
+\medskip
+\noindent
+\textbf{Kairos} sta in quel territorio. Il nome è il greco
+\kairosgr{} (\emph{kairós}): non il tempo che scorre, che è \chronosgr{}
+(\emph{chrónos}), ma il momento opportuno, l'istante in cui una cosa va fatta. La distinzione è
+pertinente a un linguaggio reversibile, dove il tempo non è una freccia ma una
+coordinata percorribile nei due versi, e ciò che conta di un passo non è
+\emph{quando} avviene ma che sia quello giusto: l'inversa di un programma non ne
+riavvolge la storia, ne esegue un altro che riporta allo stato di partenza.
+
+Al nucleo di Janus (assegnamenti invertibili, condizionali a doppia guardia,
+cicli \texttt{from\,\dots\,until}, procedure invocabili con \texttt{call} e
+\texttt{uncall}, interi e array) Kairos aggiunge il parallelismo esplicito
+\texttt{par\,\dots\,and\,\dots\,rap}, la comunicazione sincrona su canali
+\texttt{ssend}/\texttt{srecv} con protocolli ricostruiti dal programma, uno stack come struttura dati primitiva
+e le transazioni \texttt{try\,\dots\,rollback\,\dots\,yrt}.
+La scelta di progetto che tiene insieme il tutto è la \emph{disgiunzione}: rami
+paralleli operano su porzioni disgiunte dello store e comunicano solo per
+canali. Da questa singola ipotesi discende la confluenza degli interleaving che
+non toccano canali (\S\ref{sec:par-conf}), e quindi il fatto che il
+non-determinismo residuo non sia osservabile sullo store finale: la
+concorrenza di Kairos serve a esprimere il parallelismo dei problemi, non a
+introdurre corse critiche.
+
+\medskip
+\noindent
+Il contributo di questo documento è la semantica formale del linguaggio.
+Diamo una semantica operazionale strutturale in stile small-step, definita come
+\textbf{estensione} della semantica di Janus di Lami, Lanese e
+Stefani~\cite{LamiLaneseStefani2024}: ereditiamo da quella base la forma dei
+giudizi, i contesti di valutazione, la configurazione terminale e il
+trattamento degli errori, e aggiungiamo le regole per i costrutti che Kairos
+introduce. Definiamo poi l'operatore di inversione $\Inv{\cdot}$, sintattico e
+calcolabile in tempo lineare, e mostriamo in che senso realizza l'esecuzione
+all'indietro.
+
+\section{Notazione e convenzioni}
+\label{sec:notazione}
+
+I giudizi hanno la forma $\cfg{c}{\sigma} \to \cfg{c'}{\sigma'}$, con lo store a
+sinistra come nella semantica di base, non il turnstile big-step
+$\sigma \vdash e \Downarrow v$ usuale nella letteratura su Janus. Non è una
+variante stilistica: interleaving dei rami e sincronizzazione sui canali
+(\cref{sec:par}) si esprimono molto più naturalmente passo per passo, perché un
+big-step collassa l'intera esecuzione di un comando in un unico giudizio e i
+punti in cui intercalare l'altro ramo restano impliciti. È la stessa motivazione
+dichiarata in~\cite{LamiLaneseStefani2024}, che adotta lo small-step per Janus
+proprio in vista di una futura estensione concorrente.
+
+Una convenzione tipografica riguarda ciò che sta \emph{fuori} dalla relazione di
+transizione. Le regole d'errore, che producono $\err$, portano il nome in
+\textcolor{red!60!black}{rosso}. I vincoli di buona formazione sono distinti
+secondo il momento in cui li si verifica: \static{in verde} quelli controllati
+sul testo del programma, prima di eseguirlo; \dynamic{in arancio} quelli
+sorvegliati durante l'esecuzione, perché riguardano stato che il testo del
+programma non determina.
+
+\section{Struttura della tesi}
+
+Il \cref{chap:background} richiama Janus, la semantica small-step su cui ci
+basiamo e i lavori sulla reversibilità concorrente. Il \cref{chap:semantica} è
+il nucleo tecnico: sintassi astratta, sistema di transizione, il confine fra ciò
+che è ereditato dalla base e ciò che Kairos aggiunge, e le regole di riduzione
+dagli assegnamenti fino a \texttt{par} e alle transazioni, con gli errori a
+runtime. Il \cref{chap:reversibilita} definisce l'operatore di inversione, ne
+dimostra le proprietà e riassume in un quadro unico tutte le regole. Seguono il
+\cref{chap:programmare} sull'uso del linguaggio, il \cref{chap:interprete}
+sull'implementazione, il \cref{chap:correlati} sul confronto con i lavori
+esistenti e il \cref{chap:conclusioni} con le conclusioni.
+
+% ======================================================================
+\chapter{Background}
+\label{chap:background}
+\label{sec:back}
+% ======================================================================
+
+\subsubsection{Janus e la programmazione reversibile}
+
+\textbf{Janus} è stato definito intorno al 1982 da Lutz e Derby al
+Caltech~\cite{LutzDerby1982}, per curiosità, e riportato all'attenzione della comunità da Yokoyama e
+Glück~\cite{YokoyamaGluck2007}, che ne hanno dato la prima semantica formale e
+un self-interpreter invertibile. È un linguaggio imperativo strutturato in cui
+ogni costrutto è invertibile per costruzione, secondo due idee ricorrenti.
+
+La prima è l'\textbf{aggiornamento invertibile}. Al posto dell'assegnamento
+distruttivo Janus ha solo aggiornamenti della forma $x \mathrel{\odot}= e$ con
+$\odot \in \{+,-,\hat{\ }\}$, dove $x$ non compare in $e$: il vecchio valore di
+$x$ è recuperabile dal nuovo applicando l'operazione inversa, e la condizione
+sull'occorrenza di $x$ garantisce che il valore di $e$ sia lo stesso prima e
+dopo il passo.
+
+La seconda è la \textbf{doppia guardia}. Un condizionale irreversibile
+$\m

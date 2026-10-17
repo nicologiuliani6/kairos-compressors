@@ -1,0 +1,36 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+\babelprovide[import,main,hyphenrules=nohyphenation]{italian}
+\usepackage{mathptmx}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{courier}
+\usepackage{microtype}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\setlist{itemsep=2pt,topsep=4pt}
+\setlength{\emergencystretch}{3em}
+
+\definecolor{kw}{RGB}{0,70,140}
+\definecolor{cm}{RGB}{110,110,110}
+\lstdefinelanguage{Kairos}{
+  morekeywords={procedure,int,stack,channel,local,delocal,call,uncall,if,then,else,fi,
+    from,do,loop,until,par,and,rap,push,pop,show,skip,nil,empty,ssend,srecv},
+  sensitive=true, morecomment=[l]{//}}
+\lstset{language=Kairos, basicstyle=\ttfamily\small, keywordstyle=\color{kw}\bfseries,
+  commentstyle=\color{cm}\itshape, columns=fullflexible, keepspaces=true,
+  frame=single, framerule=0.3pt, rulecolor=\color{black!25}, xleftmargin=4pt,
+  xrightmargin=4pt, aboveskip=6pt, belowskip=6pt, showstringspaces=false}
+\newcommand{\kw}[1]{\texttt{#1}}

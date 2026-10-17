@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+*/generati/
+dist/bin/
+dist/lavoro/
+doc/kgzip2/*_pieno.*
+doc/klzma/*_pieno.*
+doc/kgzip2/*.aux
+doc/klzma/*.aux
+doc/kgzip2/*.log
+doc/klzma/*.log
+doc/kgzip2/*.out
+doc/klzma/*.out
+*.kgz
+*.klz

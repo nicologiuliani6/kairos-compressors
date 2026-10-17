@@ -1,0 +1,65 @@
+[
+ {
+  "algoritmo": "kgzip2",
+  "file": "tesi8k.tex",
+  "byte": 8192,
+  "blocco": 4096,
+  "blocchi": 2,
+  "par": {
+   "byte": 4248,
+   "comprimi": 6.33,
+   "uncall": 5.73
+  },
+  "seq": {
+   "byte": 4248,
+   "comprimi": 11.86,
+   "uncall": 10.27
+  }
+ },
+ {
+  "algoritmo": "kgzip2",
+  "file": "tesi8k.tex",
+  "byte": 8192,
+  "blocco": 2048,
+  "blocchi": 4,
+  "par": {
+   "byte": 4697,
+   "comprimi": 6.55,
+   "uncall": 5.75
+  },
+  "seq": {
+   "byte": 4697,
+   "comprimi": 12.57,
+   "uncall": 10.9
+  }
+ },
+ {
+  "algoritmo": "klzma",
+  "file": "tesi20k.tex",
+  "byte": 20000,
+  "blocco": 8192,
+  "blocchi": 3,
+  "par": {
+   "byte": 8799,
+   "comprimi": 9.69,
+   "uncall": 10.31
+  },
+  "seq": {
+   "byte": 8799,
+   "comprimi": 18.5,
+   "uncall": 19.07
+  }
+ },
+ {
+  "algoritmo": "klzma",
+  "file": "tesi20k.tex",
+  "byte": 20000,
+  "blocco": 20000,
+  "blocchi": 1,
+  "par": {
+   "byte": 7718,
+   "comprimi": 18.88,
+   "uncall": 18.99
+  }
+ }
+]

@@ -1,0 +1,887 @@
+// ---------------------------------------------------------------------------
+//  klzma: LZ77 con modelli di contesto alla LZMA e rANS binario, reversibile.
+//
+//      blocco --LZ77 (catene di hash, rep0)--> gettoni --contesti LZMA,
+//      rANS binario adattivo--> bit
+//
+//  La procedura `comprimi`, in fondo al file, fa tutto il percorso; il
+//  decompressore e' `uncall comprimi(...)`.
+//
+//  Rispetto a LZMA: il range coder e' sostituito da rANS binario, perche'
+//  l'aggiornamento a scorrimento di LZMA (p += (2048 - p) >> 5) non e'
+//  iniettivo e non si potrebbe disfare; le probabilita' vengono da conteggi.
+//  Il resto segue LZMA: la macchina a 12 stati, i letterali ad albero con il
+//  contesto dei 3 bit alti del byte precedente, il codificatore delle
+//  lunghezze (choice, low, mid, high), gli slot di distanza con l'albero
+//  inverso e l'align. Semplificazioni: solo rep0, niente "matched literal",
+//  slot 12 e 13 con un bit diretto invece dell'albero inverso. La parse e' golosa con
+//  un passo di lazy matching, come zlib e la modalita' veloce di LZMA.
+//
+//  Ordine. rANS e' una pila: l'ultimo bit codificato e' il primo decodificato.
+//  Qui l'inverso e' `uncall`, che disfa per primo l'ultimo passo. I gettoni si
+//  codificano quindi dall'ultimo al primo: cosi' l'uncall li decodifica dal
+//  primo, con i contesti (stato, rep0, byte precedente) gia' ricostruiti, ed e'
+//  esattamente un decodificatore LZMA. Per lo stesso motivo il modello parte
+//  dall'istogramma completo delle decisioni (contato in sola lettura) e lo
+//  consuma: alla fine e' a zero, e l'uncall lo fa crescere da zero come un
+//  decodificatore adattivo.
+//
+//  Contesti (indici in cnt, due conteggi per contesto):
+//      0  is_match[12 stati][4]     48  is_rep[12]     60  letterali[8][256]
+//   2108  lunghezze dei match   2430  lunghezze delle rep0   (322 ciascuno)
+//   2752  slot[4][64]           3008  albero inverso degli slot 4..11 [12][16]
+//   3200  align[16]             contesto -1 = bit a probabilita' fissa 1/2
+// ---------------------------------------------------------------------------
+
+// --- LZ77 ---------------------------------------------------------------------
+
+// Catene di hash su 3 byte: prev[i] = 1 + la posizione precedente con lo stesso
+// hash, 0 se non c'e'. Si disfano con uncall a parse finita.
+procedure catene(int b[], int prev[], int head[], int n)
+    if n > 2 then
+        local int i = 0
+        from i == 0 do
+            local int h = 0
+                h += ((b[i] * 1031) + (b[(i + 1)] * 31) + b[(i + 2)]) % 4096
+                prev[i] += head[h]
+                head[h] -= prev[i]
+                head[h] += i + 1
+                h -= ((b[i] * 1031) + (b[(i + 1)] * 31) + b[(i + 2)]) % 4096
+            delocal int h = 0
+            i += 1
+        loop until i == (n - 2)
+        i -= n
+        i += 2
+        delocal int i = 0
+    fi n > 2
+
+// l += lunghezza della corrispondenza fra le posizioni i e j < i, al massimo
+// min(273, n - i). Uscita anticipata con l come testimone (come il confronto
+// delle rotazioni in kgzip): il ciclo gira finche' k == l.
+procedure lung(int b[], int n, int i, int j, int l)
+    local int lim = 0
+        lim += n
+        lim -= i
+        if (n - i) > 273 then
+            lim -= (n - i) - 273
+        fi (n - i) > 273
+        local int k = 0
+        from k == 0 do
+            if b[(i + k)] == b[(j + k)] then
+                l += 1
+            fi l > k
+            k += 1
+        loop until (k > l) || (k == lim)
+        if l == lim then
+            k -= lim
+        else
+            k -= l
+            k -= 1
+        fi l == lim
+        delocal int k = 0
+        if (n - i) > 273 then
+            lim += (n - i) - 273
+        fi (n - i) > 273
+        lim += i
+        lim -= n
+    delocal int lim = 0
+
+// La corrispondenza piu' lunga fra al piu' D candidati della catena di i.
+// A parita' vince il candidato piu' vicino, il primo della catena. Ogni
+// sostituzione del migliore lascia il vecchio valore su scarto.
+procedure cerca(int b[], int prev[], int n, int i, int D, int best, int bd, stack scarto)
+    local int c = 0
+    local int d = 0
+        c += prev[i]
+        if c > 0 then
+            from d == 0 do
+                local int j = 0
+                    j += c
+                    j -= 1
+                    local int lm = 0
+                        call lung(b, n, i, j, lm)
+                        local int f = 0
+                            if lm > best then
+                                f += 1
+                            fi f == 1
+                            if f == 1 then
+                                push(best, scarto)
+                                push(bd, scarto)
+                                best += lm
+                                bd += i - j
+                            fi f == 1
+                            push(f, scarto)
+                        delocal int f = 0
+                        // la lunghezza va su scarto invece di essere ricalcolata:
+                        // la disfa `uncall cerca`, insieme al resto della ricerca
+                        push(lm, scarto)
+                    delocal int lm = 0
+                    push(c, scarto)
+                    c += prev[j]
+                    push(j, scarto)
+                delocal int j = 0
+                d += 1
+            loop until (d == D) || (c == 0)
+        fi d > 0
+        push(d, scarto)
+        push(c, scarto)
+    delocal int d = 0
+    delocal int c = 0
+
+// Il gettone in posizione i, scritto in ty[k], ln[k], ds[k]: 0 letterale,
+// 1 match (ln, ds), 2 ripetizione dell'ultima distanza rep0. La procedura e'
+// pulita: la ricerca si disfa dopo aver deciso.
+//
+// Parse lazy, come zlib e LZMA: se conviene un match ma in i + 1 ce n'e' uno
+// piu' lungo, in i si emette un letterale. La seconda ricerca e l'indicatore
+// `pigro` sono funzioni pure dello stato e si disfano subito dopo la scelta.
+procedure pigrizia(int best, int b2, int pigro)
+    if b2 > best then
+        pigro += 1
+    fi pigro == 1
+
+procedure decidi(int b[], int prev[], int n, int i, int D, int rep0,
+                 int ty[], int ln[], int ds[], int k, stack scarto)
+    local int best = 0
+    local int bd = 0
+    local int lr = 0
+    local int b2 = 0
+    local int bd2 = 0
+    local int pigro = 0
+        call cerca(b, prev, n, i, D, best, bd, scarto)
+        if rep0 > 0 then
+            local int j = 0
+                j += i
+                j -= rep0
+                call lung(b, n, i, j, lr)
+                j += rep0
+                j -= i
+            delocal int j = 0
+        fi rep0 > 0
+        if ((best >= 3) && ((i + 1) < n)) && ((lr < 2) || ((lr + 1) < best)) then
+            local int i1 = 0
+                i1 += i + 1
+                call cerca(b, prev, n, i1, D, b2, bd2, scarto)
+                call pigrizia(best, b2, pigro)
+                i1 -= i + 1
+            delocal int i1 = 0
+        fi ((best >= 3) && ((i + 1) < n)) && ((lr < 2) || ((lr + 1) < best))
+        if pigro == 1 then
+            ln[k] += 1
+        else
+            if (lr >= 2) && ((lr + 1) >= best) then
+                ty[k] += 2
+                ln[k] += lr
+                ds[k] += rep0
+            else
+                if best >= 3 then
+                    ty[k] += 1
+                    ln[k] += best
+                    ds[k] += bd
+                else
+                    ln[k] += 1
+                fi best >= 3
+            fi (lr >= 2) && ((lr + 1) >= best)
+        fi pigro == 1
+        if ((best >= 3) && ((i + 1) < n)) && ((lr < 2) || ((lr + 1) < best)) then
+            local int i1 = 0
+                i1 += i + 1
+                uncall pigrizia(best, b2, pigro)
+                uncall cerca(b, prev, n, i1, D, b2, bd2, scarto)
+                i1 -= i + 1
+            delocal int i1 = 0
+        fi ((best >= 3) && ((i + 1) < n)) && ((lr < 2) || ((lr + 1) < best))
+        if rep0 > 0 then
+            local int j = 0
+                j += i
+                j -= rep0
+                uncall lung(b, n, i, j, lr)
+                j += rep0
+                j -= i
+            delocal int j = 0
+        fi rep0 > 0
+        uncall cerca(b, prev, n, i, D, best, bd, scarto)
+    delocal int pigro = 0
+    delocal int bd2 = 0
+    delocal int b2 = 0
+    delocal int lr = 0
+    delocal int bd = 0
+    delocal int best = 0
+
+// out += stato LZMA dopo un gettone di tipo t partendo dallo stato s.
+procedure nuovo_stato(int s, int t, int out)
+    if t == 0 then
+        if s >= 4 then
+            if s < 10 then
+                out += s - 3
+            else
+                out += s - 6
+            fi s < 10
+        fi s >= 4
+    else
+        if s < 7 then
+            out += 7
+        else
+            out += 10
+        fi s < 7
+        if t == 2 then
+            out += 1
+        fi t == 2
+    fi t == 0
+
+// Parse golosa: per ogni gettone k anche lo stato st[k] e la distanza rep0
+// rp[k] in vigore prima di esso, che servono come contesti alla codifica.
+procedure analizza(int b[], int prev[], int n, int D, int ty[], int ln[], int ds[],
+                   int st[], int rp[], int ntok, stack scarto)
+    local int i = 0
+    local int s = 0
+    local int r = 0
+    from i == 0 do
+        st[ntok] += s
+        rp[ntok] += r
+        call decidi(b, prev, n, i, D, r, ty, ln, ds, ntok, scarto)
+        i += ln[ntok]
+        local int so = 0
+        local int tt = 0
+            so += st[ntok]
+            tt += ty[ntok]
+            s -= so
+            call nuovo_stato(so, tt, s)
+            r -= rp[ntok]
+            if tt == 1 then
+                r += ds[ntok]
+            else
+                r += rp[ntok]
+            fi tt == 1
+            tt -= ty[ntok]
+            so -= st[ntok]
+        delocal int tt = 0
+        delocal int so = 0
+        ntok += 1
+    loop until i == n
+    // lo stato e rep0 finali dipendono dall'ultimo gettone
+    local int so = 0
+    local int tt = 0
+        so += st[(ntok - 1)]
+        tt += ty[(ntok - 1)]
+        uncall nuovo_stato(so, tt, s)
+        if tt == 1 then
+            r -= ds[(ntok - 1)]
+        else
+            r -= rp[(ntok - 1)]
+        fi tt == 1
+        tt -= ty[(ntok - 1)]
+        so -= st[(ntok - 1)]
+    delocal int tt = 0
+    delocal int so = 0
+    delocal int r = 0
+    delocal int s = 0
+    i -= n
+    delocal int i = 0
+
+// --- rANS binario ----------------------------------------------------------------
+//
+// Stato x in [2^16, 2^17), probabilita' su 2^12. Codificare il bit v con
+// probabilita' p0 dello zero: si emettono bit bassi di x finche' x < 32 f, poi
+// x = (x / f) * 4096 + c + (x mod f). Ogni passo e' una biiezione esatta;
+// all'indietro e' il decodificatore: v si legge da x mod 4096, poi si
+// ricompone x e si rileggono i bit finche' x >= 2^16. v si azzera proprio
+// cosi', decodificandolo dal nuovo x.
+procedure rans(int v, int p0, int x, stack bitst, int nb)
+    local int f = 0
+    local int c = 0
+        f += p0
+        f += v * (4096 - (2 * p0))
+        c += v * p0
+        from x >= 65536 loop
+            local int h = 0
+                h += x / 2
+                x -= h
+                x -= h
+                push(x, bitst)
+                x <=> h
+            delocal int h = 0
+            nb += 1
+        until x < (32 * f)
+        local int q = 0
+            q += x / f
+            x -= q * f
+            x += c
+            x += q * 4096
+            q -= x / 4096
+        delocal int q = 0
+        c -= v * p0
+        f -= v * (4096 - (2 * p0))
+        f -= p0
+    delocal int c = 0
+    delocal int f = 0
+    v -= (x % 4096) >= p0
+
+// p0 += probabilita' dello zero nel contesto ctx (su 4096), dai conteggi;
+// contesto -1: 1/2.
+procedure prob(int cnt[], int ctx, int p0)
+    if ctx >= 0 then
+        p0 += 1 + (((cnt[(2 * ctx)] + 1) * 4094) / ((cnt[(2 * ctx)] + cnt[((2 * ctx) + 1)]) + 2))
+    else
+        p0 += 2048
+    fi ctx >= 0
+
+// Un bit v in {0, 1} nel contesto ctx, consumato: il conteggio del bit si
+// toglie dal modello, poi il rANS lo codifica con il modello senza di esso.
+// All'indietro: si decodifica con il modello corrente e poi lo si aggiorna,
+// come in qualunque decodificatore adattivo.
+procedure codbit(int v, int ctx, int cnt[], int pot2[], stack bitst, int x, int nb)
+    if ctx >= 0 then
+        cnt[((2 * ctx) + v)] -= 1
+    fi ctx >= 0
+    local int p0 = 0
+        call prob(cnt, ctx, p0)
+        call rans(v, p0, x, bitst, nb)
+        uncall prob(cnt, ctx, p0)
+    delocal int p0 = 0
+
+// --- alberi di bit -----------------------------------------------------------------
+//
+// Albero normale di nbit bit: il decodificatore legge dal bit alto, con
+// contesto base + il prefisso gia' letto (1 in testa). Qui si codifica dal
+// bit basso, nell'ordine inverso: con v + 2^nbit, dimezzare lascia il bit in
+// v e il prefisso, cioe' il contesto, nella meta'. v viene consumato.
+procedure albero(int v, int nbit, int base, int cnt[], int pot2[], stack bitst,
+                 int x, int nb)
+    v += pot2[nbit]
+    local int k = 0
+    from k == 0 do
+        local int h = 0
+            h += v / 2
+            v -= h
+            v -= h
+            local int ctx = 0
+                ctx += base + h
+                call codbit(v, ctx, cnt, pot2, bitst, x, nb)
+                ctx -= base + h
+            delocal int ctx = 0
+            v <=> h
+        delocal int h = 0
+        k += 1
+    loop until k == nbit
+    delocal int k = nbit
+    v -= 1
+
+// m += 2^k + i k bit bassi di v rovesciati (il bit 0 diventa il piu' alto).
+procedure riflesso(int v, int k, int m, int pot2[])
+    m += pot2[k]
+    local int j = 0
+        if k > 0 then
+            from j == 0 do
+                m += ((v / pot2[j]) % 2) * pot2[((k - 1) - j)]
+                j += 1
+            loop until j == k
+            j -= k
+        fi k > 0
+    delocal int j = 0
+
+// Albero inverso: il decodificatore legge dal bit basso, e il contesto e' il
+// prefisso dei bit gia' letti. Qui si codifica dal bit alto; il contesto del
+// bit k si ricava dai k bit bassi ancora in v.
+procedure albero_inv(int v, int nbit, int base, int cnt[], int pot2[], stack bitst,
+                     int x, int nb)
+    local int k = 0
+        k += nbit
+        from k == nbit do
+            k -= 1
+            local int bt = 0
+                bt += v / pot2[k]
+                v -= bt * pot2[k]
+                local int m = 0
+                    call riflesso(v, k, m, pot2)
+                    local int ctx = 0
+                        ctx += base + m
+                        call codbit(bt, ctx, cnt, pot2, bitst, x, nb)
+                        ctx -= base + m
+                    delocal int ctx = 0
+                    uncall riflesso(v, k, m, pot2)
+                delocal int m = 0
+            delocal int bt = 0
+        loop until k == 0
+    delocal int k = 0
+
+// --- lunghezze e distanze -----------------------------------------------------------
+
+// l = lunghezza - 2, consumata. choice, poi low[ps] (0..7), oppure choice2 e
+// mid[ps] (8..15), oppure high (16..271). Si codifica dal fondo: prima il ramo,
+// poi le scelte, che il decodificatore legge per prime.
+procedure cod_lung(int l, int base, int ps, int cnt[], int pot2[], stack bitst,
+                   int x, int nb)
+    local int ch = 0
+        if l < 8 then
+            local int tb = 0
+            local int nbit = 3
+                tb += base + 2 + (ps * 8)
+                call albero(l, nbit, tb, cnt, pot2, bitst, x, nb)
+                tb -= base + 2 + (ps * 8)
+            delocal int nbit = 3
+            delocal int tb = 0
+        else
+            ch += 1
+            l -= 8
+            local int ch2 = 0
+                if l < 8 then
+                    local int tb = 0
+                    local int nbit = 3
+                        tb += base + 34 + (ps * 8)
+                        call albero(l, nbit, tb, cnt, pot2, bitst, x, nb)
+                        tb -= base + 34 + (ps * 8)
+                    delocal int nbit = 3
+                    delocal int tb = 0
+                else
+                    ch2 += 1
+                    l -= 8
+                    local int tb = 0
+                    local int nbit = 8
+                        tb += base + 66
+                        call albero(l, nbit, tb, cnt, pot2, bitst, x, nb)
+                        tb -= base + 66
+                    delocal int nbit = 8
+                    delocal int tb = 0
+                fi ch2 == 0
+                local int c2 = 0
+                    c2 += base + 1
+                    call codbit(ch2, c2, cnt, pot2, bitst, x, nb)
+                    c2 -= base + 1
+                delocal int c2 = 0
+            delocal int ch2 = 0
+        fi ch == 0
+        local int c1 = 0
+            c1 += base
+            call codbit(ch, c1, cnt, pot2, bitst, x, nb)
+            c1 -= base
+        delocal int c1 = 0
+    delocal int ch = 0
+
+// s += slot della distanza d0: il primo s con slotbase[s + 1] > d0.
+procedure trova_slot(int d0, int s, int slotbase[])
+    from s == 0 loop
+        s += 1
+    until slotbase[(s + 1)] > d0
+
+// d0 = distanza - 1, consumata: lo slot (albero di 6 bit nel contesto della
+// lunghezza ls), poi il resto: albero inverso per gli slot fino a 11, bit
+// diretti piu' 4 bit di align per gli altri.
+procedure cod_dist(int d0, int ls, int slotbase[], int cnt[], int pot2[], stack bitst,
+                   int x, int nb)
+    local int s = 0
+        call trova_slot(d0, s, slotbase)
+        d0 -= slotbase[s]
+        if s >= 4 then
+            local int nbs = 0
+                nbs += s / 2
+                nbs -= 1
+                if nbs <= 4 then
+                    local int tb = 0
+                        tb += 3008 + (s * 16)
+                        call albero_inv(d0, nbs, tb, cnt, pot2, bitst, x, nb)
+                        tb -= 3008 + (s * 16)
+                    delocal int tb = 0
+                else
+                    local int a = 0
+                    local int quattro = 4
+                    local int tb = 3200
+                        a += d0 % 16
+                        d0 -= a
+                        call albero_inv(a, quattro, tb, cnt, pot2, bitst, x, nb)
+                    delocal int tb = 3200
+                    delocal int quattro = 4
+                    delocal int a = 0
+                    local int k = 4
+                        from k == 4 do
+                            local int bt = 0
+                            local int meno = -1
+                                bt += (d0 / pot2[k]) % 2
+                                d0 -= bt * pot2[k]
+                                call codbit(bt, meno, cnt, pot2, bitst, x, nb)
+                            delocal int meno = -1
+                            delocal int bt = 0
+                            k += 1
+                        loop until k == nbs
+                    delocal int k = nbs
+                fi nbs <= 4
+                nbs += 1
+                nbs -= s / 2
+            delocal int nbs = 0
+        fi s >= 4
+        local int tb = 0
+        local int sei = 6
+            tb += 2752 + (ls * 64)
+            call albero(s, sei, tb, cnt, pot2, bitst, x, nb)
+            tb -= 2752 + (ls * 64)
+        delocal int sei = 6
+        delocal int tb = 0
+    delocal int s = 0
+
+// Un gettone: t tipo, l lunghezza, ds distanza, lv byte del letterale; tutti
+// consumati. s stato, ps = posizione mod 4, pv byte precedente, r rep0 in vigore.
+// Ordine inverso a quello del decodificatore: il corpo, poi is_rep, poi is_match.
+procedure cod_gettone(int t, int l, int ds, int lv, int s, int ps, int pv, int r,
+                      int slotbase[], int cnt[], int pot2[], stack bitst,
+                      int x, int nb)
+    if t == 0 then
+        local int tb = 0
+        local int otto = 8
+            tb += 60 + ((pv / 32) * 256)
+            call albero(lv, otto, tb, cnt, pot2, bitst, x, nb)
+            tb -= 60 + ((pv / 32) * 256)
+        delocal int otto = 8
+        delocal int tb = 0
+        l -= 1
+    else
+        if t == 2 then
+            ds -= r
+            l -= 2
+            local int base = 2430
+                call cod_lung(l, base, ps, cnt, pot2, bitst, x, nb)
+            delocal int base = 2430
+        else
+            ds -= 1
+            local int ls = 0
+                ls += l - 2
+                if (l - 2) > 3 then
+                    ls -= l - 5
+                fi (l - 2) > 3
+                call cod_dist(ds, ls, slotbase, cnt, pot2, bitst, x, nb)
+                if (l - 2) > 3 then
+                    ls += l - 5
+                fi (l - 2) > 3
+                ls -= l - 2
+            delocal int ls = 0
+            l -= 2
+            local int base = 2108
+                call cod_lung(l, base, ps, cnt, pot2, bitst, x, nb)
+            delocal int base = 2108
+        fi t == 2
+        t -= 1
+        local int c = 0
+            c += 48 + s
+            call codbit(t, c, cnt, pot2, bitst, x, nb)
+            c -= 48 + s
+        delocal int c = 0
+        t += 1
+    fi t == 0
+    local int c = 0
+        c += (s * 4) + ps
+        call codbit(t, c, cnt, pot2, bitst, x, nb)
+        c -= (s * 4) + ps
+    delocal int c = 0
+
+// Toglie dal blocco i byte di un match, dall'ultimo: la sorgente e' sempre
+// ancora piena. All'indietro e' la copia LZ77, sovrapposizioni comprese.
+procedure togli_copia(int b[], int p, int l, int ds)
+    local int j = 0
+        j += l
+        from j == l do
+            j -= 1
+            local int t = 0
+                t += b[((p + j) - ds)]
+                b[(p + j)] -= t
+                t -= b[((p + j) - ds)]
+            delocal int t = 0
+        loop until j == 0
+    delocal int j = 0
+
+// --- istogramma del modello ---------------------------------------------------------
+//
+// Le stesse decisioni della codifica, contate in sola lettura: ogni procedura
+// aggiunge 1 ai conteggi dei contesti che il gettone usera', calcolati dal
+// valore senza consumarlo. E' reversibile da sola (cnt += f(valori)) e la si
+// percorre una volta per gettone.
+
+// Albero normale di nbit bit: il bit k (dal basso) ha contesto il prefisso
+// dei bit sopra di lui, con l'1 in testa.
+procedure conta_albero(int v, int nbit, int base, int cnt[], int pot2[])
+    local int k = 0
+    from k == 0 do
+        cnt[((2 * (base + ((v + pot2[nbit]) / pot2[(k + 1)]))) + ((v / pot2[k]) % 2))] += 1
+        k += 1
+    loop until k == nbit
+    delocal int k = nbit
+
+// Albero inverso: il contesto del bit k sono i k bit sotto di lui, rovesciati.
+procedure conta_albero_inv(int v, int nbit, int base, int cnt[], int pot2[])
+    local int k = 0
+    from k == 0 do
+        local int m = 0
+            call riflesso(v, k, m, pot2)
+            cnt[((2 * (base + m)) + ((v / pot2[k]) % 2))] += 1
+            uncall riflesso(v, k, m, pot2)
+        delocal int m = 0
+        k += 1
+    loop until k == nbit
+    delocal int k = nbit
+
+procedure conta_lung(int l, int base, int ps, int cnt[], int pot2[])
+    cnt[((2 * base) + (l >= 8))] += 1
+    local int nbit = 3
+    local int tb = 0
+        if l < 8 then
+            tb += base + 2 + (ps * 8)
+            call conta_albero(l, nbit, tb, cnt, pot2)
+            tb -= base + 2 + (ps * 8)
+        else
+            cnt[((2 * (base + 1)) + (l >= 16))] += 1
+            local int r = 0
+                r += l - 8
+                if l < 16 then
+                    tb += base + 34 + (ps * 8)
+                    call conta_albero(r, nbit, tb, cnt, pot2)
+                    tb -= base + 34 + (ps * 8)
+                else
+                    r -= 8
+                    nbit += 5
+                    tb += base + 66
+                    call conta_albero(r, nbit, tb, cnt, pot2)
+                    tb -= base + 66
+                    nbit -= 5
+                    r += 8
+                fi l < 16
+                r -= l - 8
+            delocal int r = 0
+        fi l < 8
+    delocal int tb = 0
+    delocal int nbit = 3
+
+procedure conta_dist(int d0, int ls, int slotbase[], int cnt[], int pot2[])
+    local int s = 0
+        call trova_slot(d0, s, slotbase)
+        if s >= 4 then
+            local int rem = 0
+            local int nbs = 0
+                rem += d0 - slotbase[s]
+                nbs += (s / 2) - 1
+                if nbs <= 4 then
+                    local int tb = 0
+                        tb += 3008 + (s * 16)
+                        call conta_albero_inv(rem, nbs, tb, cnt, pot2)
+                        tb -= 3008 + (s * 16)
+                    delocal int tb = 0
+                else
+                    local int a = 0
+                    local int quattro = 4
+                    local int tb = 3200
+                        a += rem % 16
+                        call conta_albero_inv(a, quattro, tb, cnt, pot2)
+                        a -= rem % 16
+                    delocal int tb = 3200
+                    delocal int quattro = 4
+                    delocal int a = 0
+                fi nbs <= 4
+                nbs -= (s / 2) - 1
+                rem -= d0 - slotbase[s]
+            delocal int nbs = 0
+            delocal int rem = 0
+        fi s >= 4
+        local int tb = 0
+        local int sei = 6
+            tb += 2752 + (ls * 64)
+            call conta_albero(s, sei, tb, cnt, pot2)
+            tb -= 2752 + (ls * 64)
+        delocal int sei = 6
+        delocal int tb = 0
+        uncall trova_slot(d0, s, slotbase)
+    delocal int s = 0
+
+// Le decisioni di un gettone, nello stesso schema di cod_gettone.
+procedure conta_gettone(int t, int l, int d, int lv, int s, int ps, int pv,
+                        int slotbase[], int cnt[], int pot2[])
+    cnt[((2 * ((s * 4) + ps)) + (t != 0))] += 1
+    if t == 0 then
+        local int tb = 0
+        local int otto = 8
+            tb += 60 + ((pv / 32) * 256)
+            call conta_albero(lv, otto, tb, cnt, pot2)
+            tb -= 60 + ((pv / 32) * 256)
+        delocal int otto = 8
+        delocal int tb = 0
+    else
+        cnt[((2 * (48 + s)) + (t == 2))] += 1
+        local int l2 = 0
+            l2 += l - 2
+            if t == 2 then
+                local int base = 2430
+                    call conta_lung(l2, base, ps, cnt, pot2)
+                delocal int base = 2430
+            else
+                local int d0 = 0
+                local int ls = 0
+                    d0 += d - 1
+                    ls += l2
+                    if l2 > 3 then
+                        ls -= l2 - 3
+                    fi l2 > 3
+                    call conta_dist(d0, ls, slotbase, cnt, pot2)
+                    if l2 > 3 then
+                        ls += l2 - 3
+                    fi l2 > 3
+                    ls -= l2
+                    d0 -= d - 1
+                delocal int ls = 0
+                delocal int d0 = 0
+                local int base = 2108
+                    call conta_lung(l2, base, ps, cnt, pot2)
+                delocal int base = 2108
+            fi t == 2
+            l2 -= l - 2
+        delocal int l2 = 0
+    fi t == 0
+
+// Primo passaggio: l'istogramma di tutte le decisioni di tutti i gettoni.
+// Non consuma nulla: blocco e gettoni restano come sono.
+procedure conta_modello(int b[], int n, int ty[], int ln[], int ds[], int st[],
+                        int ntok, int slotbase[], int cnt[], int pot2[])
+    local int p = 0
+    local int k = 0
+    from p == 0 do
+        local int t = 0
+        local int l = 0
+        local int d = 0
+        local int lv = 0
+        local int s = 0
+        local int ps = 0
+        local int pv = 0
+            t += ty[k]
+            l += ln[k]
+            d += ds[k]
+            s += st[k]
+            ps += p % 4
+            if p > 0 then
+                pv += b[(p - 1)]
+            fi p > 0
+            if t == 0 then
+                lv += b[p]
+            fi t == 0
+            call conta_gettone(t, l, d, lv, s, ps, pv, slotbase, cnt, pot2)
+            if t == 0 then
+                lv -= b[p]
+            fi t == 0
+            if p > 0 then
+                pv -= b[(p - 1)]
+            fi p > 0
+            ps -= p % 4
+            s -= st[k]
+            d -= ds[k]
+            l -= ln[k]
+            t -= ty[k]
+        delocal int pv = 0
+        delocal int ps = 0
+        delocal int s = 0
+        delocal int lv = 0
+        delocal int d = 0
+        delocal int l = 0
+        delocal int t = 0
+        p += ln[k]
+        k += 1
+    loop until p == n
+    k -= ntok
+    delocal int k = 0
+    p -= n
+    delocal int p = 0
+
+// Secondo passaggio: i gettoni dall'ultimo al primo. Ogni gettone si sposta in
+// variabili locali, i suoi byte escono dal blocco, i contesti st[k] e rp[k] si
+// riazzerano ricalcolandoli dal gettone k - 1, e la codifica consuma il resto.
+procedure codifica(int b[], int n, int ty[], int ln[], int ds[], int st[], int rp[],
+                   int ntok, int slotbase[], int cnt[], int pot2[], stack bitst,
+                   int x, int nb)
+    local int p = 0
+        p += n
+        from p == n do
+            ntok -= 1
+            p -= ln[ntok]
+            local int t = 0
+            local int l = 0
+            local int d = 0
+            local int lv = 0
+            local int s = 0
+            local int r = 0
+            local int ps = 0
+            local int pv = 0
+                t += ty[ntok]
+                ty[ntok] -= t
+                l += ln[ntok]
+                ln[ntok] -= l
+                d += ds[ntok]
+                ds[ntok] -= d
+                s += st[ntok]
+                st[ntok] -= s
+                r += rp[ntok]
+                rp[ntok] -= r
+                ps += p % 4
+                if p > 0 then
+                    pv += b[(p - 1)]
+                fi p > 0
+                if t == 0 then
+                    lv += b[p]
+                    b[p] -= lv
+                else
+                    call togli_copia(b, p, l, d)
+                fi t == 0
+                call cod_gettone(t, l, d, lv, s, ps, pv, r, slotbase, cnt, pot2, bitst, x, nb)
+                if p > 0 then
+                    pv -= b[(p - 1)]
+                fi p > 0
+                ps -= p % 4
+                if ntok > 0 then
+                    local int so = 0
+                    local int tt = 0
+                        so += st[(ntok - 1)]
+                        tt += ty[(ntok - 1)]
+                        uncall nuovo_stato(so, tt, s)
+                        if tt == 1 then
+                            r -= ds[(ntok - 1)]
+                        else
+                            r -= rp[(ntok - 1)]
+                        fi tt == 1
+                        tt -= ty[(ntok - 1)]
+                        so -= st[(ntok - 1)]
+                    delocal int tt = 0
+                    delocal int so = 0
+                fi ntok > 0
+            delocal int pv = 0
+            delocal int ps = 0
+            delocal int r = 0
+            delocal int s = 0
+            delocal int lv = 0
+            delocal int d = 0
+            delocal int l = 0
+            delocal int t = 0
+        loop until p == 0
+    delocal int p = 0
+
+// --- il blocco intero -----------------------------------------------------------------
+//
+// Pre:  b = dati, tutto il resto a zero/vuoto.
+// Post: b = 0, bitst = compresso, x = stato rANS finale, nb = numero di bit;
+//       catene, gettoni, conteggi e scarto a zero/vuoti.
+// Il decompressore e' `uncall comprimi(...)`.
+procedure comprimi(int b[], int n, int D, int prev[], int head[], int ty[], int ln[], int ds[],
+                   int st[], int rp[], int slotbase[], int cnt[], int pot2[], stack scarto,
+                   stack bitst, int x, int nb)
+    local int ntok = 0
+        call catene(b, prev, head, n)
+        call analizza(b, prev, n, D, ty, ln, ds, st, rp, ntok, scarto)
+        uncall catene(b, prev, head, n)
+        call conta_modello(b, n, ty, ln, ds, st, ntok, slotbase, cnt, pot2)
+        x += 65536
+        call codifica(b, n, ty, ln, ds, st, rp, ntok, slotbase, cnt, pot2, bitst, x, nb)
+    delocal int ntok = 0
+
+// Svuota un array su uno stack, a[0] in fondo (per il decompressore).
+procedure scarica(int a[], stack s, int n)
+    local int i = 0
+    from i == 0 do
+        local int t = 0
+            t += a[i]
+            a[i] -= t
+            push(t, s)
+        delocal int t = 0
+        i += 1
+    loop until i == n
+    delocal int i = n

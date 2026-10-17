@@ -1,0 +1,721 @@
+// ---------------------------------------------------------------------------
+//  bzip2 in miniatura, reversibile.
+//
+//      blocco --RLE--> r --BWT--> out, idx --MTF--> m --RLE degli zeri--> dst
+//             --Elias gamma--> bit
+//
+//  La procedura `comprimi`, in fondo al file, fa tutto il percorso. Il
+//  decompressore non esiste nel sorgente: e' `uncall comprimi(...)`. Perche'
+//  funzioni ogni stadio e' pulito nel senso di Lyngby, Nylandsted, Gluck e
+//  Yokoyama (RC 2024): consuma il proprio ingresso e lascia solo l'uscita,
+//  quindi l'inverso parte dai soli bit compressi e da cinque contatori.
+//
+//  La BWT viene da ../bwt.kairos con due cambiamenti: le rotazioni si
+//  ordinano per raddoppio dei prefissi, O(n log n) qualunque siano i dati,
+//  invece che a bolle, O(n^3); e la tabella dell'inversa si costruisce con un
+//  istogramma invece che con scansioni quadratiche. Il confronto a uscita
+//  anticipata (`maggiore`) e l'ordinamento per fusione, il passo intermedio,
+//  sono in fusione.kairos.
+// ---------------------------------------------------------------------------
+
+// --- carattere k-esimo della rotazione che parte da off --------------------
+//
+//  Basterebbe c += blocco[((off + k) % n)], reversibile perche' l'indice dipende
+//  solo da variabili che il comando non tocca. Qui la correzione e' esplicita,
+//  per mostrare come si disfa un passo che perde informazione: j e' una
+//  variabile locale che va riportata a zero, quindi la correzione j -= n deve
+//  poter essere disfatta, e per disfarla serve sapere se e' avvenuta. La
+//  guardia d'uscita j < off lo dice.
+procedure car(int blocco[], int n, int off, int k, int c)
+    local int j = 0
+        j += off
+        j += k
+        if j >= n then
+            j -= n
+        fi j < off
+        c += blocco[j]
+        if j < off then
+            j += n
+        fi j >= n
+        j -= k
+        j -= off
+    delocal int j = 0
+
+// --- ordinamento delle rotazioni per raddoppio dei prefissi ------------------
+//
+// Manber e Myers. rk[i] e' il rango della rotazione i guardando i suoi primi h
+// caratteri (all'inizio h = 1 e il rango e' il carattere stesso). Ordinando le
+// rotazioni per la coppia (rk[i], rk[i + h]) si ottiene l'ordine sui primi 2h
+// caratteri, da cui i ranghi nuovi; dopo ceil(log2 n) giri si guardano almeno
+// n caratteri, cioe' le rotazioni intere. Ogni giro costa O(n + nr) qualunque
+// siano i dati: niente confronti carattere per carattere, quindi nessun caso
+// peggiore legato ai prefissi comuni lunghi.
+//
+// Le coppie si ordinano con due passate di counting sort stabile, prima sulla
+// seconda chiave e poi sulla prima, partendo dall'ordine 0..n-1: a parita'
+// vince l'indice piu' piccolo, come nell'ordinamento a bolle e in quello per
+// fusione. L'uscita (offs e idx) e' quindi la stessa.
+
+// Istogramma delle chiavi: la chiave dell'elemento x e' r[(x + s) mod n].
+procedure conta_chiavi(int v[], int r[], int cnt[], int s, int n)
+    local int j = 0
+    from j == 0 do
+        local int x = 0
+            x += v[j]
+            cnt[r[((x + s) % n)]] += 1
+            x -= v[j]
+        delocal int x = 0
+        j += 1
+    loop until j == n
+    delocal int j = n
+
+// out riceve gli elementi di v in ordine stabile di chiave; v non cambia.
+// pos[c] e' la prossima cella libera per la chiave c: alla fine vale la
+// posizione iniziale piu' le occorrenze, e togliendo cnt si torna alla
+// cumulata, che si disfa come l'istogramma.
+procedure per_conteggio(int v[], int out[], int r[], int cnt[], int pos[],
+                        int s, int n, int nr)
+    call conta_chiavi(v, r, cnt, s, n)
+    call cumulata(cnt, pos, n, nr)
+    local int j = 0
+    from j == 0 do
+        local int x = 0
+            x += v[j]
+            local int c = 0
+                c += r[((x + s) % n)]
+                out[pos[c]] += x
+                pos[c] += 1
+                c -= r[((x + s) % n)]
+            delocal int c = 0
+            x -= v[j]
+        delocal int x = 0
+        j += 1
+    loop until j == n
+    delocal int j = n
+    local int c = 0
+    from c == 0 do
+        pos[c] -= cnt[c]
+        c += 1
+    loop until c == nr
+    delocal int c = nr
+    uncall cumulata(cnt, pos, n, nr)
+    uncall conta_chiavi(v, r, cnt, s, n)
+
+// sa = rotazioni ordinate per (r[i], r[i + h], i). ide torna a zero; l'ordine
+// intermedio tmp va su scarto invece di essere ricalcolato all'indietro: costa
+// una passata invece di un counting sort (spazio in cambio di tempo, alla Bennett).
+procedure ordina_coppie(int r[], int sa[], int tmp[], int ide[], int cnt[], int pos[],
+                        stack scarto, int h, int n, int nr)
+    local int zero = 0
+        call identita(ide, n)
+        call per_conteggio(ide, tmp, r, cnt, pos, h, n, nr)
+        call per_conteggio(tmp, sa, r, cnt, pos, zero, n, nr)
+        call scarta(tmp, scarto, n)
+        uncall identita(ide, n)
+    delocal int zero = 0
+
+// Ranghi sui primi 2h caratteri: si scorre sa e il rango cresce di uno quando
+// la coppia cambia. La guardia d'uscita confronta q con il rango appena dato
+// alla rotazione precedente: e' maggiore solo se si e' incrementato.
+procedure nuovi_ranghi(int r[], int rn[], int sa[], int h, int n)
+    local int q = 0
+    local int j = 1
+    from j == 1 do
+        local int a = 0
+        local int b = 0
+            a += sa[j]
+            b += sa[(j - 1)]
+            if (r[a] != r[b]) || (r[((a + h) % n)] != r[((b + h) % n)]) then
+                q += 1
+            fi q > rn[b]
+            rn[a] += q
+            b -= sa[(j - 1)]
+            a -= sa[j]
+        delocal int b = 0
+        delocal int a = 0
+        j += 1
+    loop until j == n
+    delocal int j = n
+    q -= rn[sa[(n - 1)]]
+    delocal int q = 0
+
+// Sposta un array su scarto, azzerandolo: i ranghi di un giro concluso sono il
+// dato ausiliario dell'ordinamento, come le scelte della fusione.
+procedure scarta(int r[], stack scarto, int n)
+    local int i = 0
+    from i == 0 do
+        local int t = 0
+            t += r[i]
+            r[i] -= t
+            push(t, scarto)
+        delocal int t = 0
+        i += 1
+    loop until i == n
+    delocal int i = n
+
+// Un giro: ordina sui primi 2h caratteri. Se non bastano a coprire la
+// rotazione e ci sono ancora ranghi uguali, calcola i ranghi nuovi, mette su
+// scarto l'ordine del giro e i ranghi vecchi e ricomincia con 2h, scambiando i
+// ruoli dei due array. Altrimenti sa e' gia' l'ordine definitivo. Tutto cio' che
+// finisce su scarto sparisce con `uncall ordina`, quando bwt disfa
+// l'ordinamento: per un blocco di n byte sono al piu' 3n interi per giro.
+//
+// Uscita anticipata: se le coppie sono tutte distinte (l'ultimo rango vale
+// n - 1) l'ordine non cambia piu', e sui dati non ripetitivi bastano pochi
+// giri invece di log n. Dopo la ricorsione pero' non si puo' piu' ricalcolare
+// se si era ricorsi, perche' i ranghi sono stati consumati: l'indicatore d
+// va quindi su scarto, e all'indietro lo si riprende da li'.
+procedure giro(int r[], int rn[], int sa[], int tmp[], int ide[], int cnt[], int pos[],
+               stack scarto, int h, int n, int nr)
+    call ordina_coppie(r, sa, tmp, ide, cnt, pos, scarto, h, n, nr)
+    local int h2 = 0
+        h2 += h
+        h2 += h
+        if h2 < n then
+            call nuovi_ranghi(r, rn, sa, h, n)
+            local int d = 0
+                if rn[sa[(n - 1)]] == (n - 1) then
+                    d += 1
+                fi d == 1
+                if d == 0 then
+                    call scarta(sa, scarto, n)
+                    call scarta(r, scarto, n)
+                    call giro(rn, r, sa, tmp, ide, cnt, pos, scarto, h2, n, nr)
+                fi d == 0
+                push(d, scarto)
+            delocal int d = 0
+        fi h2 < n
+        h2 -= h
+        h2 -= h
+    delocal int h2 = 0
+
+// Pre: offs, rk, rk2, tmp, ide, cnt, pos a zero; nr >= n e nr >= alfabeto.
+// Post: offs = rotazioni ordinate; il resto e' dato ausiliario, che sparisce
+// con `uncall ordina(...)` purche' blocco e offs siano ancora gli stessi.
+procedure ordina(int offs[], int blocco[], int rk[], int rk2[], int tmp[], int ide[],
+                 int cnt[], int pos[], stack scarto, int n, int nr)
+    local int i = 0
+    from i == 0 do
+        rk[i] += blocco[i]
+        i += 1
+    loop until i == n
+    delocal int i = n
+    local int h = 1
+        call giro(rk, rk2, offs, tmp, ide, cnt, pos, scarto, h, n, nr)
+    delocal int h = 1
+
+// --- estrazione: ultima colonna e indice della rotazione originale ---------
+//
+//  out[i] e' l'ultimo carattere della rotazione i-esima nell'ordine, cioe' il
+//  carattere in posizione n-1 di quella rotazione. idx e' la posizione, nel
+//  nuovo ordine, della rotazione che parte da 0: e' l'informazione senza la
+//  quale la trasformata non si inverte.
+procedure estrai(int offs[], int blocco[], int out[], int n, int idx)
+    local int i = 0
+    from i == 0 do
+        local int o = 0
+        local int k = 0
+            o += offs[i]
+            k += n
+            k -= 1
+            local int c = 0
+                call car(blocco, n, o, k, c)
+                out[i] += c
+                uncall car(blocco, n, o, k, c)
+            delocal int c = 0
+            if o == 0 then
+                idx += i
+            fi o == 0
+            k -= n
+            k += 1
+            o -= offs[i]
+        delocal int k = 0
+        delocal int o = 0
+        i += 1
+    loop until i == n
+    delocal int i = n
+
+// --- trasformata inversa: da (out, idx) si ricostruisce il blocco -----------
+//
+//  Metodo classico di Burrows e Wheeler. Si costruisce il vettore T che, per
+//  ogni riga della matrice ordinata, dice quale riga la precede; percorrendolo
+//  da idx si legge il blocco originale a ritroso.
+//
+//      T[i] = #{ j : out[j] < out[i] } + #{ j < i : out[j] == out[i] }
+//
+//  cioe' la posizione che out[i] occupa nella prima colonna, che e' out
+//  ordinata. I due conteggi si fanno con due scansioni, senza congiunzioni:
+//  la `if` di Kairos confronta due espressioni e basta.
+
+// Con un istogramma il costo e' O(n + alfabeto) invece di O(n^2):
+//     prima[c] = #{ j : out[j] < c },   visti[c] = occorrenze di c gia' passate.
+procedure istogramma(int out[], int freq[], int n)
+    local int i = 0
+    from i == 0 do
+        local int c = 0
+            c += out[i]
+            freq[c] += 1
+            c -= out[i]
+        delocal int c = 0
+        i += 1
+    loop until i == n
+    delocal int i = n
+
+procedure cumulata(int freq[], int prima[], int n, int na)
+    local int acc = 0
+    local int c = 0
+    from c == 0 do
+        prima[c] += acc
+        acc += freq[c]
+        c += 1
+    loop until c == na
+    delocal int c = na
+    delocal int acc = n
+
+procedure costruisci_T(int out[], int tv[], int freq[], int prima[], int visti[],
+                       int n, int na)
+    call istogramma(out, freq, n)
+    call cumulata(freq, prima, n, na)
+    local int i = 0
+    from i == 0 do
+        local int c = 0
+            c += out[i]
+            tv[i] += prima[c]
+            tv[i] += visti[c]
+            visti[c] += 1
+            c -= out[i]
+        delocal int c = 0
+        i += 1
+    loop until i == n
+    delocal int i = n
+    // ora visti e' l'istogramma: lo si azzera con freq
+    local int c = 0
+    from c == 0 do
+        visti[c] -= freq[c]
+        c += 1
+    loop until c == na
+    delocal int c = na
+    uncall cumulata(freq, prima, n, na)
+    uncall istogramma(out, freq, n)
+
+// Percorre T da idx e ricostruisce il blocco. Le posizioni visitate finiscono
+// su `cammino`: sono il dato ausiliario di questo passo.
+procedure cammina(int out[], int tv[], int blocco[], int cammino[], int idx, int n)
+    local int p = 0
+        p += idx
+        local int k = 0
+        from k == 0 do
+            blocco[((n - 1) - k)] += out[p]       // a ritroso: l'ultimo carattere per primo
+            local int q = 0
+                q += tv[p]
+                p <=> q
+                cammino[k] += q          // q e' la posizione vecchia
+                q -= cammino[k]
+            delocal int q = 0
+            k += 1
+        loop until k == n
+        delocal int k = n
+        p -= idx
+    delocal int p = 0
+
+
+// ===========================================================================
+//  Stadi aggiunti per la pipeline in stile bzip2
+//
+//      blocco --BWT--> out, idx --MTF--> m --RLE degli zeri--> gettoni
+//
+//  Ogni stadio e' pulito nel senso di Lyngby et al.: consuma l'ingresso e
+//  lascia solo l'uscita. E' la condizione perche' il decompressore sia
+//  `uncall comprimi(...)`: partendo dai soli gettoni (piu' idx) l'inverso non
+//  ha bisogno di nient'altro. Nessuna riga di decompressione e' scritta.
+// ===========================================================================
+
+procedure identita(int a[], int n)
+    local int i = 0
+    from i == 0 do
+        a[i] += i
+        i += 1
+    loop until i == n
+    delocal int i = n
+
+// --- BWT pulita -------------------------------------------------------------
+//
+// Inversa classica resa pulita: (out, idx, res = 0) -> (out, idx, res = blocco).
+// tv, cam e ric sono ausiliari e tornano a zero disfacendo chi li ha prodotti.
+procedure bwt_inversa(int out[], int tv[], int cam[], int ric[], int res[],
+                    int freq[], int prima[], int visti[], int idx, int n, int na)
+    call costruisci_T(out, tv, freq, prima, visti, n, na)
+    call cammina(out, tv, ric, cam, idx, n)
+    local int i = 0
+    from i == 0 do
+        res[i] += ric[i]
+        i += 1
+    loop until i == n
+    delocal int i = n
+    uncall cammina(out, tv, ric, cam, idx, n)
+    uncall costruisci_T(out, tv, freq, prima, visti, n, na)
+
+// (blocco, out = 0, idx = 0) -> (blocco = 0, out, idx).
+// La coppia di procedure del lavoro di riferimento: la trasformata diretta
+// produce out e idx lasciando il blocco; l'inversa, chiamata all'indietro su
+// (out, idx), ricalcola il blocco e lo azzera. Questo e' il clean in senso
+// stretto che il cap. 4 lasciava aperto: anche l'ingresso sparisce.
+procedure bwt(int blocco[], int offs[], int out[], int tv[], int cam[], int ric[],
+              int freq[], int prima[], int visti[], int rk[], int rk2[], int ide[],
+              int cnt[], int pos[], stack scarto, int idx, int n, int na, int nr)
+    call ordina(offs, blocco, rk, rk2, tv, ide, cnt, pos, scarto, n, nr)   // tv fa da appoggio
+    call estrai(offs, blocco, out, n, idx)
+    uncall ordina(offs, blocco, rk, rk2, tv, ide, cnt, pos, scarto, n, nr)
+    uncall bwt_inversa(out, tv, cam, ric, blocco, freq, prima, visti, idx, n, na)
+
+// --- Move-to-front ----------------------------------------------------------
+//
+// p = posizione di v in tab (i valori di tab sono distinti). Uscita anticipata:
+// il ciclo si ferma sulla cella trovata, e lo stato finale (j = p + 1) basta a
+// riportare j a zero.
+procedure trova(int tab[], int v, int p)
+    local int j = 0
+    from j == 0 do
+        if tab[j] == v then
+            p += j
+        fi tab[j] == v
+        j += 1
+    loop until tab[(j - 1)] == v
+    j -= p
+    j -= 1
+    delocal int j = 0
+
+// Porta tab[p] in testa facendo scorrere di uno tab[0..p-1].
+procedure sposta(int tab[], int p)
+    if p > 0 then
+        local int q = 0
+            q += p
+            from q == p do
+                local int q1 = 0
+                    q1 += q
+                    q1 -= 1
+                    tab[q] <=> tab[q1]
+                    q1 += 1
+                    q1 -= q
+                delocal int q1 = 0
+                q -= 1
+            loop until q == 0
+        delocal int q = 0
+    fi p > 0
+
+// Ripete sulla tabella gli spostamenti scritti in m. Dalla sola m si ricava
+// quindi lo stato finale della tabella, che e' cio' che serve per azzerarla.
+procedure rigioca(int tab[], int m[], int n)
+    local int i = 0
+    from i == 0 do
+        local int p = 0
+            p += m[i]
+            call sposta(tab, p)
+            p -= m[i]
+        delocal int p = 0
+        i += 1
+    loop until i == n
+    delocal int i = n
+
+// (s, m = 0, tab = 0) -> (s = 0, m, tab = 0).
+// Dopo lo spostamento il simbolo e' in tab[0]: e' quello che permette di
+// azzerare s[i] senza perdere nulla. La tabella finale dipende dai dati; la si
+// riporta all'identita' disfacendo `rigioca`, che dipende solo da m.
+procedure mtf(int s[], int m[], int tab[], int n, int na)
+    call identita(tab, na)
+    local int i = 0
+    from i == 0 do
+        local int v = 0
+            v += s[i]
+            local int p = 0
+                call trova(tab, v, p)
+                m[i] += p
+                call sposta(tab, p)
+                p -= m[i]
+            delocal int p = 0
+            v -= tab[0]
+        delocal int v = 0
+        s[i] -= tab[0]
+        i += 1
+    loop until i == n
+    delocal int i = n
+    uncall rigioca(tab, m, n)
+    uncall identita(tab, na)
+
+// --- RLE degli zeri ---------------------------------------------------------
+//
+// Sposta m sullo stack sopra una sentinella -1, con m[0] in cima. m torna a zero.
+procedure impila(int m[], stack src, int n)
+    local int t = 0
+        t -= 1
+        push(t, src)
+    delocal int t = 0
+    local int i = 0
+    from i == 0 do
+        local int t = 0
+            t += m[((n - 1) - i)]
+            m[((n - 1) - i)] -= t
+            push(t, src)
+        delocal int t = 0
+        i += 1
+    loop until i == n
+    delocal int i = n
+
+// Estende `run` finche' la cima di src vale v (da converti.kairos).
+procedure corsa(stack src, int v, int run)
+    local int cont = 1
+    from run == 1 do
+        cont -= 1
+        local int w = 0
+            pop(w, src)
+            if w == v then
+                cont += 1
+                w -= v
+                run += 1
+            else
+                push(w, src)
+            fi cont == 1
+        delocal int w = 0
+    loop until cont == 0
+    delocal int cont = 0
+
+// Pre:  src = [-1, m_n-1, ..., m_0], nsrc = n, dst vuoto, ngett = 0.
+// Post: src = [-1], nsrc = 0, dst = gettoni, nel = elementi di dst.
+// Un simbolo non nullo e' un gettone a se'. Una corsa di L zeri diventa due
+// elementi: L, e sopra lo 0 che la annuncia. Lo 0 in cima e' cio' che
+// all'indietro dice "qui sotto c'e' una lunghezza".
+//
+// L'if deve dire in uscita quale ramo ha preso. Il testimone z vale 1 se si e'
+// emessa una corsa; dopo aver spinto il gettone lo si azzera guardando la cima
+// di dst (pop, confronto, push), perche' Kairos non ha un'espressione `top`.
+procedure rle0(stack src, stack dst, int nsrc, int ngett, int nel)
+    from ngett == 0 do
+        local int v = 0
+            pop(v, src)
+            nsrc -= 1
+            local int z = 0
+                if v == 0 then
+                    z += 1
+                    local int run = 1
+                        call corsa(src, v, run)
+                        nsrc -= run
+                        nsrc += 1
+                        push(run, dst)
+                        nel += 1
+                    delocal int run = 0
+                fi z == 1
+                push(v, dst)
+                nel += 1
+                local int w = 0
+                    pop(w, dst)
+                    if w == 0 then
+                        z -= 1
+                    fi w == 0
+                    push(w, dst)
+                delocal int w = 0
+            delocal int z = 0
+        delocal int v = 0
+        ngett += 1
+    loop until nsrc == 0
+
+// --- Codice di Elias gamma --------------------------------------------------
+//
+// Consuma x >= 1 e lo scrive su `bit` in 2L+1 bit, L = floor(log2 x): prima gli
+// L bit bassi di x (dal meno significativo), poi un 1, poi L zeri. Letto dalla
+// cima, come fa l'inverso: gli zeri dicono L, l'1 li chiude, seguono i bit di x
+// dal piu' significativo. E' un codice a prefisso: i valori piccoli, che dopo
+// BWT e MTF sono la maggioranza, costano pochi bit (x = 1 costa un bit solo).
+//
+// Il dimezzamento e' reversibile tenendo il resto: h = x / 2, x - 2h e' il bit
+// che si spinge, e x <=> h porta avanti la meta'. Gli L zeri li spinge
+// `uncall corsa`: all'indietro `call corsa` li consuma e si ferma da sola
+// sull'1, senza bisogno di sapere quanti sono.
+procedure gamma(int x, stack bit, int nb)
+    local int L = 0
+        if x > 1 then
+            from L == 0 do
+                local int h = 0
+                    h += x / 2
+                    x -= h
+                    x -= h
+                    push(x, bit)
+                    x <=> h
+                delocal int h = 0
+                L += 1
+            loop until x == 1
+        fi L > 0
+        x -= 1
+        local int uno = 1
+            push(uno, bit)
+        delocal int uno = 0
+        nb += L
+        nb += L
+        nb += 1
+        local int run = 1
+            run += L
+            L -= run
+            L += 1
+            local int zero = 0
+                uncall corsa(bit, zero, run)
+            delocal int zero = 0
+        delocal int run = 1
+    delocal int L = 0
+
+// Pre:  dst = nel elementi, bit vuoto, nb = 0.  Post: dst vuoto, bit = codice.
+// Ogni elemento e diventa gamma(e + 1): gli elementi possono valere 0.
+procedure codifica(stack dst, stack bit, int nel, int nb)
+    local int k = 0
+    from k == 0 do
+        local int x = 0
+            pop(x, dst)
+            x += 1
+            call gamma(x, bit, nb)
+        delocal int x = 0
+        k += 1
+    loop until k == nel
+    delocal int k = nel
+
+// Svuota un array su uno stack, a[0] in fondo: serve al decompressore per
+// lasciare il risultato in una struttura che non va deallocata.
+procedure scarica(int a[], stack s, int n)
+    local int i = 0
+    from i == 0 do
+        local int t = 0
+            t += a[i]
+            a[i] -= t
+            push(t, s)
+        delocal int t = 0
+        i += 1
+    loop until i == n
+    delocal int i = n
+
+// --- RLE iniziale (come il primo stadio di bzip2) ---------------------------
+//
+// Protegge l'ordinamento: senza, una corsa lunga fa condividere a molte
+// rotazioni prefissi lunghi e il confronto torna a costare n.
+//
+// Una corsa di L >= 4 byte uguali a v diventa sei elementi, dal basso:
+//     L-4 mod 256,  L-4 div 256,  v, v, v, v
+// un byte che non apre una corsa resta se stesso. A differenza di bzip2 il
+// conteggio sta sotto le copie: il decodificatore e' `uncall`, che legge dalla
+// cima, e dalla cima una corsa si riconosce da quattro valori uguali. Non c'e'
+// ambiguita' perche' le corse sono massimali: dopo una corsa di v viene un
+// byte diverso, e fuori dalle corse un byte si ripete al piu' tre volte.
+
+// Spinge v su s senza consumarlo.
+procedure copia(int v, stack s)
+    local int t = 0
+        t += v
+        push(t, s)
+    delocal int t = 0
+
+// Pre:  src = [-1, b_n-1, ..., b_0], nsrc = n, out vuoto, n1 = 0.
+// Post: src = [-1], nsrc = 0, out = n1 elementi.
+procedure rle1(stack src, stack out, int nsrc, int n1)
+    from n1 == 0 do
+        local int v = 0
+            pop(v, src)
+            nsrc -= 1
+            local int run = 1
+                call corsa(src, v, run)
+                local int z = 0
+                    if run >= 4 then
+                        z += 1
+                        nsrc -= run
+                        nsrc += 1
+                        run -= 4
+                        local int alto = 0
+                            alto += run / 256
+                            run -= alto * 256
+                            push(run, out)
+                            push(alto, out)
+                        delocal int alto = 0
+                        call copia(v, out)
+                        call copia(v, out)
+                        call copia(v, out)
+                        push(v, out)
+                        n1 += 6
+                        run += 1
+                    else
+                        // corsa corta: si emette un byte, il resto torna su src
+                        uncall corsa(src, v, run)
+                        push(v, out)
+                        n1 += 1
+                    fi z == 1
+                    // azzeramento del testimone: in cima a out ci sono quattro
+                    // valori uguali se e solo se si e' emessa una corsa
+                    if n1 >= 4 then
+                        local int a = 0
+                        local int b = 0
+                        local int c = 0
+                        local int d = 0
+                            pop(a, out)
+                            pop(b, out)
+                            pop(c, out)
+                            pop(d, out)
+                            if (a == b) && (b == c) && (c == d) then
+                                z -= 1
+                            fi (a == b) && (b == c) && (c == d)
+                            push(d, out)
+                            push(c, out)
+                            push(b, out)
+                            push(a, out)
+                        delocal int d = 0
+                        delocal int c = 0
+                        delocal int b = 0
+                        delocal int a = 0
+                    fi n1 >= 4
+                delocal int z = 0
+            delocal int run = 1
+        delocal int v = 0
+    loop until nsrc == 0
+
+// Da stack ad array: il fondo di s va in r[0]. s torna vuoto.
+procedure disimpila(stack s, int r[], int n1)
+    local int i = 0
+    from i == 0 do
+        local int t = 0
+            pop(t, s)
+            r[((n1 - 1) - i)] += t
+            t -= r[((n1 - 1) - i)]
+        delocal int t = 0
+        i += 1
+    loop until i == n1
+    delocal int i = n1
+
+procedure togli_sentinella(stack s)
+    local int t = 0
+        pop(t, s)
+        t += 1
+    delocal int t = 0
+
+// --- Il blocco intero -------------------------------------------------------
+//
+//   blocco --RLE--> r --BWT--> out, idx --MTF--> m --RLE degli zeri--> dst
+//          --gamma--> bit
+//
+// Pre:  blocco = dati, tutto il resto a zero/vuoto.
+// Post: blocco = 0, bit = compresso, idx, n1, ng, nel, nb; ausiliari a zero.
+// Il decompressore e' `uncall comprimi(...)`.
+procedure comprimi(int blocco[], int r[], int offs[], int out[], int tv[], int cam[],
+                   int ric[], int m[], int rk[], int rk2[], int ide[],
+                   int tab[], int freq[], int prima[], int visti[], int cnt[], int pos[],
+                   stack scarto, stack src, stack dst, stack bit,
+                   int idx, int n1, int ng, int nel, int nb, int n, int na, int nr)
+    call impila(blocco, src, n)
+    local int nsrc = 0
+        nsrc += n
+        call rle1(src, dst, nsrc, n1)
+    delocal int nsrc = 0
+    call togli_sentinella(src)
+    call disimpila(dst, r, n1)
+    call bwt(r, offs, out, tv, cam, ric, freq, prima, visti, rk, rk2, ide, cnt, pos,
+             scarto, idx, n1, na, nr)
+    call mtf(out, m, tab, n1, na)
+    call impila(m, src, n1)
+    local int nsrc = 0
+        nsrc += n1
+        call rle0(src, dst, nsrc, ng, nel)
+    delocal int nsrc = 0
+    call togli_sentinella(src)
+    call codifica(dst, bit, nel, nb)

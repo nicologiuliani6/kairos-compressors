@@ -1,0 +1,133 @@
+ch}) && \text{(canali)}\\
+   \mid{}& \mathtt{par}\ c\ \mathtt{and}\ c\ [\mathtt{and}\ c]^{*}\ \mathtt{rap} && \text{(parallelo)}\\
+   \mid{}& \mathtt{try}\ b\ c\ [\mathtt{rollback}\ c]\ \mathtt{yrt}\ b' && \text{(commit / rollback)}
+\end{align*}
+
+\noindent
+Il bersaglio di un assegnamento è un \emph{luogo} $\ell ::= v \mid a[e]$: una
+variabile intera oppure una cella di array. Le due forme si comportano allo
+stesso modo — l'unica differenza è che la cella va individuata valutando
+l'indice prima di scrivere.
+
+\noindent
+La sintassi concreta ammette due abbreviazioni. Una chiamata si può scrivere
+senza parola chiave, $f(\bar v)$, e vale $\mathtt{call}\ f(\bar v)$. Il valore
+$m$ di $\mathtt{local}$ e $\mathtt{delocal}$ può essere anche una variabile già
+nello store, che si legge come in un'espressione: è la forma
+$\mathtt{delocal}\ i = n$ che chiude un contatore arrivato al limite $n$.
+
+\noindent
+Un \emph{programma} è una lista di procedure
+$\mathtt{procedure}\ f(\bar v)\ \{\, c \,\}$; $\bar v$ è la lista (eventualmente
+vuota) dei parametri. Questa è la sintassi astratta: la sequenza si scrive qui
+con il punto e virgola, $c_1\,;\,c_2$, come nelle regole di \S\ref{sec:seq},
+mentre nel testo dei programmi i comandi si scrivono uno dopo l'altro, senza
+separatori, e il corpo di una procedura arriva fino alla procedura successiva,
+senza parentesi graffe (per convenzione un comando per riga, indentato). Il condizionale ha
+\textbf{due} guardie ($b$ d'ingresso, $b'$ d'uscita) e il ciclo pure ($b_1$
+d'ingresso, $b_2$ d'uscita): è ciò che rende il linguaggio reversibile
+(\S\ref{sec:rev}). Le parentesi quadre segnano le clausole \emph{facoltative},
+come in Janus: un ramo assente vale $\mathtt{skip}$, e nelle regole che seguono
+si scrivono per esteso tutte e due, senza perdita di generalità.
+
+\medskip
+\noindent
+L'esecuzione parte dalla procedura $\mathtt{main}$, senza parametri, dopo che
+tutte le procedure del programma sono state registrate: il loro ordine nel file
+non conta. A fine esecuzione l'interprete mostra le variabili di
+$\mathtt{main}$. Un programma ben formato soddisfa inoltre questi vincoli,
+che il compilatore verifica prima dell'esecuzione:
+\begin{itemize}
+  \item in un assegnamento $v \mathrel{\oplus}= e$ la variabile (o l'array) $v$
+    non compare in $e$, né nell'indice della cella scritta
+    (\S\ref{sec:assign}); $\mathtt{delocal}\ v = v$ non è ammesso;
+  \item $\mathtt{local}$ e $\mathtt{delocal}$ formano un blocco, come in Janus:
+    ogni $\mathtt{delocal}$ chiude il $\mathtt{local}$ aperto più di recente
+    nella stessa sequenza di comandi, nessun $\mathtt{local}$ resta aperto alla
+    fine della sequenza, e un $\mathtt{local}$ non ridichiara un parametro o un
+    locale ancora aperto (\S\ref{sec:scope}); un $\mathtt{delocal}$ riporta il
+    valore atteso e ha lo stesso tipo, e per un array la stessa lunghezza, del
+    $\mathtt{local}$ che chiude;
+  \item le dichiarazioni senza $\mathtt{local}$ ($\mathtt{int}\ x$,
+    $\mathtt{stack}\ s$, $\mathtt{channel}\ c$) compaiono solo in
+    $\mathtt{main}$: sono il suo store iniziale, a zero o vuoto, ed è ciò che
+    l'interprete mostra a fine esecuzione; nelle altre procedure ogni variabile
+    è un parametro o un locale;
+  \item le procedure hanno nomi distinti, diversi da quelli delle operazioni
+    predefinite ($\mathtt{show}$, $\mathtt{push}$, $\mathtt{pop}$,
+    $\mathtt{ssend}$, $\mathtt{srecv}$) e da quelli che il compilatore riserva
+    alle procedure che genera (che finiscono in \texttt{\_\_inv} o cominciano
+    con \texttt{\_\_try\_}), e $\mathtt{main}$ non ha parametri;
+  \item gli operandi hanno il tipo giusto, secondo la dichiarazione in scope
+    (uno stesso nome può essere un intero in un blocco e uno stack in un
+    altro): un'espressione legge interi e celle di array; un argomento di
+    $\mathtt{call}$/$\mathtt{uncall}$ ha il tipo del parametro corrispondente;
+    $\mathtt{push}$ e $\mathtt{pop}$ collegano una variabile intera e uno
+    stack; $\mathtt{ssend}$ e $\mathtt{srecv}$ usano un canale e un messaggio
+    non vuoto di variabilch}) && \text{(canali)}\\
+   \mid{}& \mathtt{par}\ c\ \mathtt{and}\ c\ [\mathtt{and}\ c]^{*}\ \mathtt{rap} && \text{(parallelo)}\\
+   \mid{}& \mathtt{try}\ b\ c\ [\mathtt{rollback}\ c]\ \mathtt{yrt}\ b' && \text{(commit / rollback)}
+\end{align*}
+
+\noindent
+Il bersaglio di un assegnamento è un \emph{luogo} $\ell ::= v \mid a[e]$: una
+variabile intera oppure una cella di array. Le due forme si comportano allo
+stesso modo — l'unica differenza è che la cella va individuata valutando
+l'indice prima di scrivere.
+
+\noindent
+La sintassi concreta ammette due abbreviazioni. Una chiamata si può scrivere
+senza parola chiave, $f(\bar v)$, e vale $\mathtt{call}\ f(\bar v)$. Il valore
+$m$ di $\mathtt{local}$ e $\mathtt{delocal}$ può essere anche una variabile già
+nello store, che si legge come in un'espressione: è la forma
+$\mathtt{delocal}\ i = n$ che chiude un contatore arrivato al limite $n$.
+
+\noindent
+Un \emph{programma} è una lista di procedure
+$\mathtt{procedure}\ f(\bar v)\ \{\, c \,\}$; $\bar v$ è la lista (eventualmente
+vuota) dei parametri. Questa è la sintassi astratta: la sequenza si scrive qui
+con il punto e virgola, $c_1\,;\,c_2$, come nelle regole di \S\ref{sec:seq},
+mentre nel testo dei programmi i comandi si scrivono uno dopo l'altro, senza
+separatori, e il corpo di una procedura arriva fino alla procedura successiva,
+senza parentesi graffe (per convenzione un comando per riga, indentato). Il condizionale ha
+\textbf{due} guardie ($b$ d'ingresso, $b'$ d'uscita) e il ciclo pure ($b_1$
+d'ingresso, $b_2$ d'uscita): è ciò che rende il linguaggio reversibile
+(\S\ref{sec:rev}). Le parentesi quadre segnano le clausole \emph{facoltative},
+come in Janus: un ramo assente vale $\mathtt{skip}$, e nelle regole che seguono
+si scrivono per esteso tutte e due, senza perdita di generalità.
+
+\medskip
+\noindent
+L'esecuzione parte dalla procedura $\mathtt{main}$, senza parametri, dopo che
+tutte le procedure del programma sono state registrate: il loro ordine nel file
+non conta. A fine esecuzione l'interprete mostra le variabili di
+$\mathtt{main}$. Un programma ben formato soddisfa inoltre questi vincoli,
+che il compilatore verifica prima dell'esecuzione:
+\begin{itemize}
+  \item in un assegnamento $v \mathrel{\oplus}= e$ la variabile (o l'array) $v$
+    non compare in $e$, né nell'indice della cella scritta
+    (\S\ref{sec:assign}); $\mathtt{delocal}\ v = v$ non è ammesso;
+  \item $\mathtt{local}$ e $\mathtt{delocal}$ formano un blocco, come in Janus:
+    ogni $\mathtt{delocal}$ chiude il $\mathtt{local}$ aperto più di recente
+    nella stessa sequenza di comandi, nessun $\mathtt{local}$ resta aperto alla
+    fine della sequenza, e un $\mathtt{local}$ non ridichiara un parametro o un
+    locale ancora aperto (\S\ref{sec:scope}); un $\mathtt{delocal}$ riporta il
+    valore atteso e ha lo stesso tipo, e per un array la stessa lunghezza, del
+    $\mathtt{local}$ che chiude;
+  \item le dichiarazioni senza $\mathtt{local}$ ($\mathtt{int}\ x$,
+    $\mathtt{stack}\ s$, $\mathtt{channel}\ c$) compaiono solo in
+    $\mathtt{main}$: sono il suo store iniziale, a zero o vuoto, ed è ciò che
+    l'interprete mostra a fine esecuzione; nelle altre procedure ogni variabile
+    è un parametro o un locale;
+  \item le procedure hanno nomi distinti, diversi da quelli delle operazioni
+    predefinite ($\mathtt{show}$, $\mathtt{push}$, $\mathtt{pop}$,
+    $\mathtt{ssend}$, $\mathtt{srecv}$) e da quelli che il compilatore riserva
+    alle procedure che genera (che finiscono in \texttt{\_\_inv} o cominciano
+    con \texttt{\_\_try\_}), e $\mathtt{main}$ non ha parametri;
+  \item gli operandi hanno il tipo giusto, secondo la dichiarazione in scope
+    (uno stesso nome può essere un intero in un blocco e uno stack in un
+    altro): un'espressione legge interi e celle di array; un argomento di
+    $\mathtt{call}$/$\mathtt{uncall}$ ha il tipo del parametro corrispondente;
+    $\mathtt{push}$ e $\mathtt{pop}$ collegano una variabile intera e uno
+    stack; $\mathtt{ssend}$ e $\mathtt{srecv}$ usano un canale e un messaggio
+    non vuoto di variabil
