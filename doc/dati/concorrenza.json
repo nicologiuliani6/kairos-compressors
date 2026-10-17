@@ -6,14 +6,14 @@
   "blocco": 4096,
   "blocchi": 2,
   "par": {
-   "byte": 4248,
-   "comprimi": 6.33,
-   "uncall": 5.73
+   "byte": 4251,
+   "comprimi": 6.22,
+   "uncall": 5.48
   },
   "seq": {
-   "byte": 4248,
-   "comprimi": 11.86,
-   "uncall": 10.27
+   "byte": 4251,
+   "comprimi": 11.77,
+   "uncall": 10.55
   }
  },
  {
@@ -23,14 +23,14 @@
   "blocco": 2048,
   "blocchi": 4,
   "par": {
-   "byte": 4697,
-   "comprimi": 6.55,
-   "uncall": 5.75
+   "byte": 4710,
+   "comprimi": 6.65,
+   "uncall": 5.81
   },
   "seq": {
-   "byte": 4697,
-   "comprimi": 12.57,
-   "uncall": 10.9
+   "byte": 4710,
+   "comprimi": 12.39,
+   "uncall": 10.68
   }
  },
  {
@@ -40,14 +40,14 @@
   "blocco": 8192,
   "blocchi": 3,
   "par": {
-   "byte": 8799,
-   "comprimi": 9.69,
-   "uncall": 10.31
+   "byte": 8648,
+   "comprimi": 9.59,
+   "uncall": 10.42
   },
   "seq": {
-   "byte": 8799,
-   "comprimi": 18.5,
-   "uncall": 19.07
+   "byte": 8648,
+   "comprimi": 18.26,
+   "uncall": 19.14
   }
  },
  {
@@ -57,9 +57,9 @@
   "blocco": 20000,
   "blocchi": 1,
   "par": {
-   "byte": 7718,
-   "comprimi": 18.88,
-   "uncall": 18.99
+   "byte": 7717,
+   "comprimi": 18.55,
+   "uncall": 19.01
   }
  }
 ]

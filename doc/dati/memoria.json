@@ -1,0 +1,200 @@
+[
+ {
+  "versione": "streaming",
+  "algoritmo": "klzma",
+  "verso": "comprimi",
+  "kib": 16,
+  "byte_compressi": 6882,
+  "secondi": 7.9,
+  "python_mib": 49.7,
+  "vm_mib": 22.4
+ },
+ {
+  "versione": "streaming",
+  "algoritmo": "klzma",
+  "verso": "decomprimi",
+  "kib": 16,
+  "byte_compressi": 6882,
+  "secondi": 8.5,
+  "python_mib": 41.3,
+  "vm_mib": 37.0
+ },
+ {
+  "versione": "streaming",
+  "algoritmo": "kgzip2",
+  "verso": "comprimi",
+  "kib": 16,
+  "byte_compressi": 7826,
+  "secondi": 13.7,
+  "python_mib": 52.0,
+  "vm_mib": 26.5
+ },
+ {
+  "versione": "streaming",
+  "algoritmo": "kgzip2",
+  "verso": "decomprimi",
+  "kib": 16,
+  "byte_compressi": 7826,
+  "secondi": 12.4,
+  "python_mib": 41.4,
+  "vm_mib": 42.0
+ },
+ {
+  "versione": "streaming",
+  "algoritmo": "klzma",
+  "verso": "comprimi",
+  "kib": 64,
+  "byte_compressi": 27214,
+  "secondi": 30.5,
+  "python_mib": 51.1,
+  "vm_mib": 25.5
+ },
+ {
+  "versione": "streaming",
+  "algoritmo": "klzma",
+  "verso": "decomprimi",
+  "kib": 64,
+  "byte_compressi": 27214,
+  "secondi": 32.7,
+  "python_mib": 42.2,
+  "vm_mib": 38.8
+ },
+ {
+  "versione": "streaming",
+  "algoritmo": "kgzip2",
+  "verso": "comprimi",
+  "kib": 64,
+  "byte_compressi": 31232,
+  "secondi": 55.2,
+  "python_mib": 56.1,
+  "vm_mib": 31.0
+ },
+ {
+  "versione": "streaming",
+  "algoritmo": "kgzip2",
+  "verso": "decomprimi",
+  "kib": 64,
+  "byte_compressi": 31232,
+  "secondi": 50.8,
+  "python_mib": 42.6,
+  "vm_mib": 43.6
+ },
+ {
+  "versione": "streaming",
+  "algoritmo": "klzma",
+  "verso": "comprimi",
+  "kib": 256,
+  "byte_compressi": 88020,
+  "secondi": 103.9,
+  "python_mib": 51.1,
+  "vm_mib": 25.6
+ },
+ {
+  "versione": "streaming",
+  "algoritmo": "klzma",
+  "verso": "decomprimi",
+  "kib": 256,
+  "byte_compressi": 88020,
+  "secondi": 113.1,
+  "python_mib": 42.2,
+  "vm_mib": 38.8
+ },
+ {
+  "versione": "streaming",
+  "algoritmo": "kgzip2",
+  "verso": "comprimi",
+  "kib": 256,
+  "byte_compressi": 101202,
+  "secondi": 238.4,
+  "python_mib": 56.2,
+  "vm_mib": 32.4
+ },
+ {
+  "versione": "streaming",
+  "algoritmo": "kgzip2",
+  "verso": "decomprimi",
+  "kib": 256,
+  "byte_compressi": 101202,
+  "secondi": 223.4,
+  "python_mib": 42.6,
+  "vm_mib": 43.6
+ },
+ {
+  "versione": "streaming",
+  "algoritmo": "klzma",
+  "verso": "comprimi",
+  "kib": 1024,
+  "byte_compressi": 346036,
+  "secondi": 415.4,
+  "python_mib": 51.7,
+  "vm_mib": 31.8
+ },
+ {
+  "versione": "streaming",
+  "algoritmo": "klzma",
+  "verso": "decomprimi",
+  "kib": 1024,
+  "byte_compressi": 346036,
+  "secondi": 451.9,
+  "python_mib": 42.7,
+  "vm_mib": 42.8
+ },
+ {
+  "versione": "prima",
+  "algoritmo": "klzma",
+  "verso": "comprimi",
+  "kib": 16,
+  "byte_compressi": 6879,
+  "secondi": 7.9,
+  "python_mib": 49.5,
+  "vm_mib": 22.4
+ },
+ {
+  "versione": "prima",
+  "algoritmo": "kgzip2",
+  "verso": "comprimi",
+  "kib": 16,
+  "byte_compressi": 7822,
+  "secondi": 13.9,
+  "python_mib": 52.0,
+  "vm_mib": 26.5
+ },
+ {
+  "versione": "prima",
+  "algoritmo": "klzma",
+  "verso": "comprimi",
+  "kib": 64,
+  "byte_compressi": 27185,
+  "secondi": 30.6,
+  "python_mib": 62.5,
+  "vm_mib": 41.4
+ },
+ {
+  "versione": "prima",
+  "algoritmo": "kgzip2",
+  "verso": "comprimi",
+  "kib": 64,
+  "byte_compressi": 31202,
+  "secondi": 55.5,
+  "python_mib": 67.8,
+  "vm_mib": 58.5
+ },
+ {
+  "versione": "prima",
+  "algoritmo": "klzma",
+  "verso": "comprimi",
+  "kib": 256,
+  "byte_compressi": 87885,
+  "secondi": 102.8,
+  "python_mib": 105.7,
+  "vm_mib": 116.0
+ },
+ {
+  "versione": "prima",
+  "algoritmo": "kgzip2",
+  "verso": "comprimi",
+  "kib": 256,
+  "byte_compressi": null,
+  "errore": "comune.kvm.ErroreKairos: [LOCAL] line 1203: local 'rk20' in main: the name is already in use (parameter or open local) in the same activation (Local-Err)"
+ }
+]

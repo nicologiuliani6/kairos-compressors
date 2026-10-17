@@ -6,6 +6,8 @@ RADICE = QUI.parent.parent
 DATI = RADICE / 'doc' / 'dati'
 sys.path.insert(0, str(RADICE))
 from kgzip2 import modello, driver as kgzip
+sys.path.insert(0, str(QUI.parent))
+from riempi_comune import memoria, ntest
 BENCH = {r['file']: r for r in json.loads((RADICE / 'bench' / 'risultati.json').read_text())}
 
 tex = (QUI / 'kgzip2.tex').read_text()
@@ -58,7 +60,7 @@ def tabella(tipi, ns, etichetta, didascalia):
 NS = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192]
 tab_sort = tabella(['periodico', 'costante'], NS, 'tab:sort1',
                    r'Tempo (s) di ordinamento in avanti e all\'indietro, dati ripetitivi. '
-                   r'``--'' = non misurato (oltre i 30 s per esecuzione, o oltre le dimensioni utili).') + '\n\n' + \
+                   r'``--\'\' = non misurato (oltre i 30 s per esecuzione, o oltre le dimensioni utili).') + '\n\n' + \
     tabella(['casuale', 'testo'], NS, 'tab:sort2',
             r'Tempo (s) di ordinamento in avanti e all\'indietro, dati casuali e testo.')
 
@@ -151,8 +153,8 @@ for r in righe:
            f'{100 * ideale / n:.1f} & {t1:.1f} & {t2:.1f}').replace('.', '{,}')
     corp.append(f'{NOMIF[nome]} & ' + num + r' \\')
 corp += [r'\bottomrule', r'\end{tabular}',
-         r'\caption{Blocchi da 8192 byte. ``\%'' è la dimensione compressa rispetto all\'originale; '
-         r'``ordine 0'' è la dimensione che avrebbero gli stessi gettoni con un codice entropico ideale '
+         r'\caption{Blocchi da 8192 byte. ``\%\'\' è la dimensione compressa rispetto all\'originale; '
+         r'``ordine 0\'\' è la dimensione che avrebbero gli stessi gettoni con un codice entropico ideale '
          r'd\'ordine 0 (senza intestazioni). Tempi della VM in secondi (il frontend, che ora traduce '
          r'solo la parte fissa, resta sotto il decimo di secondo). In tutte le righe il '
          r'ritorno è identico byte per byte e l\'uscita compressa coincide con il modello.}',
@@ -241,12 +243,16 @@ correttezza = (
     r"(byte casuali con alfabeto fino a 256 simboli, testo, blocchi periodici, costanti, alfabeto di tre "
     r"simboli; $n$ fino a 400): nessuna discordanza, e le quattro varianti danno lo stesso \kw{offs}, la "
     r"stessa colonna e lo stesso \kw{idx} anche sui blocchi periodici, dove molte rotazioni sono identiche. "
-    r"La suite di test della repository (\kw{test/test\_completo.py}, 281 controlli, nessuno fallito) "
+    rf"La suite di test della repository (\kw{{test/test\_completo.py}}, {ntest()} controlli, nessuno fallito) "
     r"comprime e decomprime con entrambi gli algoritmi i 9 file della Tabella~\ref{tab:corpus} e 13 casi "
     r"limite (file vuoto, di 1 e 2 byte, corse di esattamente 4, corse di 300 byte, quasi-corse, tutti i 256 "
     r"byte, due blocchi in \kw{par}): l'uscita compressa coincide byte per byte con il modello, il ritorno "
     r"con l'originale, e ogni file viene poi alterato e troncato per controllare che sia rifiutato. Prova "
-    r"anche i comandi veri (rimozione dell'ingresso, \kw{-k}, \kw{-c}, filtro da stdin, \kw{-t}).")
+    r"anche lo streaming: un file a più frame compresso con gruppi diversi dà gli stessi byte, si "
+    r"decomprime con gruppi diversi e concatenato ad altri flussi, rifiuta i dati estranei in coda, e su un "
+    r"file a più frame ogni troncamento e un byte alterato in ogni posizione vengono rifiutati. Infine i "
+    r"comandi veri (rimozione dell'ingresso dopo la verifica, \kw{-k}, \kw{-c}, \kw{-T}, filtro da stdin a "
+    r"più blocchi, flussi concatenati da una pipe, \kw{-t} su file alterati e troncati).")
 abstract_num = (
     rf"Su 9 file il ritorno è identico byte per byte. Sul testo, con blocchi da 8 KiB, kgzip2 arriva a "
     rf"{pc('janus8k.c')}--{pc('readme8k.md')} della dimensione originale (bzip2: {pz('janus8k.c')}--{pz('readme8k.md')}) "
@@ -268,7 +274,8 @@ for k, v in {'@@ABSTRACT_NUMERI@@': abstract_num, '@@CORRETTEZZA@@': correttezza
              '@@TAB_SORT@@': tab_sort, '@@PLOT_SORT@@': plot, '@@COMMENTO_SORT@@': commento_sort,
              '@@TAB_CORPUS@@': tab_corpus, '@@COMMENTO_CORPUS@@': commento_corpus,
              '@@TAB_PROFILO@@': tab_profilo, '@@CONCORRENZA@@': concorrenza,
-             '@@CONCLUSIONI@@': conclusioni}.items():
+             '@@CONCLUSIONI@@': conclusioni, '@@MEMORIA@@': memoria('kgzip2'),
+             '@@NTEST@@': ntest()}.items():
     assert k in tex, k
     tex = tex.replace(k, v)
 tex = tex.replace("\\'", "'")

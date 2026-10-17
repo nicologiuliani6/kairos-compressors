@@ -1,0 +1,52 @@
+kgzip2:
+  vuoto                   0 ->     14 byte
+  un_byte                 1 ->     15 byte
+  due_byte                2 ->     16 byte
+  banana                  6 ->     20 byte
+  aaaa                    4 ->     18 byte
+  aaab                    4 ->     18 byte
+  corse                 313 ->     38 byte
+  quasi_corse            18 ->     27 byte
+  tutti_i_byte          256 ->    271 byte
+  periodico             333 ->     32 byte
+  misto                 500 ->    255 byte
+  casuale               300 ->    315 byte
+  due_blocchi         10000 ->    163 byte
+  casuale4k.bin        4096 ->   4111 byte
+  cerchio.pgm           269 ->     63 byte
+  cerchio64.pgm        4109 ->    116 byte
+  doppio8k.tex         8192 ->   2934 byte
+  janus8k.c            8192 ->   3601 byte
+  periodico8k.txt      8192 ->     58 byte
+  readme8k.md          8192 ->   3928 byte
+  tesi8k.tex           8192 ->   3816 byte
+  zeri4k.bin           4096 ->     25 byte
+  streaming          5 frame -> 509 byte, memorizzati -> 282 byte
+klzma:
+  vuoto                   0 ->     15 byte
+  un_byte                 1 ->     16 byte
+  due_byte                2 ->     17 byte
+  banana                  6 ->     21 byte
+  aaaa                    4 ->     19 byte
+  aaab                    4 ->     19 byte
+  corse                 313 ->     32 byte
+  quasi_corse            18 ->     28 byte
+  tutti_i_byte          256 ->    232 byte
+  periodico             333 ->     27 byte
+  misto                 500 ->    227 byte
+  casuale               300 ->    316 byte
+  due_blocchi         10000 ->     87 byte
+  casuale4k.bin        4096 ->   4112 byte
+  cerchio.pgm           269 ->     56 byte
+  cerchio64.pgm        4109 ->    123 byte
+  doppio8k.tex         8192 ->   1830 byte
+  janus8k.c            8192 ->   3124 byte
+  periodico8k.txt      8192 ->     42 byte
+  readme8k.md          8192 ->   3340 byte
+  tesi8k.tex           8192 ->   3483 byte
+  zeri4k.bin           4096 ->     31 byte
+  streaming          5 frame -> 279 byte, memorizzati -> 283 byte
+comandi:
+ordinamenti delle rotazioni:
+
+325 controlli superati, 0 falliti

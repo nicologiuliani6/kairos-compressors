@@ -4,6 +4,7 @@
 #   make test-rapido  quick test suite (edge cases, commands, rotation sorts)
 #   make test         full test suite (also the whole corpus, a few minutes)
 #   make bench        bench/risultati.md and .json against bzip2, xz, LZMA
+#   make memoria      doc/dati/memoria.json: RAM and time as the file grows (streaming)
 #   make eseguibili   dist/bin/kgzip2 and dist/bin/klzma, standalone single files
 #   make pdf          doc/kgzip2.pdf and doc/klzma.pdf from the LaTeX sources
 #   make installa     copies the executables to $(PREFIX)/bin (default /usr/local)
@@ -13,7 +14,7 @@ PY      := .venv/bin/python
 KAIROS  ?= kairos
 PREFIX  ?= /usr/local
 
-.PHONY: prepara test-rapido test bench eseguibili pdf installa pulisci
+.PHONY: prepara test-rapido test bench memoria eseguibili pdf installa pulisci
 
 VM_SRC  := $(KAIROS)/src/vm
 
@@ -37,6 +38,9 @@ test: prepara
 
 bench: prepara
 	$(PY) bench/misura.py
+
+memoria: prepara
+	$(PY) bench/memoria.py 16 64 256
 
 eseguibili: prepara
 	KAIROS_HOME=$(abspath $(KAIROS)) dist/costruisci.sh

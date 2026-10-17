@@ -8,9 +8,15 @@ exactly 4, long runs, all 256 byte values, two blocks in a `par`, ...):
 - decompression (`uncall`) restores the original;
 - three corrupted copies and one truncated copy are rejected before the VM;
 
-then the real commands in a temporary folder (input removal, `-k`, `-c`,
-stdin filter, `-t`, refusing to overwrite) and the four rotation sorts of
-kgzip2 against a reference. `--rapido` skips the corpus.
+then streaming: a file of several frames compressed with different group
+sizes gives the same bytes, decompresses with different group sizes and when
+concatenated with other streams, trailing garbage is rejected, and on a file of
+several frames every truncation and a corrupted byte at every position are
+rejected. Then the real commands in a temporary folder (input removal after
+verification, `-k`, `-c`, `-T`, a multi-block stdin filter, concatenated
+streams from a pipe, `-t` on corrupted and truncated files, refusing to
+overwrite, no temporary file left) and the four rotation sorts of kgzip2
+against a reference. `--rapido` skips the corpus.
 
 The corpus: `tesi8k.tex` (thesis LaTeX), `janus8k.c` (Kairos VM source),
 `readme8k.md` (Kairos README), `doppio8k.tex` (4 KiB of text twice),

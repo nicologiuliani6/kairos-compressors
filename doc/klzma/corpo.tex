@@ -45,7 +45,7 @@ L'inverso, generato da \kw{uncall}, è il decodificatore rANS: legge il bit da $
 \section{\texttt{klzma file.txt}, passo per passo}
 \label{sec:pipeline}
 
-Come per kgzip2 si segue l'eseguibile, che esiste: \kw{dist/bin/klzma}, un file unico con dentro frontend di Kairos, VM e libreria \kw{klzma.kairos}, con le opzioni di xz (\kw{-d}, \kw{-t}, \kw{-k}, \kw{-c}, \kw{-f}, \kw{-v}) più \kw{-D} per la profondità della ricerca. Il frontend traduce solo la libreria e un \kw{main} senza dati; i byte e i bit entrano come istruzioni di bytecode scritte dall'involucro.
+Come per kgzip2 si segue l'eseguibile, che esiste: \kw{dist/bin/klzma}, un file unico con dentro frontend di Kairos, VM e libreria \kw{klzma.kairos}, con le opzioni di xz (\kw{-d}, \kw{-t}, \kw{-k}, \kw{-c}, \kw{-f}, \kw{-v}, \kw{-T}) più \kw{-D} per la profondità della ricerca. Come kgzip2 lavora in streaming, a gruppi di blocchi, con la memoria costante qualunque sia la dimensione del file. Il frontend traduce solo la libreria e un \kw{main} senza dati; i byte e i bit entrano come istruzioni di bytecode scritte dall'involucro.
 
 \begin{figure}[t]
 \centering
@@ -53,22 +53,22 @@ Come per kgzip2 si segue l'eseguibile, che esiste: \kw{dist/bin/klzma}, un file 
   box/.style={draw, rounded corners=2pt, minimum height=8mm, align=center, font=\small, inner sep=3pt},
   kai/.style={box, fill=blue!6}, py/.style={box, fill=black!4},
   >={Stealth[length=2mm]}, node distance=3.5mm]
-\node[py] (in) {\kw{file}};
+\node[py] (in) {gruppo\\di $K$ blocchi};
 \node[kai, right=of in] (cat) {catene\\di hash};
 \node[kai, right=of cat] (par) {parse\\LZ77};
 \node[kai, right=of par] (ist) {istogramma\\del modello};
 \node[kai, right=of ist] (cod) {codifica\\all'indietro};
-\node[py, right=of cod] (out) {\kw{.klz}};
+\node[py, right=of cod] (out) {$K$ frame\\di \kw{.klz}};
 \draw[->] (in) -- (cat); \draw[->] (cat) -- (par); \draw[->] (par) -- (ist); \draw[->] (ist) -- (cod); \draw[->] (cod) -- (out);
 \node[font=\footnotesize, align=center, below=5mm of ist] {decompressione: \kw{uncall comprimi} percorre la catena da destra a sinistra};
 \end{tikzpicture}
-\caption{Il percorso di \kw{klzma}. In azzurro ciò che esegue Kairos; le catene di hash servono solo alla parse e spariscono (\kw{uncall catene}) prima dell'istogramma.}
+\caption{Il percorso di \kw{klzma} per un gruppo di blocchi, che si ripete finché il file non finisce. In azzurro ciò che esegue Kairos, su ogni blocco del gruppo in un ramo di \kw{par}; le catene di hash servono solo alla parse e spariscono (\kw{uncall catene}) prima dell'istogramma.}
 \label{fig:pipeline}
 \end{figure}
 
 \subsection{Compressione}
 
-\paragraph{1. Blocchi e caricamento.} Il file si divide in blocchi (8 KiB predefiniti, \kw{-b} per cambiarli); ogni blocco è un ramo di un \kw{par}. I byte entrano nello store come istruzioni \kw{PUSHEQ b0[k] v}, insieme a due tabelle costanti, le potenze di 2 e le basi degli slot di distanza.
+\paragraph{1. Blocchi e caricamento.} Il file si legge come flusso, a blocchi di dimensione fissa (8 KiB predefiniti, \kw{-1}\dots\kw{-9} per cambiarli), raccolti in gruppi di $K$, uno per core (\kw{-T}). Ogni gruppo è un'esecuzione della VM, con un blocco per ramo di un \kw{par}; in memoria c'è un gruppo alla volta. I byte entrano nello store come istruzioni \kw{PUSHEQ b\_0[k] v}, insieme a due tabelle costanti, le potenze di 2 e le basi degli slot di distanza. Il frontend traduce il programma di un gruppo una volta sola: i gruppi pieni hanno tutti la stessa forma.
 
 \paragraph{2. Catene di hash.} Per ogni posizione $i$ si calcola l'hash dei tre byte che partono da lì e si collega $i$ all'occorrenza precedente dello stesso hash: \kw{prev[i] += head[h]; head[h] -= prev[i]; head[h] += i + 1}. Tre assegnamenti reversibili: \kw{head[h]} si azzera sottraendo il vecchio valore, appena copiato in \kw{prev[i]}. Le catene servono solo alla parse, e alla fine si disfano con \kw{uncall catene}.
 
@@ -85,7 +85,7 @@ Come per kgzip2 si segue l'eseguibile, che esiste: \kw{dist/bin/klzma}, un file 
 \end{enumerate}
 Gli alberi di bit seguono la stessa logica. Un letterale nel decodificatore si legge dal bit alto, con contesto il prefisso già letto: qui si codifica dal bit basso, e con $v + 256$ il dimezzamento lascia il bit in $v$ e il prefisso, cioè il contesto, nella metà. Gli alberi inversi di LZMA (slot bassi e align) si trattano allo stesso modo, specularmente. La distanza segue LZMA: lo slot (albero di 6 bit nel contesto della lunghezza), poi il resto, con albero inverso per gli slot fino a 11 e bit diretti più 4 bit di align oltre.
 
-\paragraph{6. Fine.} Blocco, gettoni, contesti e conteggi sono a zero, \kw{scarto} è vuoto, e restano i bit, lo stato rANS finale $x$ e il numero di bit. Il contenitore \kw{KLZ3} tiene per ogni blocco il modo, la lunghezza, $x$ e il numero di bit, poi i bit, e in fondo il CRC32 dei dati originali e quello del file; se i bit di un blocco non sono più corti dei suoi byte, il blocco si memorizza tale e quale, come i blocchi non compressi di LZMA2.
+\paragraph{6. Fine.} Blocco, gettoni, contesti e conteggi sono a zero, \kw{scarto} è vuoto, e restano i bit, lo stato rANS finale $x$ e il numero di bit. L'involucro scrive subito un frame per blocco, nel formato comune con kgzip2: dopo la firma \kw{KLZ4} e la profondità $D$, ogni frame tiene il tipo (Kairos o memorizzato, più l'indicatore dell'ultimo frame), la lunghezza, $x$ e il numero di bit, poi i bit, e un CRC32 del file fino a lì; l'ultimo frame porta anche il CRC32 dei dati originali. Se i bit di un blocco non sono più corti dei suoi byte, il blocco si memorizza tale e quale, come i blocchi non compressi di LZMA2. L'uscita non dipende da $K$.
 
 \begin{table}[t]
 \centering\small
@@ -100,13 +100,13 @@ pos. & gettone & $\ell$ & $d$ & stato & rep0 & nota\\
 11 & letterale & 1 & -- & 1 & 1 & \kw{!} \\
 \bottomrule
 \end{tabular}
-\caption{La parse di \kw{barbaaaaara!}: 9 gettoni, 84 decisioni binarie, 70 bit dopo il rANS. 70 bit non sono meno di 12 byte, e il blocco viene memorizzato: su file così corti vale la regola di LZMA2.}
+\caption{La parse di \kw{barbaaaaara!}: 9 gettoni, 84 decisioni binarie, 70 bit dopo il rANS. I 9 byte dei bit, con lo stato $x$ e il numero di bit, non sono meno dei 12 byte del blocco, che quindi viene memorizzato: su file così corti vale la regola di LZMA2.}
 \label{tab:esempio}
 \end{table}
 
 \subsection{Decompressione: \texttt{klzma -d file.txt.klz}}
 
-L'involucro controlla il CRC del file prima di avviare la VM: un file alterato non arriva all'\kw{uncall}. Il secondo programma carica i bit, $x$ e il numero di bit, ed esegue \kw{uncall comprimi}; alla fine si controlla il CRC dei dati ricostruiti. L'inverso della codifica all'indietro è una decodifica in avanti, e coincide passo per passo con un decodificatore LZMA:
+Si procede a gruppi di $K$ frame. L'involucro controlla il CRC di ogni frame prima di avviare la VM: un file alterato si ferma al primo frame danneggiato e non arriva all'\kw{uncall}. Il secondo programma carica i bit, $x$ e il numero di bit, ed esegue \kw{uncall comprimi}; i byte ricostruiti si scrivono subito, e dopo l'ultimo frame si controlla il CRC dei dati. L'inverso della codifica all'indietro è una decodifica in avanti, e coincide passo per passo con un decodificatore LZMA:
 \begin{itemize}
 \item l'istogramma iniziale, all'indietro, è il punto d'arrivo: si parte da conteggi a zero e ogni bit decodificato li incrementa, come in qualunque decodificatore adattivo;
 \item i gettoni si decodificano dal primo, e quando si decodifica il gettone $k$ i precedenti sono già ricostruiti: lo stato, rep0 e il byte precedente, che servono come contesti, sono disponibili;
@@ -124,7 +124,7 @@ Un codificatore adattivo reversibile che procedesse in avanti finirebbe con il m
 
 \paragraph{Ambiente.} Lo stesso di kgzip2: Kairos al commit \kw{1aa59fb}, 2 vCPU Xeon, VM con \kw{-O3}. Riferimenti: bzip2 1.0.8 \kw{-9}, xz con \kw{-9e}, e LZMA puro (\kw{FORMAT\_RAW}, \kw{-9e}), cioè lo stesso codificatore di 7-Zip senza l'intestazione di xz. Profondità $D = 32$, blocchi da 8 KiB.
 
-\paragraph{Correttezza.} Ogni uscita di Kairos è confrontata con un modello Python indipendente (\kw{modello.py}), che contiene anche un decodificatore scritto a parte. La suite di test della repository (281 controlli, nessuno fallito, in comune con kgzip2) copre i file della Tabella~\ref{tab:corpus} e 13 casi limite (file vuoto, di 1 e 2 byte, corse lunghe, tutti i 256 byte, due blocchi in \kw{par}): l'uscita compressa coincide byte per byte con il modello, il ritorno con l'originale, e i file alterati o troncati vengono rifiutati dal CRC prima della VM.
+\paragraph{Correttezza.} Ogni uscita di Kairos è confrontata con un modello Python indipendente (\kw{modello.py}), che contiene anche un decodificatore scritto a parte. La suite di test della repository (@@NTEST@@ controlli, nessuno fallito, in comune con kgzip2) copre i file della Tabella~\ref{tab:corpus} e 13 casi limite (file vuoto, di 1 e 2 byte, corse lunghe, tutti i 256 byte, due blocchi in \kw{par}): l'uscita compressa coincide byte per byte con il modello, il ritorno con l'originale, e i file alterati o troncati vengono rifiutati dal CRC prima della VM. Per lo streaming prova un file a più frame compresso con gruppi diversi (stessi byte), decompresso con gruppi diversi, concatenato con altri flussi, seguito da dati estranei, e su un file a più frame ogni troncamento e un byte alterato in ogni posizione.
 
 @@TAB@@
 
@@ -137,6 +137,8 @@ Un codificatore adattivo reversibile che procedesse in avanti finirebbe con il m
 @@PROFILO@@
 
 @@BLOCCHI@@
+
+@@MEMORIA@@
 
 \section{Che cosa manca rispetto a LZMA}
 
@@ -152,7 +154,7 @@ Un codificatore adattivo reversibile che procedesse in avanti finirebbe con il m
 \section{Limiti e lavori futuri}
 
 \begin{itemize}
-\item \textbf{Velocità.} Uno o due KB al secondo: è un interprete di un linguaggio reversibile, e la pulizia raddoppia parte del lavoro.
+\item \textbf{Velocità.} Due o tre KiB al secondo su 2 core: è un interprete di un linguaggio reversibile, e la pulizia raddoppia parte del lavoro. Con lo streaming la memoria resta costante, quindi la dimensione dei file è limitata solo dal tempo.
 \item \textbf{Dizionario continuo fra blocchi}, come in LZMA2 vero, al posto dei blocchi indipendenti: rinuncia al \kw{par} in cambio di rapporto.
 \item \textbf{Parse ottima reversibile}: i costi si possono calcolare dai conteggi, e la scelta di ogni gettone resterebbe una funzione pura disfatta subito, come ora.
 \item \textbf{Adattività}: uno stimatore che dimentichi, reversibile, per esempio conteggi dimezzati con il bit perso messo nel flusso compresso.
@@ -174,12 +176,14 @@ Anche l'algoritmo di 7-Zip si scrive in Kairos una volta sola. Il codificatore e
 \appendix
 \section{File e comandi}
 
-Tutto è in \kw{klzma/} nella repository \kw{kairos-compressori}: \kw{klzma.kairos} (la libreria), \kw{driver.py} (programmi, dati come bytecode, contenitore \kw{KLZ3}), \kw{modello.py} (la stessa pipeline in Python, con un decodificatore indipendente), \kw{\_\_main\_\_.py} (il comando). In \kw{bench/}: \kw{misura.py}, \kw{esperimenti\_klzma.py} (le varianti della Tabella~\ref{tab:varianti}), \kw{profilo\_klzma.py}, \kw{concorrenza.py}.
+Tutto è in \kw{klzma/} nella repository \kw{kairos-compressori}: \kw{klzma.kairos} (la libreria), \kw{driver.py} (il programma di un gruppo di blocchi, dati come bytecode, contatori dei frame), \kw{modello.py} (la stessa pipeline in Python, con un decodificatore indipendente), \kw{\_\_main\_\_.py} (il comando). Il formato a frame e lo streaming sono in \kw{comune/contenitore.py} e \kw{comune/flusso.py}, condivisi con kgzip2. In \kw{bench/}: \kw{misura.py}, \kw{esperimenti\_klzma.py} (le varianti della Tabella~\ref{tab:varianti}), \kw{profilo\_klzma.py}, \kw{concorrenza.py}, \kw{memoria.py}.
 \begin{lstlisting}[language={}, basicstyle=\ttfamily\footnotesize]
 make eseguibili                       # dist/bin/klzma, dist/bin/kgzip2
 klzma -v file.txt                     # file.txt.klz, poi rimuove file.txt
 klzma -d file.txt.klz                 # uncall dello stesso programma
 klzma -k -D 128 file.txt              # ricerca piu' profonda, tiene l'ingresso
+tar c cartella | klzma > cartella.tar.klz    # streaming, memoria costante
+cat a.klz b.klz | klzma -d > ab       # flussi concatenati
 python3 bench/esperimenti_klzma.py test/corpus/*
 \end{lstlisting}
 

@@ -77,19 +77,16 @@ def h0(xs):
 if __name__ == '__main__':
     import pathlib
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
-    from kgzip2.driver import dividi, impacchetta
+    from kgzip2.driver import dividi, atteso
     dati = open(sys.argv[1], 'rb').read()
     print(f'{sys.argv[1]}: {len(dati)} byte, bzip2 -9: {len(bz2.compress(dati, 9))}, '
           f'H0 dei byte {h0(dati):.2f} bit/byte')
     for dim in map(int, sys.argv[2:] or [1024, 2048, 4096, 8192]):
-        righe, gett = [], []
+        gett = []
         for b in dividi(dati, dim):
             if len(b) >= 2:
-                (n, idx, n1, ng, nel, nb, bits), m, dst = blocco(b)
-                righe.append((b, (idx, n1, ng, nel, nb), bits)); gett += dst
-            else:
-                righe.append((b, None, None))
-        k = impacchetta(righe, dati)
+                gett += blocco(b)[2]
+        k = atteso(dati, dim)
         ideale = h0(gett) * len(gett) / 8
         print(f'  blocco {dim:5d}: {len(k):6d} byte ({100 * len(k) / len(dati):5.1f}%), '
               f'codice ideale d\'ordine 0 ~{ideale:6.0f} byte')

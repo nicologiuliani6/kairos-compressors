@@ -49,7 +49,7 @@ def tempo(k, blocco):
     b = src.index('\n', a)
     args = src[a + len('    call comprimi('):b - 1]
     src = src[:a] + f'    call parziale({args})\n    uncall parziale({args})\n    {kvm.SEGNAPOSTO} -= 0' + src[b:]
-    istr = [f'PUSHEQ blocco0[{j}] {v}' for j, v in enumerate(blocco) if v]
+    istr = [f'PUSHEQ blocco_0[{j}] {v}' for j, v in enumerate(blocco) if v]
     righe = kvm.con_dati(kvm.compila(src), istr)
     for j, r in enumerate(righe):
         if r.split(None, 1)[1].strip() == f'MINEQ {kvm.SEGNAPOSTO} 0':

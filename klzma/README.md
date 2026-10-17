@@ -18,7 +18,7 @@ block --LZ77 (hash chains, rep0, lazy)--> tokens --LZMA contexts, binary rANS-->
 | lengths, distances | LZMA length coder, distance slots, reverse trees, align | the same (slots 12-13 with one direct bit + align) |
 | state machine | 12 states | the same |
 | entropy coder | range coder, shift-updated probabilities | **binary rANS, probabilities from counts** |
-| blocks | LZMA2 chunks, shared dictionary | independent blocks in a `par` (like xz multithreaded), stored blocks |
+| blocks | LZMA2 chunks, shared dictionary | independent blocks, streamed in groups that are branches of a `par` (like xz multithreaded), stored blocks |
 
 Rep1-3 and the matched literal were measured on the Python model and left out:
 on 8 KiB blocks they cost more contexts than they save
@@ -49,12 +49,15 @@ already rebuilt, and updates the model after each bit. rANS is a stack and
 | file | content |
 |---|---|
 | `klzma.kairos` | the library: LZ77, histogram, rANS, `comprimi` |
-| `driver.py` | program generation, data loading as bytecode, KLZ3 container |
+| `driver.py` | the Kairos program of a group of blocks, data loading as bytecode, frame counters |
 | `__main__.py` | the `klzma` command |
 | `modello.py` | the same pipeline in Python, with an independent forward decoder |
 
-## KLZ3 container
+## KLZ4 format
 
-`KLZ3`, number of blocks, search depth D; per block a mode (0 Kairos, 1 stored),
-the length, and for mode 0 the final rANS state and the number of bits; the
-bits, then the stored blocks; CRC32 of the original data and of the file.
+The frame format shared with kgzip2 (`comune/contenitore.py`): `KLZ4`, the
+search depth D, then one frame per block: type (Kairos or stored, plus a
+"last" flag), length, for Kairos frames the final rANS state and the number of
+bits followed by the bits, for stored frames the bytes; a CRC32 of the file up
+to that point, checked before the VM; on the last frame also the CRC32 of the
+original data.

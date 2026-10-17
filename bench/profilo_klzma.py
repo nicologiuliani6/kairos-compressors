@@ -27,12 +27,12 @@ for k in range(1, len(STADI) + 1):
     src = driver.programma([len(dati)], driver.D_PREDEFINITO, 'call')
     corpo = '\n'.join(c for _, c in STADI[:k])
     src = src.replace('procedure main()', f'procedure parziale({FIRMA})\n{corpo}\n\nprocedure main()\n    int ntok', 1)
-    chiamata = 'call comprimi(' + ', '.join(f'{a}0' for a in driver.NOMI) + ')'
-    arg = ', '.join(f'{a}0' for a in driver.NOMI) + ', ntok'
+    chiamata = 'call comprimi(' + ', '.join(f'{a}_0' for a in driver.NOMI) + ')'
+    arg = ', '.join(f'{a}_0' for a in driver.NOMI) + ', ntok'
     src = src.replace('    ' + chiamata, f'    call parziale({arg})\n    uncall parziale({arg})')
-    istr = [f'PUSHEQ b0[{j}] {v}' for j, v in enumerate(dati) if v]
+    istr = [f'PUSHEQ b_0[{j}] {v}' for j, v in enumerate(dati) if v]
     # dopo l'uncall il blocco e' di nuovo pieno: lo si svuota con le stesse istruzioni
-    righe = kvm.compila(src.replace('    show(x0)', f'    {kvm.SEGNAPOSTO} -= 0\n    show(x0)'))
+    righe = kvm.compila(src.replace('    show(x_0)', f'    {kvm.SEGNAPOSTO} -= 0\n    show(x_0)'))
     righe = kvm.con_dati(righe, istr)
     for j, r in enumerate(righe):
         if r.split(None, 1)[1].strip() == f'MINEQ {kvm.SEGNAPOSTO} 0':

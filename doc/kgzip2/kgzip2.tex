@@ -44,7 +44,7 @@
 \maketitle
 
 \begin{abstract}
-In un linguaggio reversibile comprimere e decomprimere non sono due programmi da tenere allineati: il decompressore è il compressore eseguito all'indietro. Questo lavoro estende il caso di studio del capitolo 4 della tesi (trasformata di Burrows e Wheeler reversibile, a blocchi paralleli, dopo Lyngby et al.~\cite{lyngby}) a un compressore completo, \emph{kgzip2}, costruito sulla pipeline di bzip2: RLE iniziale, BWT, move-to-front, RLE degli zeri e codice di Elias gamma. Tutto è una sola procedura Kairos, \kw{comprimi}. Il programma di decompressione riceve soltanto i bit compressi e cinque contatori per blocco ed esegue \kw{uncall comprimi(...)}: nel sorgente non esiste una riga di decodifica. Perché questo funzioni ogni stadio è \emph{pulito}: consuma l'ingresso e lascia solo l'uscita, compresa la BWT, che nel capitolo 4 lasciava il blocco originale. Il secondo contributo riguarda il punto che~\cite{lyngby} indica come miglioramento necessario, l'ordinamento delle rotazioni: dal bubble sort $O(n^3)$ si passa a un confronto con uscita anticipata, a un merge sort reversibile e infine a un ordinamento per raddoppio dei prefissi, $O(n\log n)$ qualunque siano i dati. @@ABSTRACT_NUMERI@@
+In un linguaggio reversibile comprimere e decomprimere non sono due programmi da tenere allineati: il decompressore è il compressore eseguito all'indietro. Questo lavoro estende il caso di studio del capitolo 4 della tesi (trasformata di Burrows e Wheeler reversibile, a blocchi paralleli, dopo Lyngby et al.~\cite{lyngby}) a un compressore completo, \emph{kgzip2}, costruito sulla pipeline di bzip2: RLE iniziale, BWT, move-to-front, RLE degli zeri e codice di Elias gamma. Tutto è una sola procedura Kairos, \kw{comprimi}. Il programma di decompressione riceve soltanto i bit compressi e cinque contatori per blocco ed esegue \kw{uncall comprimi(...)}: nel sorgente non esiste una riga di decodifica. Perché questo funzioni ogni stadio è \emph{pulito}: consuma l'ingresso e lascia solo l'uscita, compresa la BWT, che nel capitolo 4 lasciava il blocco originale. Il secondo contributo riguarda il punto che~\cite{lyngby} indica come miglioramento necessario, l'ordinamento delle rotazioni: dal bubble sort $O(n^3)$ si passa a un confronto con uscita anticipata, a un merge sort reversibile e infine a un ordinamento per raddoppio dei prefissi, $O(n\log n)$ qualunque siano i dati. @@ABSTRACT_NUMERI@@ L'eseguibile \kw{kgzip2} è un file unico che funziona senza Kairos installato e lavora in streaming, a gruppi di blocchi: la memoria resta costante qualunque sia la dimensione del file.
 \end{abstract}
 
 \section{Introduzione}
@@ -74,7 +74,7 @@ Questo lavoro fa il passo successivo: un compressore intero, da file a file, con
 \section{\texttt{kgzip2 file.txt}, passo per passo}
 \label{sec:pipeline}
 
-Questa sezione descrive l'intero percorso come lo vede chi usa il programma. L'eseguibile esiste: \kw{dist/bin/kgzip2} è un file unico di circa 8 MB, costruito con PyInstaller, che funziona su una macchina senza Kairos né Python. Ha le opzioni di gzip e bzip2: \kw{-d}, \kw{-t}, \kw{-k}, \kw{-c}, \kw{-f}, \kw{-v}, \kw{-1}\dots\kw{-9}, e senza file fa da filtro fra stdin e stdout.
+Questa sezione descrive l'intero percorso come lo vede chi usa il programma. L'eseguibile esiste: \kw{dist/bin/kgzip2} è un file unico di circa 8 MB, costruito con PyInstaller, che funziona su una macchina senza Kairos né Python. Ha le opzioni di gzip e bzip2: \kw{-d}, \kw{-t}, \kw{-k}, \kw{-c}, \kw{-f}, \kw{-v}, \kw{-1}\dots\kw{-9}, più \kw{-T} per il numero di blocchi per esecuzione della VM, e senza file fa da filtro fra stdin e stdout. Lavora in streaming: un file di qualunque dimensione passa a gruppi di blocchi, con la memoria costante.
 
 \subsection{Che cosa c'è dentro l'eseguibile}
 
@@ -82,7 +82,7 @@ Questa sezione descrive l'intero percorso come lo vede chi usa il programma. L'e
 \item \textbf{la libreria Kairos} \kw{kgzip2.kairos}: tutti gli stadi e la procedura \kw{comprimi};
 \item \textbf{il frontend Kairos} (lexer, parser LALR, controlli statici, generatore di bytecode), che traduce la libreria e un \kw{main} senza dati: poche centinaia di righe, in meno di un decimo di secondo;
 \item \textbf{la macchina virtuale} (\kw{libvm.so}), che esegue il bytecode in avanti o all'indietro e realizza \kw{par} con un thread per ramo;
-\item \textbf{un involucro} che legge e scrive i file, scrive i dati direttamente come istruzioni di bytecode e gestisce il contenitore \kw{.kgz}. Non comprime nulla: sposta byte e impacchetta bit.
+\item \textbf{un involucro} che legge e scrive i file in streaming, scrive i dati direttamente come istruzioni di bytecode e gestisce il formato a frame \kw{.kgz}. Non comprime nulla: sposta byte e impacchetta bit.
 \end{itemize}
 
 \noindent La VM gira in un processo figlio con un tempo massimo, così un programma che non terminasse non bloccherebbe il comando. La stessa costruzione produce \kw{klzma}.
@@ -95,40 +95,41 @@ Questa sezione descrive l'intero percorso come lo vede chi usa il programma. L'e
   py/.style={box, fill=black!4},
   >={Stealth[length=2mm]}, node distance=4mm and 4mm]
 \node[py] (in) {\kw{file.txt}};
-\node[py, right=of in] (bl) {blocchi\\$\le$ 8 KiB};
+\node[py, right=of in] (bl) {gruppo di $K$\\blocchi da 8 KiB};
 \node[py, right=of bl] (src) {programma\\Kairos};
 \node[kai, right=of src] (vm) {VM: \kw{par}\\\kw{call comprimi}};
-\node[py, right=of vm] (out) {\kw{file.txt.kgz}};
+\node[py, right=of vm] (out) {$K$ frame di\\\kw{file.txt.kgz}};
 \draw[->] (in) -- (bl); \draw[->] (bl) -- (src); \draw[->] (src) -- (vm); \draw[->] (vm) -- (out);
+\draw[->, dashed] (out.north) to[bend right=14] node[above, font=\footnotesize] {gruppo successivo, finché il file non finisce} (bl.north);
 \node[kai, below=9mm of src, minimum width=12.6cm, xshift=1.4cm] (stadi) {
 \kw{blocco} $\xrightarrow{\text{RLE}}$ \kw{r} $\xrightarrow{\text{BWT}}$ \kw{out}, \kw{idx}
 $\xrightarrow{\text{MTF}}$ \kw{m} $\xrightarrow{\text{RLE zeri}}$ gettoni $\xrightarrow{\text{gamma}}$ bit};
 \draw[->, dashed] (vm.south) -- (vm.south |- stadi.north);
 \node[font=\footnotesize, align=center, below=1mm of stadi] {la decompressione percorre la stessa catena da destra a sinistra: \kw{uncall comprimi}};
 \end{tikzpicture}
-\caption{Il percorso di \kw{kgzip2}. In grigio l'involucro, in azzurro ciò che esegue Kairos.}
+\caption{Il percorso di \kw{kgzip2}. In grigio l'involucro, in azzurro ciò che esegue Kairos. Il ciclo si ripete per ogni gruppo di $K$ blocchi (uno per core): in memoria c'è un gruppo alla volta.}
 \label{fig:pipeline}
 \end{figure}
 
 \subsection{Compressione}
 
-\paragraph{1. Lettura e blocchi.} Il file si legge come sequenza di byte e si divide in blocchi di lunghezza quasi uguale, al più $B$ byte ($B = 1024\cdot$livello, 8192 con \kw{-8}) e mai meno di 2. I blocchi sono indipendenti: ognuno sarà un ramo di un \kw{par}.
+\paragraph{1. Lettura a gruppi.} Il file si legge come flusso, a blocchi di $B$ byte ($B = 1024\cdot$livello, 8192 con \kw{-8}); l'ultimo può essere più corto. I blocchi sono indipendenti e si raccolgono in gruppi di $K$, uno per core (\kw{-T} lo cambia): ogni gruppo è un'esecuzione della VM, con i blocchi come rami di un \kw{par}, e i passi 2--4 si ripetono per ogni gruppo. In memoria ci sono solo i blocchi del gruppo corrente, più uno letto in anticipo per sapere qual è l'ultimo: la RAM non dipende dalla dimensione del file (§\ref{sec:memoria}), e il comando funziona anche da una pipe, senza conoscere la lunghezza dei dati. Un blocco di meno di 2 byte, che può essere solo l'ultimo, si memorizza senza passare dalla VM.
 
-\paragraph{2. Caricamento.} La VM non legge file, quindi i dati entrano nello store del programma. L'involucro genera un \kw{main} che dichiara, per ogni blocco $i$, gli array di lavoro (tutti a zero) e contiene un segnaposto al posto dei dati. Solo questa parte passa dal frontend; al posto del segnaposto, nel bytecode, l'involucro scrive un'istruzione per byte, \kw{PUSHEQ blocco0[k] v}, cioè ciò che il frontend produrrebbe da \kw{blocco0[k] += v}:
+\paragraph{2. Caricamento.} La VM non legge file, quindi i dati entrano nello store del programma. L'involucro genera un \kw{main} che dichiara, per ogni blocco $i$, gli array di lavoro (tutti a zero) e contiene un segnaposto al posto dei dati. Solo questa parte passa dal frontend; al posto del segnaposto, nel bytecode, l'involucro scrive un'istruzione per byte, \kw{PUSHEQ blocco\_0[k] v}, cioè ciò che il frontend produrrebbe da \kw{blocco\_0[k] += v}:
 \begin{lstlisting}
-local int blocco0[12] = 0
+local int blocco_0[12] = 0
 ...
-blocco0[0] += 98      // 'b'
-blocco0[1] += 97      // 'a'
+blocco_0[0] += 98      // 'b'
+blocco_0[1] += 97      // 'a'
 ...
 par
-    call comprimi(blocco0, r0, offs0, ..., bit0, idx0, n10, ..., nr0)
+    call comprimi(blocco_0, r_0, ..., bit_0, idx_0, n1_0, ..., nr_0)
 and
-    call comprimi(blocco1, r1, offs1, ..., bit1, idx1, n11, ..., nr1)
+    call comprimi(blocco_1, r_1, ..., bit_1, idx_1, n1_1, ..., nr_1)
 rap
-show(idx0)  show(n10)  show(ng0)  show(nel0)  show(nb0)  show(bit0)
+show(idx_0)  show(n1_0)  show(ng_0)  show(nel_0)  show(nb_0)  show(bit_0)
 \end{lstlisting}
-Il parser non vede mai i dati: in decompressione, dove i bit sono decine di migliaia, questo toglie circa 5 secondi su 8 KiB.
+Il parser non vede mai i dati: in decompressione, dove i bit sono decine di migliaia, questo toglie circa 5 secondi su 8 KiB. E poiché i gruppi pieni hanno tutti la stessa forma ($K$ blocchi da $B$ byte), il frontend traduce il programma una volta sola: ogni gruppo riusa lo stesso bytecode, con i propri dati al posto del segnaposto. Il trattino basso fra nome e indice non è estetico: senza, il contatore \kw{n1} del blocco 0 e la lunghezza \kw{n} del blocco 10 si chiamerebbero entrambi \kw{n10}, e da 11 blocchi in su il controllo statico di Kairos fermerebbe il programma per una corsa critica nel \kw{par} (è successo alla prima versione, che con blocchi da 8 KiB non comprimeva file oltre 80 KiB).
 
 \paragraph{3. Esecuzione.} La VM esegue \kw{call comprimi} su ogni ramo in parallelo. I rami scrivono array disgiunti, quindi il controllo statico sul \kw{par} li accetta. Dentro \kw{comprimi} gli stadi si susseguono; ciascuno ha come precondizione l'uscita a zero e come postcondizione l'ingresso a zero. La Tabella~\ref{tab:esempio} segue un blocco di 12 byte.
 
@@ -145,7 +146,7 @@ BWT, uscita & \kw{out} = 1 98 97 114 0 97 97 97 98 114 33 97 97, \quad \kw{idx} 
 move-to-front & \kw{m} = 1 98 98 114 4 2 0 0 3 3 36 3 0 \\
 RLE degli zeri & 1 98 98 114 4 2 \textbf{2 0} 3 3 36 3 \textbf{1 0} \quad (12 gettoni, 14 elementi) \\
 Elias gamma & 84 bit: \kw{1010001001010010000000100001001110110101}\dots \\
-contenitore & 84 bit più cinque contatori non sono meno di 12 byte: il blocco si memorizza, e il file è \kw{KGZ3}, un blocco, modo 1, i 12 byte e i due CRC (27 byte) \\
+frame & 84 bit più cinque contatori non sono meno di 12 byte: il blocco si memorizza, e il file è \kw{KGZ4} con un solo frame: tipo (memorizzato, ultimo), lunghezza, i 12 byte, il CRC dei dati e quello del file (26 byte) \\
 \bottomrule
 \end{tabular}
 \caption{Un blocco attraverso la pipeline. Su un ingresso così corto la codifica non conviene e scatta il blocco memorizzato; i numeri dei passi sono quelli stampati da Kairos e coincidono con il modello Python.}
@@ -188,11 +189,11 @@ x <=> h         // si prosegue con la meta'
 \end{lstlisting}
 Gli $L$ zeri della parte unaria li spinge \kw{uncall corsa}: all'indietro \kw{call corsa} li consuma e si ferma da sola sull'1 che li precede, senza dover conoscere $L$. L'ordine dei bit è quello in cui li consuma l'inverso, dalla cima.
 
-\paragraph{4. Raccolta e contenitore.} Alla fine del \kw{par} ogni ramo ha lasciato soltanto lo stack \kw{bit} e cinque contatori: \kw{idx}, $n_1$ (lunghezza dopo l'RLE), numero di gettoni, numero di elementi, numero di bit. Tutto il resto è a zero e i \kw{delocal} del \kw{main} lo verificano: un ausiliario non azzerato fermerebbe il programma. L'involucro scrive il file \kw{.kgz}: la firma \kw{KGZ3}, il numero di blocchi, per ogni blocco il modo, la lunghezza e i cinque contatori in varint, poi tutti i bit impacchettati in byte, e in fondo due CRC32, quello dei dati originali e quello del file. Un blocco i cui bit non sono più corti dei suoi byte si memorizza tale e quale (modo 1), come i blocchi non compressi di LZMA2: è il caso dei dati casuali e dei file molto corti.
+\paragraph{4. Raccolta e frame.} Alla fine del \kw{par} ogni ramo ha lasciato soltanto lo stack \kw{bit} e cinque contatori: \kw{idx}, $n_1$ (lunghezza dopo l'RLE), numero di gettoni, numero di elementi, numero di bit. Tutto il resto è a zero e i \kw{delocal} del \kw{main} lo verificano: un ausiliario non azzerato fermerebbe il programma. L'involucro scrive subito un frame per blocco e passa al gruppo successivo. Il file \kw{.kgz} è la firma \kw{KGZ4} seguita dai frame; un frame contiene il tipo (modo 0 Kairos o 1 memorizzato, più l'indicatore dell'ultimo frame), la lunghezza del blocco e i cinque contatori in varint, i bit impacchettati in byte e un CRC32 del file dal primo byte fino a lì. L'ultimo frame porta anche il CRC32 di tutti i dati originali, calcolato man mano. Nessun campo dipende dai blocchi che seguono, quindi il formato si scrive senza tornare indietro, e l'uscita non dipende da $K$: con \kw{-T 1} o \kw{-T 8} i byte sono gli stessi. Un blocco i cui bit non sono più corti dei suoi byte si memorizza tale e quale (modo 1), come i blocchi non compressi di LZMA2: è il caso dei dati casuali e dei file molto corti.
 
 \subsection{Decompressione: \texttt{kgzip2 -d file.txt.kgz}}
 
-\paragraph{1. Lettura e controllo.} L'involucro controlla firma e CRC del file \emph{prima} di avviare la VM: un file alterato si rifiuta qui e non arriva mai all'\kw{uncall}. Poi genera un secondo programma, che dichiara gli stessi array a zero e carica lo stato \emph{finale} della compressione: i bit con istruzioni \kw{PUSH} scritte direttamente nel bytecode, i contatori con \kw{PUSHEQ}. Del file originale non contiene nulla.
+\paragraph{1. Lettura e controllo.} Anche la decompressione procede a gruppi di $K$ frame. L'involucro legge un frame e ne controlla il CRC \emph{prima} di avviare la VM: un file alterato si ferma al primo frame danneggiato e non arriva mai all'\kw{uncall}, e un file troncato si riconosce perché manca l'ultimo frame. Poi genera un secondo programma, che dichiara gli stessi array a zero e carica lo stato \emph{finale} della compressione: i bit con istruzioni \kw{PUSH} scritte direttamente nel bytecode, i contatori con \kw{PUSHEQ}. Del file originale non contiene nulla.
 
 \paragraph{2. Esecuzione all'indietro.} Il programma esegue \kw{uncall comprimi(...)} su ogni blocco, di nuovo in un \kw{par}. L'inverso di una sequenza è la sequenza degli inversi in ordine opposto, quindi gli stadi si disfano dall'ultimo al primo:
 \begin{itemize}
@@ -204,9 +205,9 @@ Gli $L$ zeri della parte unaria li spinge \kw{uncall corsa}: all'indietro \kw{ca
 \end{itemize}
 Nessuna di queste procedure è scritta: sono gli inversi, calcolati dalla VM istruzione per istruzione.
 
-\paragraph{3. Scrittura.} Dopo l'\kw{uncall} l'array \kw{blocco} contiene i byte originali. Il programma li sposta su uno stack d'uscita (\kw{call scarica}) perché gli array, alla fine del \kw{main}, devono essere a zero; l'involucro li raccoglie, controlla il CRC dei dati originali e scrive \kw{file.txt}. In compressione, se il file d'ingresso va rimosso (senza \kw{-k}), il comando decomprime prima il risultato e lo confronta con l'originale.
+\paragraph{3. Scrittura.} Dopo l'\kw{uncall} l'array \kw{blocco} contiene i byte originali. Il programma li sposta su uno stack d'uscita (\kw{call scarica}) perché gli array, alla fine del \kw{main}, devono essere a zero; l'involucro li scrive subito in \kw{file.txt} e passa al gruppo successivo; dopo l'ultimo frame controlla il CRC dei dati originali. Più file \kw{.kgz} concatenati si decomprimono nella concatenazione dei dati, come in gzip. In compressione, se il file d'ingresso va rimosso (senza \kw{-k}), il comando decomprime prima il risultato, sempre in streaming, e lo confronta pezzo per pezzo con l'originale; solo allora rimuove l'ingresso.
 
-\paragraph{4. Verifica: \texttt{kgzip2 -t}.} \kw{-t} controlla il CRC del file, decomprime in memoria e controlla il CRC del risultato. Il CRC è necessario: le asserzioni d'uscita, all'indietro, diventano controlli sullo stato, ma un file alterato non porta per forza a un'asserzione violata. In una prova con un bit invertito, prima di introdurre il CRC, la decompressione non è terminata. Con il CRC, 40 file con un bit invertito a caso (20 per algoritmo) sono stati rifiutati tutti in meno di un decimo di secondo ciascuno.
+\paragraph{4. Verifica: \texttt{kgzip2 -t}.} \kw{-t} decomprime senza scrivere nulla, controllando il CRC di ogni frame e alla fine quello dei dati. Il CRC è necessario: le asserzioni d'uscita, all'indietro, diventano controlli sullo stato, ma un file alterato non porta per forza a un'asserzione violata. In una prova con un bit invertito, prima di introdurre il CRC, la decompressione non è terminata. Con il CRC, 40 file con un bit invertito a caso (20 per algoritmo) sono stati rifiutati tutti in meno di un decimo di secondo ciascuno; la suite di test, su un file a più frame, prova anche ogni troncamento e un byte alterato in ogni posizione, e li rifiuta tutti.
 
 \section{Ordinare le rotazioni}
 \label{sec:ordinare}
@@ -268,13 +269,18 @@ Il programma di misura carica un blocco, esegue \kw{ordina} ed \kw{estrai}, stam
 
 @@CONCORRENZA@@
 
+\subsection{Streaming e memoria}
+\label{sec:memoria}
+
+@@MEMORIA@@
+
 \section{Limiti}
 \label{sec:limiti}
 
 \begin{itemize}
 \item \textbf{Codice entropico.} Il codice gamma è fisso: non si adatta alle frequenze del blocco. È la ragione principale della distanza da bzip2, che usa Huffman con tabelle per gruppi di simboli. La colonna ``ordine 0'' della Tabella~\ref{tab:corpus} dà il limite che un codice adattivo d'ordine 0 raggiungerebbe sugli stessi gettoni.
 \item \textbf{Dati incomprimibili.} Sui byte casuali MTF produce valori uniformi e il codice gamma spenderebbe circa 13 bit per byte; il blocco memorizzato limita il danno all'intestazione e ai CRC.
-\item \textbf{Velocità assoluta.} Anche con l'ordinamento $O(n\log n)$ kgzip2 elabora qualche centinaio di byte al secondo per core: è un interprete di un linguaggio reversibile, e ogni passo in avanti ne implica uno all'indietro per pulire.
+\item \textbf{Velocità assoluta.} Anche con l'ordinamento $O(n\log n)$ kgzip2 elabora qualche centinaio di byte al secondo per core: è un interprete di un linguaggio reversibile, e ogni passo in avanti ne implica uno all'indietro per pulire. Con lo streaming la memoria non limita più la dimensione dei file; il tempo sì (§\ref{sec:memoria}).
 \item \textbf{Spazio.} Lo stack \kw{scarto} tiene fino a circa $3n\lceil\log_2 n\rceil$ interi durante l'ordinamento; la pulizia avviene prima della fine di \kw{bwt}.
 \item \textbf{Blocchi piccoli.} Blocchi da 8 KiB contro i 900 KiB di bzip2: la BWT rende di più su blocchi grandi.
 \end{itemize}
@@ -315,14 +321,18 @@ Tutto è nella repository \kw{kairos-compressori}, con Kairos come sottomodulo i
 percorso & contenuto \\
 \midrule
 \kw{kgzip2/kgzip2.kairos} & la libreria: tutti gli stadi e \kw{comprimi} \\
-\kw{kgzip2/driver.py} & l'involucro: programmi, dati come bytecode, contenitore \kw{KGZ3} \\
+\kw{kgzip2/driver.py} & il programma di un gruppo di blocchi, dati come bytecode, contatori dei frame \\
 \kw{kgzip2/modello.py} & la stessa pipeline in Python, bit per bit \\
 \kw{kgzip2/fusione.kairos} & confronto a uscita anticipata e merge sort (passo intermedio) \\
 \kw{kgzip2/ordinamenti.py} & le quattro varianti dell'ordinamento: verifica e tempi \\
 \kw{kgzip2/profilo.py} & costo per stadio, con programmi troncati \\
-\kw{comune/} & esecuzione dei programmi Kairos, contenitori e CRC, riga di comando \\
-\kw{test/test\_completo.py} & la suite di test (281 controlli) \\
+\kw{comune/kvm.py} & esecuzione dei programmi Kairos, cache del frontend \\
+\kw{comune/contenitore.py} & il formato a frame e i CRC, comune ai due algoritmi \\
+\kw{comune/flusso.py} & lo streaming a gruppi di blocchi \\
+\kw{comune/cli.py} & la riga di comando \\
+\kw{test/test\_completo.py} & la suite di test (@@NTEST@@ controlli) \\
 \kw{bench/misura.py} & il confronto con bzip2, xz e LZMA \\
+\kw{bench/memoria.py} & memoria e tempo al crescere del file \\
 \kw{dist/costruisci.sh} & gli eseguibili autonomi \kw{dist/bin/kgzip2} e \kw{dist/bin/klzma} \\
 \bottomrule
 \end{tabular}
@@ -333,8 +343,9 @@ make eseguibili                       # dist/bin/kgzip2, dist/bin/klzma
 kgzip2 -v file.txt                    # file.txt.kgz, poi rimuove file.txt
 kgzip2 -d file.txt.kgz                # uncall dello stesso programma
 kgzip2 -t file.txt.kgz                # controlla CRC e decompressione, non scrive
-tar c cartella | kgzip2 > cartella.tar.kgz
-make test                             # 281 controlli
+tar c cartella | kgzip2 > cartella.tar.kgz   # streaming, memoria costante
+kgzip2 -T 1 -v grande.bin             # un blocco alla volta, con avanzamento
+make test                             # @@NTEST@@ controlli
 python3 kgzip2/ordinamenti.py tempi raddoppio periodico 256 1024 4096
 \end{lstlisting}
 

@@ -6,9 +6,14 @@ sono la parte grande (una riga per byte o per bit), entrano come istruzioni di
 bytecode scritte direttamente al posto dell'istruzione segnaposto
 `segnaposto_dati += 0`. La VM esegue in un processo figlio, con un tempo
 massimo: un programma che non termina non blocca il chiamante.
+
+In streaming lo stesso programma (stessa forma, dati diversi) si esegue una
+volta per gruppo di blocchi: la traduzione della parte fissa si fa una volta
+sola e si riusa (`compila` tiene gli ultimi programmi tradotti).
 """
 import ast as _ast
 import ctypes
+import functools
 import os
 import pathlib
 import re
@@ -57,8 +62,17 @@ from src.frontend.bytecode import ByteCode_Compiler                   # noqa: E4
 from src.frontend.errors import KairosCompileError                    # noqa: E402
 
 
+@functools.lru_cache(maxsize=8)
+def _compila(sorgente):
+    return tuple(_traduci(sorgente))
+
+
 def compila(sorgente):
-    """Sorgente Kairos -> righe di bytecode."""
+    """Sorgente Kairos -> righe di bytecode (dalla cache se gia' tradotto)."""
+    return list(_compila(sorgente))
+
+
+def _traduci(sorgente):
     lexer.lineno = 1
     try:
         albero = parser.parse(sorgente, lexer=lexer)

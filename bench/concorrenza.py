@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Blocchi come rami di un par contro blocchi in sequenza (tempi della sola VM).
 
+Tutti i blocchi del file stanno in un solo gruppo, cioè in una sola esecuzione
+della VM: con il par sono rami concorrenti, in sequenza uno dopo l'altro.
+
     python3 bench/concorrenza.py        -> doc/dati/concorrenza.json
 """
 import json
@@ -25,8 +28,8 @@ for nome, D, f, dim in casi:
         if r['blocchi'] == 1 and modo == 'seq':
             continue
         D.SEQUENZIALE = modo == 'seq'
-        z, (tf1, tv1) = D.comprimi(dati, dim, timeout=3600)
-        ric, (tf2, tv2) = D.decomprimi(z, timeout=3600)
+        z, (tf1, tv1) = D.comprimi(dati, dim, timeout=3600, gruppo=r['blocchi'])
+        ric, (tf2, tv2) = D.decomprimi(z, timeout=3600, gruppo=r['blocchi'])
         assert ric == dati
         r[modo] = {'byte': len(z), 'comprimi': round(tv1, 2), 'uncall': round(tv2, 2)}
     D.SEQUENZIALE = False

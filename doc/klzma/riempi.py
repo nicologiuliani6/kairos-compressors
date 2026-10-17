@@ -3,13 +3,16 @@
 import json
 import pathlib
 import re
+import sys
 
 QUI = pathlib.Path(__file__).resolve().parent
 RADICE = QUI.parent.parent
 DATI = RADICE / 'doc' / 'dati'
+sys.path.insert(0, str(QUI.parent))
+from riempi_comune import memoria, ntest   # noqa: E402
 tex = (QUI / 'preambolo.tex').read_text().split(r'\title{')[0] + (QUI / 'corpo.tex').read_text()
 B = {r['file']: r for r in json.loads((RADICE / 'bench' / 'risultati.json').read_text())}
-v = lambda s: s.replace('.', '{,}')
+v = lambda s: re.sub(r'(?<=\d)\.(?=\d)', '{,}', s)   # virgola decimale, solo fra cifre
 ORDINE = ['tesi8k.tex', 'janus8k.c', 'readme8k.md', 'doppio8k.tex', 'periodico8k.txt',
           'cerchio64.pgm', 'cerchio.pgm', 'zeri4k.bin', 'casuale4k.bin']
 NOMI = {'tesi8k.tex': 'tesi (\\LaTeX)', 'janus8k.c': 'Janus.c', 'readme8k.md': 'README',
@@ -33,7 +36,7 @@ for f in ORDINE:
              + v(f"{100 * k / r['byte']:.1f} & {r['klzma']['comprimi'][1]:.1f} & {r['klzma']['uncall'][1]:.1f}") + r' \\')
 T += [r'\bottomrule', r'\end{tabular}',
       r'\caption{Byte dopo la compressione, blocchi da 8 KiB, $D = 32$. LZMA è il codificatore di 7-Zip '
-      r'senza intestazione (\kw{xz --format=raw}), xz aggiunge la propria; kgzip2 e klzma includono 8 byte '
+      r'senza intestazione (\kw{xz --format=raw}), xz aggiunge la propria; kgzip2 e klzma includono la propria (firma, tipo e lunghezza del frame) e 8 byte '
       r'di CRC. In grassetto il più piccolo. Tempi della VM in secondi; il blocco casuale è memorizzato e non '
       r'passa per la VM in decompressione. Ritorno identico e uscita uguale al modello in tutte le righe.}',
       r'\label{tab:corpus}', r'\end{table}']
@@ -51,7 +54,7 @@ commento = (
     rf"periodico a {d['periodico8k.txt']['k']} (LZMA {d['periodico8k.txt']['raw']}). Il merito è dei conteggi: su "
     r"dati stazionari un modello che non dimentica converge più in fretta dello scorrimento di LZMA. Sui byte "
     rf"casuali il blocco memorizzato tiene il file a {d['casuale4k.bin']['k']} byte, meno di xz "
-    rf"({d['casuale4k.bin']['xz']}) e di bzip2 ({d['casuale4k.bin']['bz']}). Sui file minuscoli pesano i 8 byte di "
+    rf"({d['casuale4k.bin']['xz']}) e di bzip2 ({d['casuale4k.bin']['bz']}). Sui file minuscoli pesano gli 8 byte di "
     rf"CRC (immagine 16$\times$16: {d['cerchio.pgm']['k']} contro {d['cerchio.pgm']['raw']}). bzip2 resta il "
     r"migliore sul testo normale da 8 KiB, dove la BWT ha un vantaggio sui blocchi piccoli.")
 
@@ -125,9 +128,11 @@ abs_ = (rf"Su file da 8 KB klzma è alla pari con LZMA puro sul testo ({d['tesi8
         rf"{d['tesi8k.tex']['raw']} byte sulla tesi, CRC compreso), comprime molto meglio di kgzip2 "
         rf"({d['tesi8k.tex']['kg']}) e fa meglio dello stesso LZMA sui dati ripetitivi ({d['doppio8k.tex']['k']} "
         rf"contro {d['doppio8k.tex']['raw']} byte sul testo ripetuto). Il ritorno è identico byte per byte su "
-        r"tutti i file, e l'eseguibile \kw{klzma} è un file unico che funziona senza Kairos installato.")
+        r"tutti i file, e l'eseguibile \kw{klzma} è un file unico che funziona senza Kairos installato e "
+        r"lavora in streaming, con la memoria costante qualunque sia la dimensione del file.")
 for k_, val in {'@@TAB@@': '\n'.join(T), '@@COMMENTO@@': commento, '@@BLOCCHI@@': blocchi, '@@ABS@@': abs_,
-                '@@VARIANTI@@': varianti, '@@PROFILO@@': profilo_txt, '@@ISTO@@': isto}.items():
+                '@@VARIANTI@@': varianti, '@@PROFILO@@': profilo_txt, '@@ISTO@@': isto,
+                '@@MEMORIA@@': r'\paragraph{Streaming e memoria.} ' + memoria('klzma'), '@@NTEST@@': ntest()}.items():
     assert k_ in tex, k_
     tex = tex.replace(k_, val)
 assert r"e resta a pochi punti da LZMA puro sul testo, dove la differenza viene dalla parse golosa e dai contesti mancanti più che dalla reversibilità." in tex

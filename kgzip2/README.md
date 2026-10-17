@@ -9,7 +9,9 @@ block --RLE--> r --BWT--> out, idx --MTF--> m --zero RLE--> tokens --Elias gamma
 
 The whole pipeline is one procedure, `comprimi`, in [`kgzip2.kairos`](kgzip2.kairos).
 Compression runs `call comprimi(...)`, decompression `uncall comprimi(...)`.
-Blocks (8 KiB by default) are branches of one `par`, in both directions.
+Blocks (8 KiB by default) are read as a stream; each group of blocks (one per
+core by default) is one VM run, with the blocks as branches of a `par`, in both
+directions.
 
 ## Why the inverse is a decompressor
 
@@ -41,17 +43,20 @@ step (early-exit comparison and a reversible merge sort) and
 | file | content |
 |---|---|
 | `kgzip2.kairos` | the library: every stage and `comprimi` |
-| `driver.py` | program generation, data loading as bytecode, KGZ3 container |
+| `driver.py` | the Kairos program of a group of blocks, data loading as bytecode, frame counters |
 | `__main__.py` | the `kgzip2` command (`python -m kgzip2`, `bin/kgzip2`, `dist/bin/kgzip2`) |
 | `modello.py` | the same pipeline in Python, bit for bit |
 | `fusione.kairos`, `ordinamenti.py` | rotation sorts: bubble, early exit, merge, prefix doubling |
 | `profilo.py` | cost of each stage, with truncated programs |
 
-## KGZ3 container
+## KGZ4 format
 
-`KGZ3`, number of blocks; per block a mode (0 Kairos, 1 stored) and the length,
-plus `idx, n1, tokens, elements, bits` for mode 0; the bits of all mode-0
-blocks, then the bytes of stored blocks; CRC32 of the original data and CRC32
-of the whole file. The file CRC is checked before running the VM, so a damaged
-file never reaches `uncall`. A block whose bits are not shorter than its bytes is
-stored.
+The frame format shared with klzma (`comune/contenitore.py`): `KGZ4`, then one
+frame per block. A frame holds a type (mode 0 Kairos or 1 stored, plus a
+"last" flag), the block length, for mode 0 the five counters
+`idx, n1, tokens, elements, bits` and the packed bits, for mode 1 the bytes.
+Every frame ends with a CRC32 of the file up to that point, checked as soon as
+the frame is read and before the VM sees it; the last frame also carries the
+CRC32 of all the original data. A block whose bits are not shorter than its
+bytes is stored. Concatenated `.kgz` streams decompress to the concatenated
+data.

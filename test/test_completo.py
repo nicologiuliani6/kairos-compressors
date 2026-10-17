@@ -6,8 +6,10 @@
 
 Per kgzip2 e klzma: l'uscita compressa coincide byte per byte con il modello
 Python, la decompressione (uncall) ricostruisce l'originale, i file corrotti
-o troncati vengono rifiutati prima della VM. Poi i comandi veri, in una
-cartella temporanea, e la verifica degli ordinamenti delle rotazioni.
+o troncati vengono rifiutati prima della VM. Poi lo streaming (piu' frame,
+gruppi diversi, flussi concatenati, dati in coda, ogni troncamento e ogni byte
+alterato di un file), i comandi veri in una cartella temporanea e la verifica
+degli ordinamenti delle rotazioni.
 """
 import os
 import pathlib
@@ -44,7 +46,7 @@ def casi_limite():
         'periodico': (b'abcabc' * 60)[:333],
         'misto': bytes(rnd.choice([0, 0, 0, 1, 2, 255, 7]) for _ in range(500)),
         'casuale': bytes(rnd.randrange(256) for _ in range(300)),
-        'due_blocchi': (b'Kairos reversibile ' * 600)[:10000],     # due blocchi da ~5 KB in par
+        'due_blocchi': (b'Kairos reversibile ' * 600)[:10000],     # 8192 + 1808 byte, in un par
     }
 
 
@@ -71,6 +73,60 @@ def prova_algoritmo(nome, D, dati, etichetta):
     return len(out)
 
 
+def rifiuta(D, buf, cosa, **kw):
+    try:
+        D.decomprimi(buf, timeout=60, **kw)
+        controlla(False, cosa)
+    except C.FileNonValido:
+        controlla(True, '')
+
+
+def prova_flusso(nome, D):
+    """Piu' frame in piu' esecuzioni della VM, con l'uscita indipendente dal gruppo."""
+    dati = (b'Kairos va avanti e indietro, call e uncall. ' * 120)[:4500]
+    a, _ = D.comprimi(dati, 1024, timeout=900, gruppo=2)
+    controlla(a == D.atteso(dati, 1024), f'{nome} flusso: uscita diversa dal modello')
+    b, _ = D.comprimi(dati, 1024, timeout=900, gruppo=1)
+    controlla(a == b, f'{nome} flusso: l\'uscita dipende dal gruppo')
+    for g in (1, 3, 8):
+        ric, _ = D.decomprimi(a, timeout=900, gruppo=g)
+        controlla(ric == dati, f'{nome} flusso: ritorno diverso con gruppo {g}')
+    c, _ = D.comprimi(b'seconda parte', timeout=900)
+    ric, _ = D.decomprimi(a + c + a, timeout=900, gruppo=4)
+    controlla(ric == dati + b'seconda parte' + dati, f'{nome} flusso: flussi concatenati')
+    for coda in (b'x', bytes(7), D.MAGIA[:2], D.MAGIA):
+        rifiuta(D, a + coda, f'{nome} flusso: dati in coda accettati ({coda!r})')
+    # 25 blocchi in una sola esecuzione della VM: i nomi per blocco non si sovrappongono
+    # (senza separatore n1 del blocco 0 e n del blocco 10 sarebbero entrambi n10)
+    molti = (b'Kairos: un programma, due versi. ' * 60)[:25 * 64]
+    m, _ = D.comprimi(molti, 64, timeout=900, gruppo=25)
+    controlla(m == D.atteso(molti, 64), f'{nome} flusso: 25 blocchi in un par, uscita diversa dal modello')
+    controlla(D.decomprimi(m, timeout=900, gruppo=25)[0] == molti, f'{nome} flusso: 25 blocchi in un par, ritorno')
+    # un file di soli frame memorizzati: ogni troncamento e ogni byte alterato
+    # vanno rifiutati, e senza la VM la prova costa poco
+    rnd = random.Random(11)
+    casuale = bytes(rnd.randrange(256) for _ in range(250))
+    z, _ = D.comprimi(casuale, 64, timeout=900)
+    controlla(z == D.atteso(casuale, 64), f'{nome} memorizzati: uscita diversa dal modello')
+    controlla(D.decomprimi(z)[0] == casuale, f'{nome} memorizzati: ritorno')
+    tronchi = alterati = 0
+    for L in range(len(z)):
+        try:
+            D.decomprimi(z[:L])
+        except C.FileNonValido:
+            tronchi += 1
+    controlla(tronchi == len(z), f'{nome} memorizzati: {len(z) - tronchi} troncamenti accettati')
+    for p in range(len(z)):
+        bb = bytearray(z)
+        bb[p] ^= 1 << rnd.randrange(8)
+        try:
+            D.decomprimi(bytes(bb))
+        except C.FileNonValido:
+            alterati += 1
+    controlla(alterati == len(z), f'{nome} memorizzati: {len(z) - alterati} byte alterati accettati')
+    return len(a), len(z)
+
+
 def prova_comandi(prog, est):
     py = sys.executable
     cmd = [py, str(RADICE / 'bin' / prog)]
@@ -94,13 +150,34 @@ def prova_comandi(prog, est):
         r = subprocess.run(cmd + ['-d', '-c', str(d / f'prova.txt{est}')], capture_output=True)
         controlla(r.stdout == dati, f'{prog}: -d -c su stdout')
         r = subprocess.run(cmd, input=dati, capture_output=True)
-        r2 = subprocess.run(cmd + ['-d'], input=r.stdout, capture_output=True)
+        filtro = r.stdout
+        r2 = subprocess.run(cmd + ['-d'], input=filtro, capture_output=True)
         controlla(r2.stdout == dati, f'{prog}: filtro stdin -> stdout')
         b = bytearray((d / f'prova.txt{est}').read_bytes())
         b[len(b) // 2] ^= 4
         (d / 'rotto.txt').with_suffix(est).write_bytes(b)
         r = subprocess.run(cmd + ['-t', str((d / 'rotto.txt').with_suffix(est))], capture_output=True)
         controlla(r.returncode != 0 and b'danneggiato' in r.stderr, f'{prog}: -t rifiuta un file corrotto')
+        (d / 'mezzo.txt').with_suffix(est).write_bytes(b[:len(b) // 2])
+        r = subprocess.run(cmd + ['-t', str((d / 'mezzo.txt').with_suffix(est))], capture_output=True)
+        controlla(r.returncode != 0 and b'troncato' in r.stderr, f'{prog}: -t rifiuta un file troncato')
+        # streaming vero: piu' blocchi da una pipe, gruppi diversi, flussi concatenati
+        D = KG if prog == 'kgzip2' else KL
+        lungo = (b'Una riga di prova per lo streaming, con un numero: %d\n' % 7) * 60
+        r1 = subprocess.run(cmd + ['-1', '-T', '1'], input=lungo, capture_output=True)
+        r3 = subprocess.run(cmd + ['-1', '-T', '3', '-v'], input=lungo, capture_output=True)
+        controlla(r1.returncode == 0 and r1.stdout == r3.stdout == D.atteso(lungo, 1024),
+                  f'{prog}: pipe a piu\' blocchi, uguale al modello con -T 1 e -T 3')
+        controlla(b'blocchi' in r3.stderr, f'{prog}: -v riporta i blocchi')
+        r = subprocess.run(cmd + ['-d', '-T', '2'], input=r1.stdout + filtro, capture_output=True)
+        controlla(r.returncode == 0 and r.stdout == lungo + dati, f'{prog}: flussi concatenati da una pipe')
+        g = d / 'grande.txt'
+        g.write_bytes(lungo)
+        r = subprocess.run(cmd + ['-1', '-v', str(g)], capture_output=True)
+        controlla(r.returncode == 0 and not g.exists() and b'verificato' in r.stderr
+                  and (d / f'grande.txt{est}').read_bytes() == r1.stdout,
+                  f'{prog}: file a piu\' blocchi, verificato prima di rimuovere l\'ingresso')
+        controlla(not list(d.glob('*.tmp')), f'{prog}: nessun file temporaneo rimasto')
 
 
 if __name__ == '__main__':
@@ -113,6 +190,8 @@ if __name__ == '__main__':
         for etichetta, dati in casi.items():
             n = prova_algoritmo(nome, D, dati, etichetta)
             print(f'  {etichetta:18s} {len(dati):6d} -> {n:6d} byte', flush=True)
+        n1, n2 = prova_flusso(nome, D)
+        print(f'  {"streaming":18s} 5 frame -> {n1} byte, memorizzati -> {n2} byte', flush=True)
     print('comandi:', flush=True)
     prova_comandi('kgzip2', '.kgz')
     prova_comandi('klzma', '.klz')
