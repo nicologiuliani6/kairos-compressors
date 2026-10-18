@@ -8,8 +8,9 @@ Per kgzip2 e klzma: l'uscita compressa coincide byte per byte con il modello
 Python, la decompressione (uncall) ricostruisce l'originale, i file corrotti
 o troncati vengono rifiutati prima della VM. Poi lo streaming (piu' frame,
 gruppi diversi, flussi concatenati, dati in coda, ogni troncamento e ogni byte
-alterato di un file), i comandi veri in una cartella temporanea e la verifica
-degli ordinamenti delle rotazioni.
+alterato di un file), l'uncall senza CRC su file alterati (non deve mai girare
+all'infinito), i comandi veri in una cartella temporanea e la verifica degli
+ordinamenti delle rotazioni.
 """
 import os
 import pathlib
@@ -17,10 +18,12 @@ import random
 import subprocess
 import sys
 import tempfile
+import time
 
 RADICE = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RADICE))
 from comune import contenitore as C     # noqa: E402
+from comune import kvm                  # noqa: E402
 from kgzip2 import driver as KG          # noqa: E402
 from klzma import driver as KL           # noqa: E402
 
@@ -127,6 +130,30 @@ def prova_flusso(nome, D):
     return len(a), len(z)
 
 
+def prova_asserzioni(nome, D):
+    """Senza il CRC un file alterato arriva all'uncall: la VM non deve mai girare
+    all'infinito. O si ferma su un proprio controllo, o termina (e allora il CRC
+    dei dati, che resta, si accorge dell'errore)."""
+    blocco = (RADICE / 'test' / 'corpus' / 'tesi8k.tex').read_bytes()[:512]
+    (r,), _, _ = D.comprimi_gruppo([blocco], timeout=600)
+    conti, bits = r
+    t0 = time.perf_counter()
+    D.decomprimi_gruppo([(len(blocco), conti, bits)], timeout=600)
+    limite = max(10 * (time.perf_counter() - t0), 5.0)
+    rnd = random.Random(3)
+    fermati = 0
+    for _ in range(20):
+        b = list(bits)
+        b[rnd.randrange(len(b))] ^= 1
+        try:
+            out, _, _ = D.decomprimi_gruppo([(len(blocco), conti, b)], timeout=limite)
+            controlla(True, '')
+        except kvm.ErroreKairos as e:
+            controlla('non ha terminato' not in str(e), f'{nome}: un file alterato fa girare l\'uncall all\'infinito')
+            fermati += 1
+    return fermati
+
+
 def prova_comandi(prog, est):
     py = sys.executable
     cmd = [py, str(RADICE / 'bin' / prog)]
@@ -178,6 +205,11 @@ def prova_comandi(prog, est):
                   and (d / f'grande.txt{est}').read_bytes() == r1.stdout,
                   f'{prog}: file a piu\' blocchi, verificato prima di rimuovere l\'ingresso')
         controlla(not list(d.glob('*.tmp')), f'{prog}: nessun file temporaneo rimasto')
+        # --salta-crc: il file alterato arriva all'uncall, e lo ferma la VM o il CRC dei dati
+        r = subprocess.run(cmd + ['-t', '--salta-crc', str((d / 'rotto.txt').with_suffix(est))],
+                           capture_output=True)
+        controlla(r.returncode != 0 and (b'VM' in r.stderr or b'CRC dei dati' in r.stderr),
+                  f'{prog}: --salta-crc, il file alterato non viene accettato')
 
 
 if __name__ == '__main__':
@@ -192,6 +224,8 @@ if __name__ == '__main__':
             print(f'  {etichetta:18s} {len(dati):6d} -> {n:6d} byte', flush=True)
         n1, n2 = prova_flusso(nome, D)
         print(f'  {"streaming":18s} 5 frame -> {n1} byte, memorizzati -> {n2} byte', flush=True)
+        f = prova_asserzioni(nome, D)
+        print(f'  {"senza CRC":18s} 20 bit invertiti: {f} fermati dalla VM, nessuno senza fine', flush=True)
     print('comandi:', flush=True)
     prova_comandi('kgzip2', '.kgz')
     prova_comandi('klzma', '.klz')

@@ -10,6 +10,7 @@
   -T N  blocchi per esecuzione della VM, rami di un par (predefinito: i core)
   -s  un blocco alla volta (come -T 1)
   --timeout S  tempo massimo di ogni esecuzione della VM (predefinito 3600 s)
+  --salta-crc  (esperimenti) un file alterato arriva all'uncall senza il CRC dei frame
 
 Senza FILE legge da stdin e scrive su stdout. Tutto procede in streaming: in
 memoria stanno solo i blocchi del gruppo corrente, qualunque sia la dimensione
@@ -63,6 +64,9 @@ def main(nome, driver, estensione, descrizione, opzioni_extra=None):
                     help='secondi massimi di ogni esecuzione della VM')
     ap.add_argument('--no-verifica', action='store_true',
                     help='non decomprime per verificare prima di rimuovere l\'ingresso')
+    ap.add_argument('--salta-crc', action='store_true',
+                    help='per esperimenti, in decompressione: non controlla il CRC dei frame, '
+                         'cosi\' un file alterato arriva all\'uncall e lo ferma la VM (il CRC dei dati resta)')
     for k in range(1, 10):
         ap.add_argument(f'-{k}', dest='livello', action='store_const', const=k)
     ap.set_defaults(livello=8)
@@ -101,7 +105,7 @@ def main(nome, driver, estensione, descrizione, opzioni_extra=None):
 
     def decomprimi(ing, usc, chi=''):
         st = driver.decomprimi_flusso(ing, usc, gruppo=gruppo, timeout=a.timeout,
-                                      avanzamento=avanzamento)
+                                      avanzamento=avanzamento, salta_crc=a.salta_crc)
         riepilogo(chi, st, False)
 
     stato = 0

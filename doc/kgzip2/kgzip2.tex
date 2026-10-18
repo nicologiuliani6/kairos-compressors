@@ -44,7 +44,7 @@
 \maketitle
 
 \begin{abstract}
-In un linguaggio reversibile comprimere e decomprimere non sono due programmi da tenere allineati: il decompressore è il compressore eseguito all'indietro. Questo lavoro estende il caso di studio del capitolo 4 della tesi (trasformata di Burrows e Wheeler reversibile, a blocchi paralleli, dopo Lyngby et al.~\cite{lyngby}) a un compressore completo, \emph{kgzip2}, costruito sulla pipeline di bzip2: RLE iniziale, BWT, move-to-front, RLE degli zeri e codice di Elias gamma. Tutto è una sola procedura Kairos, \kw{comprimi}. Il programma di decompressione riceve soltanto i bit compressi e cinque contatori per blocco ed esegue \kw{uncall comprimi(...)}: nel sorgente non esiste una riga di decodifica. Perché questo funzioni ogni stadio è \emph{pulito}: consuma l'ingresso e lascia solo l'uscita, compresa la BWT, che nel capitolo 4 lasciava il blocco originale. Il secondo contributo riguarda il punto che~\cite{lyngby} indica come miglioramento necessario, l'ordinamento delle rotazioni: dal bubble sort $O(n^3)$ si passa a un confronto con uscita anticipata, a un merge sort reversibile e infine a un ordinamento per raddoppio dei prefissi, $O(n\log n)$ qualunque siano i dati. @@ABSTRACT_NUMERI@@ L'eseguibile \kw{kgzip2} è un file unico che funziona senza Kairos installato e lavora in streaming, a gruppi di blocchi: la memoria resta costante qualunque sia la dimensione del file.
+In un linguaggio reversibile comprimere e decomprimere non sono due programmi da tenere allineati: il decompressore è il compressore eseguito all'indietro. Questo lavoro estende il caso di studio del capitolo 4 della tesi (trasformata di Burrows e Wheeler reversibile, a blocchi paralleli, dopo Lyngby et al.~\cite{lyngby}) a un compressore completo, \emph{kgzip2}, costruito sulla pipeline di bzip2: RLE iniziale, BWT, move-to-front, RLE degli zeri e codice di Elias gamma. Tutto è una sola procedura Kairos, \kw{comprimi}. Il programma di decompressione riceve soltanto i bit compressi e cinque contatori per blocco ed esegue \kw{uncall comprimi(...)}: nel sorgente non esiste una riga di decodifica. Perché questo funzioni ogni stadio è \emph{pulito}: consuma l'ingresso e lascia solo l'uscita, compresa la BWT, che nel capitolo 4 lasciava il blocco originale. Il secondo contributo riguarda il punto che~\cite{lyngby} indica come miglioramento necessario, l'ordinamento delle rotazioni: dal bubble sort $O(n^3)$ si passa a un confronto con uscita anticipata, a un merge sort reversibile e infine a un ordinamento per raddoppio dei prefissi, $O(n\log n)$ qualunque siano i dati. @@ABSTRACT_NUMERI@@ L'eseguibile \kw{kgzip2} è un file unico che funziona senza Kairos installato e lavora in streaming, a gruppi di blocchi: la memoria resta costante qualunque sia la dimensione del file. Infine, un file alterato che sfugga al CRC quasi sempre ferma la VM da sola: le condizioni che rendono il programma invertibile, lette all'indietro, diventano controlli dell'ingresso che nessuno ha scritto.
 \end{abstract}
 
 \section{Introduzione}
@@ -207,7 +207,7 @@ Nessuna di queste procedure è scritta: sono gli inversi, calcolati dalla VM ist
 
 \paragraph{3. Scrittura.} Dopo l'\kw{uncall} l'array \kw{blocco} contiene i byte originali. Il programma li sposta su uno stack d'uscita (\kw{call scarica}) perché gli array, alla fine del \kw{main}, devono essere a zero; l'involucro li scrive subito in \kw{file.txt} e passa al gruppo successivo; dopo l'ultimo frame controlla il CRC dei dati originali. Più file \kw{.kgz} concatenati si decomprimono nella concatenazione dei dati, come in gzip. In compressione, se il file d'ingresso va rimosso (senza \kw{-k}), il comando decomprime prima il risultato, sempre in streaming, e lo confronta pezzo per pezzo con l'originale; solo allora rimuove l'ingresso.
 
-\paragraph{4. Verifica: \texttt{kgzip2 -t}.} \kw{-t} decomprime senza scrivere nulla, controllando il CRC di ogni frame e alla fine quello dei dati. Il CRC è necessario: le asserzioni d'uscita, all'indietro, diventano controlli sullo stato, ma un file alterato non porta per forza a un'asserzione violata. In una prova con un bit invertito, prima di introdurre il CRC, la decompressione non è terminata. Con il CRC, 40 file con un bit invertito a caso (20 per algoritmo) sono stati rifiutati tutti in meno di un decimo di secondo ciascuno; la suite di test, su un file a più frame, prova anche ogni troncamento e un byte alterato in ogni posizione, e li rifiuta tutti.
+\paragraph{4. Verifica: \texttt{kgzip2 -t}.} \kw{-t} decomprime senza scrivere nulla, controllando il CRC di ogni frame e alla fine quello dei dati. Il CRC è necessario: le asserzioni d'uscita, all'indietro, diventano controlli sullo stato, ma un file alterato non porta per forza a un'asserzione violata. In una prova con un bit invertito, prima di introdurre il CRC, la decompressione non è terminata. Con il CRC, 40 file con un bit invertito a caso (20 per algoritmo) sono stati rifiutati tutti in meno di un decimo di secondo ciascuno; la suite di test, su un file a più frame, prova anche ogni troncamento e un byte alterato in ogni posizione, e li rifiuta tutti. Che cosa fa invece l'\kw{uncall} quando il CRC non lo ferma è misurato in §\ref{sec:manomissione}: quasi sempre si ferma da solo.
 
 \section{Ordinare le rotazioni}
 \label{sec:ordinare}
@@ -273,6 +273,11 @@ Il programma di misura carica un blocco, esegue \kw{ordina} ed \kw{estrai}, stam
 \label{sec:memoria}
 
 @@MEMORIA@@
+
+\subsection{Un file alterato e l'\texttt{uncall}}
+\label{sec:manomissione}
+
+@@MANOMISSIONE@@
 
 \section{Limiti}
 \label{sec:limiti}

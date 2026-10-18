@@ -9,7 +9,7 @@ QUI = pathlib.Path(__file__).resolve().parent
 RADICE = QUI.parent.parent
 DATI = RADICE / 'doc' / 'dati'
 sys.path.insert(0, str(QUI.parent))
-from riempi_comune import memoria, ntest   # noqa: E402
+from riempi_comune import manomissione, memoria, ntest   # noqa: E402
 tex = (QUI / 'preambolo.tex').read_text().split(r'\title{')[0] + (QUI / 'corpo.tex').read_text()
 B = {r['file']: r for r in json.loads((RADICE / 'bench' / 'risultati.json').read_text())}
 v = lambda s: re.sub(r'(?<=\d)\.(?=\d)', '{,}', s)   # virgola decimale, solo fra cifre
@@ -36,7 +36,7 @@ for f in ORDINE:
              + v(f"{100 * k / r['byte']:.1f} & {r['klzma']['comprimi'][1]:.1f} & {r['klzma']['uncall'][1]:.1f}") + r' \\')
 T += [r'\bottomrule', r'\end{tabular}',
       r'\caption{Byte dopo la compressione, blocchi da 8 KiB, $D = 32$. LZMA è il codificatore di 7-Zip '
-      r'senza intestazione (\kw{xz --format=raw}), xz aggiunge la propria; kgzip2 e klzma includono la propria (firma, tipo e lunghezza del frame) e 8 byte '
+      r'senza intestazione (\kw{xz -{}-format=raw}), xz aggiunge la propria; kgzip2 e klzma includono la propria (firma, tipo e lunghezza del frame) e 8 byte '
       r'di CRC. In grassetto il più piccolo. Tempi della VM in secondi; il blocco casuale è memorizzato e non '
       r'passa per la VM in decompressione. Ritorno identico e uscita uguale al modello in tutte le righe.}',
       r'\label{tab:corpus}', r'\end{table}']
@@ -132,7 +132,8 @@ abs_ = (rf"Su file da 8 KB klzma è alla pari con LZMA puro sul testo ({d['tesi8
         r"lavora in streaming, con la memoria costante qualunque sia la dimensione del file.")
 for k_, val in {'@@TAB@@': '\n'.join(T), '@@COMMENTO@@': commento, '@@BLOCCHI@@': blocchi, '@@ABS@@': abs_,
                 '@@VARIANTI@@': varianti, '@@PROFILO@@': profilo_txt, '@@ISTO@@': isto,
-                '@@MEMORIA@@': r'\paragraph{Streaming e memoria.} ' + memoria('klzma'), '@@NTEST@@': ntest()}.items():
+                '@@MEMORIA@@': r'\paragraph{Streaming e memoria.} ' + memoria('klzma'), '@@NTEST@@': ntest(),
+                '@@MANOMISSIONE@@': manomissione('klzma')}.items():
     assert k_ in tex, k_
     tex = tex.replace(k_, val)
 assert r"e resta a pochi punti da LZMA puro sul testo, dove la differenza viene dalla parse golosa e dai contesti mancanti più che dalla reversibilità." in tex

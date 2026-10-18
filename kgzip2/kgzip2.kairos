@@ -462,9 +462,16 @@ procedure impila(int m[], stack src, int n)
     delocal int i = n
 
 // Estende `run` finche' la cima di src vale v (da converti.kairos).
+//
+// La guardia d'ingresso e' `run <= 1` e non `run == 1`: sui dati validi run
+// parte da 1 e cresce, e le due forme coincidono nei due versi. All'indietro
+// pero' la guardia diventa la condizione d'uscita, e se un file alterato fa
+// leggere una corsa lunga 0, `run == 1` non sarebbe mai vera: l'inverso
+// spingerebbe zeri per sempre. Con `run <= 1` esce, e il delocal di run in
+// rle0 ferma la VM con un errore.
 procedure corsa(stack src, int v, int run)
     local int cont = 1
-    from run == 1 do
+    from run <= 1 do
         cont -= 1
         local int w = 0
             pop(w, src)

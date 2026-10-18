@@ -88,9 +88,11 @@ def comprimi(alg, ingresso, uscita, dim, gruppo=None, timeout=None, parametri=()
     return st
 
 
-def decomprimi(alg, ingresso, uscita, gruppo=None, timeout=None, avanzamento=None):
+def decomprimi(alg, ingresso, uscita, gruppo=None, timeout=None, avanzamento=None, salta_crc=False):
+    """salta_crc: per gli esperimenti, i frame passano alla VM senza il controllo
+    del loro CRC; il CRC dei dati ricostruiti si controlla comunque."""
     k = gruppo or core()
-    lt = C.Lettore(ingresso, alg.MAGIA, len(alg.PARAMETRI), alg.NCONT)
+    lt = C.Lettore(ingresso, alg.MAGIA, len(alg.PARAMETRI), alg.NCONT, controlla_crc=not salta_crc)
     st = Statistiche()
     primo = True
     while True:
@@ -146,7 +148,7 @@ def comprimi_dati(alg, dati, dim, gruppo=None, timeout=None, parametri=()):
     return u.getvalue(), (st.frontend, st.vm)
 
 
-def decomprimi_dati(alg, buf, gruppo=None, timeout=None):
+def decomprimi_dati(alg, buf, gruppo=None, timeout=None, salta_crc=False):
     u = io.BytesIO()
-    st = decomprimi(alg, io.BytesIO(buf), u, gruppo, timeout)
+    st = decomprimi(alg, io.BytesIO(buf), u, gruppo, timeout, salta_crc=salta_crc)
     return u.getvalue(), (st.frontend, st.vm)

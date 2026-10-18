@@ -12,10 +12,12 @@ then streaming: a file of several frames compressed with different group
 sizes gives the same bytes, decompresses with different group sizes and when
 concatenated with other streams, trailing garbage is rejected, and on a file of
 several frames every truncation and a corrupted byte at every position are
-rejected. Then the real commands in a temporary folder (input removal after
+rejected. Without the CRC, 20 bit flips per algorithm go straight to `uncall`:
+none may make it loop forever (it must stop on its own checks or end, and then
+the data CRC catches it). Then the real commands in a temporary folder (input removal after
 verification, `-k`, `-c`, `-T`, a multi-block stdin filter, concatenated
-streams from a pipe, `-t` on corrupted and truncated files, refusing to
-overwrite, no temporary file left) and the four rotation sorts of kgzip2
+streams from a pipe, `-t` on corrupted and truncated files, `--salta-crc`,
+refusing to overwrite, no temporary file left) and the four rotation sorts of kgzip2
 against a reference. `--rapido` skips the corpus.
 
 The corpus: `tesi8k.tex` (thesis LaTeX), `janus8k.c` (Kairos VM source),

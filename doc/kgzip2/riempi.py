@@ -7,7 +7,7 @@ DATI = RADICE / 'doc' / 'dati'
 sys.path.insert(0, str(RADICE))
 from kgzip2 import modello, driver as kgzip
 sys.path.insert(0, str(QUI.parent))
-from riempi_comune import memoria, ntest
+from riempi_comune import manomissione, memoria, ntest
 BENCH = {r['file']: r for r in json.loads((RADICE / 'bench' / 'risultati.json').read_text())}
 
 tex = (QUI / 'kgzip2.tex').read_text()
@@ -275,7 +275,7 @@ for k, v in {'@@ABSTRACT_NUMERI@@': abstract_num, '@@CORRETTEZZA@@': correttezza
              '@@TAB_CORPUS@@': tab_corpus, '@@COMMENTO_CORPUS@@': commento_corpus,
              '@@TAB_PROFILO@@': tab_profilo, '@@CONCORRENZA@@': concorrenza,
              '@@CONCLUSIONI@@': conclusioni, '@@MEMORIA@@': memoria('kgzip2'),
-             '@@NTEST@@': ntest()}.items():
+             '@@NTEST@@': ntest(), '@@MANOMISSIONE@@': manomissione('kgzip2')}.items():
     assert k in tex, k
     tex = tex.replace(k, v)
 tex = tex.replace("\\'", "'")

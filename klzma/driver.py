@@ -114,8 +114,8 @@ def comprimi_flusso(ingresso, uscita, dim_blocco=BLOCCO, gruppo=None, timeout=No
     return flusso.comprimi(_QUESTO, ingresso, uscita, dim_blocco, gruppo, timeout, (D,), avanzamento)
 
 
-def decomprimi_flusso(ingresso, uscita, gruppo=None, timeout=None, avanzamento=None):
-    return flusso.decomprimi(_QUESTO, ingresso, uscita, gruppo, timeout, avanzamento)
+def decomprimi_flusso(ingresso, uscita, gruppo=None, timeout=None, avanzamento=None, salta_crc=False):
+    return flusso.decomprimi(_QUESTO, ingresso, uscita, gruppo, timeout, avanzamento, salta_crc)
 
 
 def comprimi(dati, dim_blocco=BLOCCO, timeout=None, gruppo=None, D=D_PREDEFINITO):
@@ -123,8 +123,8 @@ def comprimi(dati, dim_blocco=BLOCCO, timeout=None, gruppo=None, D=D_PREDEFINITO
     return flusso.comprimi_dati(_QUESTO, dati, dim_blocco, gruppo, timeout, (D,))
 
 
-def decomprimi(buf, timeout=None, gruppo=None):
-    return flusso.decomprimi_dati(_QUESTO, buf, gruppo, timeout)
+def decomprimi(buf, timeout=None, gruppo=None, salta_crc=False):
+    return flusso.decomprimi_dati(_QUESTO, buf, gruppo, timeout, salta_crc)
 
 
 def atteso(dati, dim_blocco=BLOCCO, D=D_PREDEFINITO):

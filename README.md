@@ -48,14 +48,15 @@ dist/bin/klzma -d file.txt.klz         # uncall of the same program
 dist/bin/kgzip2 -k file.txt            # keep the input
 tar c folder | dist/bin/klzma > folder.tar.klz   # streaming, constant memory
 cat a.klz b.klz | dist/bin/klzma -d > ab         # concatenated streams
-make test                  # 325 checks
+make test                  # 367 checks
 ```
 
 Options (both commands): `-d` decompress, `-t` test, `-k` keep, `-f` force,
 `-c` stdout, `-v` verbose with progress, `-1`..`-9` block size in KiB (default
 `-8`), `-T N` blocks per VM run, as branches of a `par` (default: one per
-core), `-s` one block at a time (`-T 1`), `--timeout` for each VM run. With no
-file they filter stdin to stdout. `klzma -D N` sets the hash-chain search
+core), `-s` one block at a time (`-T 1`), `--timeout` for each VM run,
+`--salta-crc` (experiments: a damaged file reaches `uncall` without the frame
+CRC check). With no file they filter stdin to stdout. `klzma -D N` sets the hash-chain search
 depth. The output does not depend on `-T`.
 
 Without building: `python3 -m kgzip2 FILE` or `bin/kgzip2 FILE` from the
@@ -114,6 +115,38 @@ about 2.5 KiB/s for klzma and 1.1 KiB/s for kgzip2 on 2 cores, so
 a 100 GB file needs tens of MiB of RAM but about 459 days with klzma.
 Memory is no longer the limit; time is.
 
+## Damaged files and `uncall`
+
+Each frame CRC stops a damaged file before the VM. Without it (`--salta-crc`,
+`bench/manomissione.py`), `uncall comprimi` runs on the damaged data: bit flips,
+pairs of bits, counters changed by one, on a 1 KiB block. The VM almost always
+stops by itself. The inverse must undo the compressor exactly, so data the
+compressor could not have produced leaves a trace: an auxiliary that does not
+return to zero (`delocal`), an exit assertion contradicting its branch, a pop
+from an empty stack. Nobody wrote these checks to validate input: they are the
+conditions that make the program invertible, read backwards.
+
+| | trials | VM stops by itself | of which reversibility checks | never ends | wrong output |
+|---|---|---|---|---|---|
+| kgzip2, before the fix | 260 | 71.2% | 57.7% | 25.4% | 3.5% |
+| kgzip2 | 260 | 96.5% | 83.1% | 0.0% | 3.5% |
+| klzma | 254 | 98.4% | 3.1% | 0.0% | 1.6% |
+
+The first run found a bug: 25.4% of the damaged files made kgzip2 loop forever.
+In `corsa` the entry guard `run == 1` becomes, backwards, the exit test; a run
+length read as 0 made `run` go to -1, -2, ... pushing zeros forever. The guard is
+now `run <= 1`: identical on valid data in both directions (the compressed
+files do not change), but backwards it always exits, and the `delocal` of `run`
+stops the VM. The same trials now never loop, and a test checks it.
+
+The wrong outputs are files the compressor could really have produced: for
+instance the BWT index changed by one always decodes to another consistent
+block. A compressor removes redundancy, and without redundancy there is
+nothing to check: that is why the CRCs stay. In klzma the VM stops mostly on an
+out-of-bounds index (a match distance before the block start), the check a
+careful LZ decoder would also make; in kgzip2 the reversibility checks do most
+of the work.
+
 ## Layout
 
 | path | content |
@@ -123,7 +156,7 @@ Memory is no longer the limit; time is.
 | `kgzip2/`, `klzma/` | one folder per algorithm: Kairos library, driver, Python model, command |
 | `bin/` | development launchers (`bin/kgzip2`, `bin/klzma`) |
 | `test/` | `test_completo.py` and the test corpus |
-| `bench/` | comparisons with bzip2/xz/LZMA, memory as the file grows, profiles, concurrency, klzma variants |
+| `bench/` | comparisons with bzip2/xz/LZMA, memory as the file grows, damaged files, profiles, concurrency, klzma variants |
 | `dist/` | `costruisci.sh`: standalone executables with PyInstaller |
 | `doc/` | LaTeX sources, raw measurement data, PDFs |
 

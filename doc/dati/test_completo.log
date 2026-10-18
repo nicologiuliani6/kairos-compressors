@@ -22,6 +22,7 @@ kgzip2:
   tesi8k.tex           8192 ->   3816 byte
   zeri4k.bin           4096 ->     25 byte
   streaming          5 frame -> 509 byte, memorizzati -> 282 byte
+  senza CRC          20 bit invertiti: 20 fermati dalla VM, nessuno senza fine
 klzma:
   vuoto                   0 ->     15 byte
   un_byte                 1 ->     16 byte
@@ -46,7 +47,8 @@ klzma:
   tesi8k.tex           8192 ->   3483 byte
   zeri4k.bin           4096 ->     31 byte
   streaming          5 frame -> 279 byte, memorizzati -> 283 byte
+  senza CRC          20 bit invertiti: 19 fermati dalla VM, nessuno senza fine
 comandi:
 ordinamenti delle rotazioni:
 
-325 controlli superati, 0 falliti
+367 controlli superati, 0 falliti
