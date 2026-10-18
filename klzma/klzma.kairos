@@ -67,9 +67,7 @@ procedure lung(int b[], int n, int i, int j, int l)
         fi (n - i) > 273
         local int k = 0
         from k == 0 do
-            if b[(i + k)] == b[(j + k)] then
-                l += 1
-            fi l > k
+            l += b[(i + k)] == b[(j + k)]      // un confronto vale 0 o 1: niente salti
             k += 1
         loop until (k > l) || (k == lim)
         if l == lim then
@@ -290,8 +288,7 @@ procedure analizza(int b[], int prev[], int n, int D, int ty[], int ln[], int ds
 procedure rans(int v, int p0, int x, stack bitst, int nb)
     local int f = 0
     local int c = 0
-        f += p0
-        f += v * (4096 - (2 * p0))
+        f += p0 + (v * (4096 - (2 * p0)))
         c += v * p0
         from x >= 65536 loop
             local int h = 0
@@ -311,8 +308,7 @@ procedure rans(int v, int p0, int x, stack bitst, int nb)
             q -= x / 4096
         delocal int q = 0
         c -= v * p0
-        f -= v * (4096 - (2 * p0))
-        f -= p0
+        f -= p0 + (v * (4096 - (2 * p0)))
     delocal int c = 0
     delocal int f = 0
     v -= (x % 4096) >= p0
@@ -330,14 +326,23 @@ procedure prob(int cnt[], int ctx, int p0)
 // toglie dal modello, poi il rANS lo codifica con il modello senza di esso.
 // All'indietro: si decodifica con il modello corrente e poi lo si aggiorna,
 // come in qualunque decodificatore adattivo.
+//
+// La probabilita' si calcola in linea invece che con `call prob` e `uncall prob`:
+// stesse operazioni, due chiamate in meno per ogni bit.
 procedure codbit(int v, int ctx, int cnt[], int pot2[], stack bitst, int x, int nb)
-    if ctx >= 0 then
-        cnt[((2 * ctx) + v)] -= 1
-    fi ctx >= 0
     local int p0 = 0
-        call prob(cnt, ctx, p0)
+        if ctx >= 0 then
+            cnt[((2 * ctx) + v)] -= 1
+            p0 += 1 + (((cnt[(2 * ctx)] + 1) * 4094) / ((cnt[(2 * ctx)] + cnt[((2 * ctx) + 1)]) + 2))
+        else
+            p0 += 2048
+        fi ctx >= 0
         call rans(v, p0, x, bitst, nb)
-        uncall prob(cnt, ctx, p0)
+        if ctx >= 0 then
+            p0 -= 1 + (((cnt[(2 * ctx)] + 1) * 4094) / ((cnt[(2 * ctx)] + cnt[((2 * ctx) + 1)]) + 2))
+        else
+            p0 -= 2048
+        fi ctx >= 0
     delocal int p0 = 0
 
 // --- alberi di bit -----------------------------------------------------------------

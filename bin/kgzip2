@@ -1,5 +1,0 @@
-#!/usr/bin/env python3
-import pathlib, runpy, sys
-radice = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(radice))
-runpy.run_module('kgzip2', run_name='__main__')

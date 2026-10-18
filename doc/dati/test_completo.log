@@ -48,7 +48,10 @@ klzma:
   zeri4k.bin           4096 ->     31 byte
   streaming          5 frame -> 279 byte, memorizzati -> 283 byte
   senza CRC          20 bit invertiti: 19 fermati dalla VM, nessuno senza fine
+binari:
+  kgzip2: 22 casi uguali al modello, ritorno esatto
+  klzma: 22 casi uguali al modello, ritorno esatto
 comandi:
 ordinamenti delle rotazioni:
 
-367 controlli superati, 0 falliti
+495 controlli superati, 0 falliti

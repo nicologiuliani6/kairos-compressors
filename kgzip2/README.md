@@ -9,9 +9,10 @@ block --RLE--> r --BWT--> out, idx --MTF--> m --zero RLE--> tokens --Elias gamma
 
 The whole pipeline is one procedure, `comprimi`, in [`kgzip2.kairos`](kgzip2.kairos).
 Compression runs `call comprimi(...)`, decompression `uncall comprimi(...)`.
-Blocks (8 KiB by default) are read as a stream; each group of blocks (one per
-core by default) is one VM run, with the blocks as branches of a `par`, in both
-directions.
+Blocks (64 KiB by default, 4 to 64 KiB with `-1` .. `-9`) are read as a
+stream; each group of blocks (one per core) is one VM run, with the blocks as
+branches of a `par`, in both directions. Blocks stop at 64 KiB because the
+initial RLE writes a run length in two bytes (at most 65539).
 
 ## Why the inverse is a decompressor
 
@@ -31,8 +32,13 @@ it consumes its input and leaves only its output.
 
 The BWT of `kairos/lossless/bwt.kairos` sorts rotations with a bubble sort that
 compares whole rotations: O(n^3). Here they are sorted by **prefix doubling**
-(Manber and Myers): pairs of ranks sorted by two stable counting sorts, O(n log n)
-whatever the data, with early stop when all ranks are distinct. The old ranks,
+(Manber and Myers): pairs of ranks sorted by stable counting sorts, O(n log n)
+whatever the data, with early stop when all ranks are distinct. The first round
+sorts the pairs of bytes with two counting sorts over 256 keys; from the second
+round the order by the second key is the previous order shifted by h, so one
+counting sort is enough. Ranks do not depend on the order inside ties, so the
+result is the same; only the round that compares whole rotations (2h >= n)
+keeps the two-pass sort, which leaves identical rotations in index order. The old ranks,
 the intermediate order and the "stopped" flag go onto `scarto`, which
 `uncall ordina` empties. [`fusione.kairos`](fusione.kairos) keeps the intermediate
 step (early-exit comparison and a reversible merge sort) and
@@ -43,8 +49,8 @@ step (early-exit comparison and a reversible merge sort) and
 | file | content |
 |---|---|
 | `kgzip2.kairos` | the library: every stage and `comprimi` |
-| `driver.py` | the Kairos program of a group of blocks, data loading as bytecode, frame counters |
-| `__main__.py` | the `kgzip2` command (`python -m kgzip2`, `bin/kgzip2`, `dist/bin/kgzip2`) |
+| `driver.py` | Python reference: the Kairos program of a group of blocks, data as bytecode, frame counters, procedure order |
+| `../nativo/kgzip2.c` | the `kgzip2` command (options of bzip2), built into `dist/bin/kgzip2` |
 | `modello.py` | the same pipeline in Python, bit for bit |
 | `fusione.kairos`, `ordinamenti.py` | rotation sorts: bubble, early exit, merge, prefix doubling |
 | `profilo.py` | cost of each stage, with truncated programs |

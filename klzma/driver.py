@@ -15,10 +15,17 @@ import sys
 
 from comune import flusso
 from comune import kvm
+from comune import libreria
 from . import modello
 
 QUI = pathlib.Path(__file__).resolve().parent
-LIBRERIA = (QUI / 'klzma.kairos').read_text()
+# Le procedure con i cicli piu' percorsi vanno in testa al bytecode (vedi
+# comune/libreria.py): il rANS e i bit, poi la ricerca delle corrispondenze.
+ORDINE = ('lung', 'rans', 'codbit', 'cerca', 'nuovo_stato', 'albero', 'conta_albero', 'decidi',
+          'pigrizia', 'analizza', 'cod_gettone', 'conta_gettone', 'codifica', 'conta_modello',
+          'cod_lung', 'conta_lung', 'togli_copia', 'catene', 'riflesso', 'albero_inv',
+          'conta_albero_inv', 'trova_slot', 'cod_dist', 'conta_dist', 'scarica', 'comprimi')
+LIBRERIA = libreria.riordina((QUI / 'klzma.kairos').read_text(), ORDINE)
 MAGIA = b'KLZ4'
 PARAMETRI = ('D',)
 NCONT = 2
@@ -26,7 +33,6 @@ NCNT = 2 * modello.NCTX
 BLOCCO = 8192
 D_PREDEFINITO = 32
 SEQUENZIALE = False
-OPZIONI = ('D',)
 NOMI = 'b n D prev head ty ln ds st rp slotbase cnt pot2 scarto bitst x nb'.split()
 
 
@@ -114,8 +120,8 @@ def comprimi_flusso(ingresso, uscita, dim_blocco=BLOCCO, gruppo=None, timeout=No
     return flusso.comprimi(_QUESTO, ingresso, uscita, dim_blocco, gruppo, timeout, (D,), avanzamento)
 
 
-def decomprimi_flusso(ingresso, uscita, gruppo=None, timeout=None, avanzamento=None, salta_crc=False):
-    return flusso.decomprimi(_QUESTO, ingresso, uscita, gruppo, timeout, avanzamento, salta_crc)
+def decomprimi_flusso(ingresso, uscita, gruppo=None, timeout=None, avanzamento=None):
+    return flusso.decomprimi(_QUESTO, ingresso, uscita, gruppo, timeout, avanzamento)
 
 
 def comprimi(dati, dim_blocco=BLOCCO, timeout=None, gruppo=None, D=D_PREDEFINITO):
@@ -123,8 +129,8 @@ def comprimi(dati, dim_blocco=BLOCCO, timeout=None, gruppo=None, D=D_PREDEFINITO
     return flusso.comprimi_dati(_QUESTO, dati, dim_blocco, gruppo, timeout, (D,))
 
 
-def decomprimi(buf, timeout=None, gruppo=None, salta_crc=False):
-    return flusso.decomprimi_dati(_QUESTO, buf, gruppo, timeout, salta_crc)
+def decomprimi(buf, timeout=None, gruppo=None):
+    return flusso.decomprimi_dati(_QUESTO, buf, gruppo, timeout)
 
 
 def atteso(dati, dim_blocco=BLOCCO, D=D_PREDEFINITO):

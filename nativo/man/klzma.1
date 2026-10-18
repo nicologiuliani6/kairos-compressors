@@ -1,0 +1,106 @@
+.TH KLZMA 1 "ottobre 2026" "klzma 1.0" "Comandi utente"
+.SH NOME
+klzma \- compressore reversibile in stile LZMA (7\-Zip, xz), scritto in Kairos
+.SH SINTASSI
+.B klzma
+.RI [ opzioni "] [" file " ...]"
+.SH DESCRIZIONE
+.B klzma
+comprime i file con l'algoritmo di LZMA: LZ77 con catene di hash, ripetizione
+dell'ultima distanza e lazy matching, i modelli di contesto di LZMA e un
+codificatore rANS binario. Tutto e' una procedura del linguaggio reversibile
+Kairos: la compressione la esegue in avanti, la decompressione all'indietro
+.RB ( uncall ),
+che si comporta esattamente come un decodificatore LZMA.
+.PP
+Ogni
+.I file
+diventa
+.IR file .klz
+e l'originale viene cancellato; con
+.B \-d
+avviene il contrario. Senza nomi di file, o con
+.BR \- ,
+legge lo standard input e scrive lo standard output. I dati si leggono in
+streaming, a blocchi indipendenti, come in xz con piu' thread: i blocchi di un
+gruppo sono rami di un
+.B par
+di Kairos, e la memoria non dipende dalla dimensione del file.
+.SH OPZIONI
+.TP
+.BR \-z ", " \-\-compress
+Comprime (predefinito).
+.TP
+.BR \-d ", " \-\-decompress ", " \-\-uncompress
+Decomprime.
+.TP
+.BR \-t ", " \-\-test
+Verifica l'integrita' dei file decomprimendoli senza scrivere nulla.
+.TP
+.BR \-l ", " \-\-list
+Elenca flussi, blocchi, dimensioni e rapporto dei file
+.BR .klz ,
+senza decomprimerli.
+.TP
+.BR \-k ", " \-\-keep
+Tiene i file d'ingresso.
+.TP
+.BR \-f ", " \-\-force
+Sovrascrive i file d'uscita, comprime anche file che hanno gia' il suffisso, e
+scrive dati compressi anche su un terminale.
+.TP
+.BR \-c ", " \-\-stdout ", " \-\-to\-stdout
+Scrive su standard output; i file d'ingresso restano.
+.TP
+.BR \-0 " ... " \-9
+Preset: dimensione dei blocchi e profondita' della ricerca nelle catene di
+hash. Predefinito
+.BR \-6 .
+.RS
+.PP
+.nf
+\-0   8 KiB,   4 candidati      \-5   32 KiB,  32 candidati
+\-1   8 KiB,   8 candidati      \-6   64 KiB,  32 candidati
+\-2  16 KiB,   8 candidati      \-7   64 KiB,  64 candidati
+\-3  16 KiB,  16 candidati      \-8  128 KiB,  64 candidati
+\-4  32 KiB,  16 candidati      \-9  256 KiB, 128 candidati
+.fi
+.RE
+.TP
+.BR \-e ", " \-\-extreme
+Raddoppia la profondita' della ricerca.
+.TP
+.BR \-T ", " \-\-threads=\fINUM\fR
+Blocchi per esecuzione della VM, cioe' rami del
+.BR par ;
+0 (predefinito) vuol dire quanti sono i core. Il file prodotto non dipende da
+.IR NUM .
+.TP
+.BR \-S ", " \-\-suffix=\fI.SUF\fR
+Usa il suffisso
+.I .SUF
+invece di
+.BR .klz .
+.TP
+.BI \-\-block\-size= DIM
+Dimensione dei blocchi, per esempio
+.B 64KiB
+o
+.BR 1MiB .
+.TP
+.BR \-q ", " \-\-quiet
+Sopprime gli avvisi; due volte anche gli errori.
+.TP
+.BR \-v ", " \-\-verbose
+Riporta rapporto e dimensioni; su un terminale mostra l'avanzamento.
+.TP
+.BR \-h ", " \-\-help ", " \-H ", " \-\-long\-help
+Aiuto breve e completo.
+.TP
+.BR \-V ", " \-\-version
+Versione.
+.SH CODICI D'USCITA
+0 tutto bene; 1 errore; 2 solo avvisi (per esempio un file saltato).
+.SH VEDI ANCHE
+.BR kgzip2 (1),
+.BR xz (1)

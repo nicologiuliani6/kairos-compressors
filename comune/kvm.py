@@ -31,9 +31,6 @@ class ErroreKairos(Exception):
 
 
 def _kairos_home():
-    if getattr(sys, 'frozen', False):
-        # eseguibile PyInstaller: frontend nell'archivio, libvm.so in kairos/build
-        return pathlib.Path(sys._MEIPASS) / 'kairos'
     cand = []
     if os.environ.get('KAIROS_HOME'):
         cand.append(pathlib.Path(os.environ['KAIROS_HOME']))

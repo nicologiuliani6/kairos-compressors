@@ -1,6 +1,6 @@
 blocco di 8192 byte
-  catene di hash               0.05 s   (cumulato   0.05 s)
-  parse (con lazy)             3.33 s   (cumulato   3.38 s)
-  catene disfatte              0.06 s   (cumulato   3.44 s)
-  istogramma del modello       3.16 s   (cumulato   6.60 s)
-  codifica (rANS)              8.18 s   (cumulato  14.78 s)
+  catene di hash               0.25 s   (cumulato   0.25 s)
+  parse (con lazy)             2.55 s   (cumulato   2.79 s)
+  catene disfatte              0.21 s   (cumulato   3.00 s)
+  istogramma del modello       3.43 s   (cumulato   6.43 s)
+  codifica (rANS)              4.71 s   (cumulato  11.15 s)

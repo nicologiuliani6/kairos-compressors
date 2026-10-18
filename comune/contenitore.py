@@ -101,8 +101,7 @@ Frame = namedtuple('Frame', 'modo n conti carico ultimo crc_dati')
 class Lettore:
     """Legge un flusso frame per frame: un frame esce solo se il suo CRC torna."""
 
-    def __init__(self, ingresso, magia, nparametri, ncontatori, controlla_crc=True):
-        self.controlla_crc = controlla_crc     # False solo per gli esperimenti (--salta-crc)
+    def __init__(self, ingresso, magia, nparametri, ncontatori):
         self.ingresso = ingresso
         self.magia = magia
         self.nparametri = nparametri
@@ -157,7 +156,7 @@ class Lettore:
             corpo = self._leggi(n)
         crc_dati = int.from_bytes(self._leggi(4), 'big') if ultimo else None
         atteso = self.crc
-        if int.from_bytes(self._leggi(4), 'big') != atteso and self.controlla_crc:
+        if int.from_bytes(self._leggi(4), 'big') != atteso:
             raise FileNonValido('CRC del file errato: ' + DANNEGGIATO)
         carico = spacchetta_bit(corpo, conti[-1]) if modo == 0 else corpo
         return Frame(modo, n, conti, carico, ultimo, crc_dati)

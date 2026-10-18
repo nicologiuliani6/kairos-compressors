@@ -20,6 +20,9 @@
 
 // --- carattere k-esimo della rotazione che parte da off --------------------
 //
+//  Non serve piu' alla pipeline (estrai legge il carattere direttamente): resta
+//  per gli ordinamenti di confronto in fusione.kairos e ordinamenti.py.
+//
 //  Basterebbe c += blocco[((off + k) % n)], reversibile perche' l'indice dipende
 //  solo da variabili che il comando non tocca. Qui la correzione e' esplicita,
 //  per mostrare come si disfa un passo che perde informazione: j e' una
@@ -125,9 +128,7 @@ procedure nuovi_ranghi(int r[], int rn[], int sa[], int h, int n)
         local int b = 0
             a += sa[j]
             b += sa[(j - 1)]
-            if (r[a] != r[b]) || (r[((a + h) % n)] != r[((b + h) % n)]) then
-                q += 1
-            fi q > rn[b]
+            q += (r[a] != r[b]) || (r[((a + h) % n)] != r[((b + h) % n)])
             rn[a] += q
             b -= sa[(j - 1)]
             a -= sa[j]
@@ -153,21 +154,42 @@ procedure scarta(int r[], stack scarto, int n)
     loop until i == n
     delocal int i = n
 
-// Un giro: ordina sui primi 2h caratteri. Se non bastano a coprire la
-// rotazione e ci sono ancora ranghi uguali, calcola i ranghi nuovi, mette su
-// scarto l'ordine del giro e i ranghi vecchi e ricomincia con 2h, scambiando i
-// ruoli dei due array. Altrimenti sa e' gia' l'ordine definitivo. Tutto cio' che
-// finisce su scarto sparisce con `uncall ordina`, quando bwt disfa
-// l'ordinamento: per un blocco di n byte sono al piu' 3n interi per giro.
+// Dal secondo giro in poi sa contiene l'ordine del giro precedente, cioe' le
+// rotazioni ordinate per r sui primi h caratteri. L'ordine per la seconda
+// chiave r[x + h] e' allora lo stesso, spostato di h: tmp[j] = sa[j] - h
+// (mod n). Basta un solo counting sort, sulla prima chiave, invece di due
+// (Manber e Myers). Dentro le coppie uguali l'ordine cambia rispetto al
+// metodo con due passate, ma i ranghi nuovi no, perche' dipendono solo dalle
+// coppie; e quando le coppie sono tutte distinte l'ordine e' unico. Resta da
+// fare con due passate solo il giro che confronta le rotazioni intere
+// (2h >= n), dove le rotazioni uguali vanno lasciate in ordine di indice.
+procedure ordina_coppie_succ(int r[], int sa[], int tmp[], int cnt[], int pos[],
+                             stack scarto, int h, int n, int nr)
+    local int j = 0
+    from j == 0 do
+        tmp[j] += ((sa[j] + n) - h) % n
+        j += 1
+    loop until j == n
+    delocal int j = n
+    call scarta(sa, scarto, n)
+    local int zero = 0
+        call per_conteggio(tmp, sa, r, cnt, pos, zero, n, nr)
+    delocal int zero = 0
+    call scarta(tmp, scarto, n)
+
+// Dopo l'ordinamento di un giro: se 2h non basta a coprire la rotazione e ci
+// sono ancora ranghi uguali, calcola i ranghi nuovi, mette su scarto i ranghi
+// vecchi e ricomincia con 2h, scambiando i ruoli dei due array. Altrimenti sa
+// e' gia' l'ordine definitivo. Tutto cio' che finisce su scarto sparisce con
+// `uncall ordina`, quando bwt disfa l'ordinamento.
 //
 // Uscita anticipata: se le coppie sono tutte distinte (l'ultimo rango vale
 // n - 1) l'ordine non cambia piu', e sui dati non ripetitivi bastano pochi
 // giri invece di log n. Dopo la ricorsione pero' non si puo' piu' ricalcolare
 // se si era ricorsi, perche' i ranghi sono stati consumati: l'indicatore d
 // va quindi su scarto, e all'indietro lo si riprende da li'.
-procedure giro(int r[], int rn[], int sa[], int tmp[], int ide[], int cnt[], int pos[],
+procedure coda(int r[], int rn[], int sa[], int tmp[], int ide[], int cnt[], int pos[],
                stack scarto, int h, int n, int nr)
-    call ordina_coppie(r, sa, tmp, ide, cnt, pos, scarto, h, n, nr)
     local int h2 = 0
         h2 += h
         h2 += h
@@ -178,9 +200,8 @@ procedure giro(int r[], int rn[], int sa[], int tmp[], int ide[], int cnt[], int
                     d += 1
                 fi d == 1
                 if d == 0 then
-                    call scarta(sa, scarto, n)
                     call scarta(r, scarto, n)
-                    call giro(rn, r, sa, tmp, ide, cnt, pos, scarto, h2, n, nr)
+                    call giro_succ(rn, r, sa, tmp, ide, cnt, pos, scarto, h2, n, nr)
                 fi d == 0
                 push(d, scarto)
             delocal int d = 0
@@ -188,6 +209,33 @@ procedure giro(int r[], int rn[], int sa[], int tmp[], int ide[], int cnt[], int
         h2 -= h
         h2 -= h
     delocal int h2 = 0
+
+// Il primo giro, h = 1: i ranghi sono i caratteri, e le coppie si ordinano con
+// due counting sort partendo dall'ordine 0..n-1.
+// Le chiavi sono byte: i counting sort di questo giro ne contano 256, non nr.
+procedure giro(int r[], int rn[], int sa[], int tmp[], int ide[], int cnt[], int pos[],
+               stack scarto, int h, int n, int nr)
+    local int ka = 256
+        call ordina_coppie(r, sa, tmp, ide, cnt, pos, scarto, h, n, ka)
+    delocal int ka = 256
+    call coda(r, rn, sa, tmp, ide, cnt, pos, scarto, h, n, nr)
+
+// Un giro successivo: sa arriva pieno, con l'ordine del giro precedente.
+procedure giro_succ(int r[], int rn[], int sa[], int tmp[], int ide[], int cnt[], int pos[],
+                    stack scarto, int h, int n, int nr)
+    local int h2 = 0
+        h2 += h
+        h2 += h
+        if h2 < n then
+            call ordina_coppie_succ(r, sa, tmp, cnt, pos, scarto, h, n, nr)
+        else
+            call scarta(sa, scarto, n)
+            call ordina_coppie(r, sa, tmp, ide, cnt, pos, scarto, h, n, nr)
+        fi h2 < n
+        h2 -= h
+        h2 -= h
+    delocal int h2 = 0
+    call coda(r, rn, sa, tmp, ide, cnt, pos, scarto, h, n, nr)
 
 // Pre: offs, rk, rk2, tmp, ide, cnt, pos a zero; nr >= n e nr >= alfabeto.
 // Post: offs = rotazioni ordinate; il resto e' dato ausiliario, che sparisce
@@ -214,22 +262,10 @@ procedure estrai(int offs[], int blocco[], int out[], int n, int idx)
     local int i = 0
     from i == 0 do
         local int o = 0
-        local int k = 0
             o += offs[i]
-            k += n
-            k -= 1
-            local int c = 0
-                call car(blocco, n, o, k, c)
-                out[i] += c
-                uncall car(blocco, n, o, k, c)
-            delocal int c = 0
-            if o == 0 then
-                idx += i
-            fi o == 0
-            k -= n
-            k += 1
+            out[i] += blocco[(((o + n) - 1) % n)]
+            idx += i * (o == 0)
             o -= offs[i]
-        delocal int k = 0
         delocal int o = 0
         i += 1
     loop until i == n
@@ -376,9 +412,7 @@ procedure bwt(int blocco[], int offs[], int out[], int tv[], int cam[], int ric[
 procedure trova(int tab[], int v, int p)
     local int j = 0
     from j == 0 do
-        if tab[j] == v then
-            p += j
-        fi tab[j] == v
+        p += j * (tab[j] == v)      // un confronto vale 0 o 1: niente salti
         j += 1
     loop until tab[(j - 1)] == v
     j -= p
@@ -391,13 +425,7 @@ procedure sposta(int tab[], int p)
         local int q = 0
             q += p
             from q == p do
-                local int q1 = 0
-                    q1 += q
-                    q1 -= 1
-                    tab[q] <=> tab[q1]
-                    q1 += 1
-                    q1 -= q
-                delocal int q1 = 0
+                tab[q] <=> tab[(q - 1)]
                 q -= 1
             loop until q == 0
         delocal int q = 0
@@ -651,24 +679,28 @@ procedure rle1(stack src, stack out, int nsrc, int n1)
                     fi z == 1
                     // azzeramento del testimone: in cima a out ci sono quattro
                     // valori uguali se e solo se si e' emessa una corsa
+                    // (le due celle sotto si guardano solo se le prime due sono
+                    // uguali: sul testo, quasi mai)
                     if n1 >= 4 then
                         local int a = 0
                         local int b = 0
-                        local int c = 0
-                        local int d = 0
                             pop(a, out)
                             pop(b, out)
-                            pop(c, out)
-                            pop(d, out)
-                            if (a == b) && (b == c) && (c == d) then
-                                z -= 1
-                            fi (a == b) && (b == c) && (c == d)
-                            push(d, out)
-                            push(c, out)
+                            if a == b then
+                                local int c = 0
+                                local int d = 0
+                                    pop(c, out)
+                                    pop(d, out)
+                                    if (b == c) && (c == d) then
+                                        z -= 1
+                                    fi (b == c) && (c == d)
+                                    push(d, out)
+                                    push(c, out)
+                                delocal int d = 0
+                                delocal int c = 0
+                            fi a == b
                             push(b, out)
                             push(a, out)
-                        delocal int d = 0
-                        delocal int c = 0
                         delocal int b = 0
                         delocal int a = 0
                     fi n1 >= 4

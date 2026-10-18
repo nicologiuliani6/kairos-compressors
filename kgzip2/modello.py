@@ -22,10 +22,33 @@ def rle1(s):
     return out
 
 
-def bwt(s):
+def bwt_ingenua(s):
     n = len(s)
     rot = sorted(range(n), key=lambda o: s[o:] + s[:o])
     return [s[(o - 1) % n] for o in rot], rot.index(0)
+
+
+def bwt(s):
+    """Come bwt_ingenua (rotazioni ordinate, quelle identiche in ordine di
+    indice), ma per raddoppio dei prefissi: O(n log^2 n) invece di confrontare
+    rotazioni intere, cosi' il modello regge anche blocchi da 64 KiB."""
+    n = len(s)
+    if n == 0:
+        return [], 0
+    rango, h = list(s), 1
+    sa = list(range(n))
+    while True:
+        chiave = [(rango[i], rango[(i + h) % n]) for i in range(n)]
+        sa = sorted(range(n), key=chiave.__getitem__)       # stabile: a parita' l'indice
+        nuovo, r = [0] * n, 0
+        for j in range(1, n):
+            r += chiave[sa[j]] != chiave[sa[j - 1]]
+            nuovo[sa[j]] = r
+        rango = nuovo
+        if r == n - 1 or 2 * h >= n:
+            break
+        h *= 2
+    return [s[(o - 1) % n] for o in sa], sa.index(0)
 
 
 def mtf(s):

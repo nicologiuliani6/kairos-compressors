@@ -1,0 +1,299 @@
+[
+ {
+  "file": "casuale4k.bin",
+  "byte": 4096,
+  "bzip2": 4580,
+  "xz": 4156,
+  "lzma_raw": 4158,
+  "kgzip2": {
+   "byte": 4111,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.01,
+    23.12
+   ],
+   "uncall": [
+    0.0,
+    0.0
+   ]
+  },
+  "klzma": {
+   "byte": 4112,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.02,
+    5.34
+   ],
+   "uncall": [
+    0.0,
+    0.0
+   ]
+  }
+ },
+ {
+  "file": "cerchio.pgm",
+  "byte": 269,
+  "bzip2": 78,
+  "xz": 104,
+  "lzma_raw": 44,
+  "kgzip2": {
+   "byte": 63,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.01,
+    0.27
+   ],
+   "uncall": [
+    0.01,
+    0.26
+   ]
+  },
+  "klzma": {
+   "byte": 56,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.03,
+    0.1
+   ],
+   "uncall": [
+    0.02,
+    0.1
+   ]
+  }
+ },
+ {
+  "file": "cerchio64.pgm",
+  "byte": 4109,
+  "bzip2": 124,
+  "xz": 168,
+  "lzma_raw": 109,
+  "kgzip2": {
+   "byte": 116,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.01,
+    3.04
+   ],
+   "uncall": [
+    0.01,
+    3.06
+   ]
+  },
+  "klzma": {
+   "byte": 123,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.02,
+    1.12
+   ],
+   "uncall": [
+    0.02,
+    1.18
+   ]
+  }
+ },
+ {
+  "file": "doppio8k.tex",
+  "byte": 8192,
+  "bzip2": 2182,
+  "xz": 1956,
+  "lzma_raw": 1899,
+  "kgzip2": {
+   "byte": 2934,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.02,
+    21.83
+   ],
+   "uncall": [
+    0.02,
+    21.3
+   ]
+  },
+  "klzma": {
+   "byte": 1830,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.02,
+    3.86
+   ],
+   "uncall": [
+    0.02,
+    4.08
+   ]
+  }
+ },
+ {
+  "file": "janus8k.c",
+  "byte": 8192,
+  "bzip2": 3214,
+  "xz": 3172,
+  "lzma_raw": 3113,
+  "kgzip2": {
+   "byte": 3601,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.0,
+    12.32
+   ],
+   "uncall": [
+    0.0,
+    11.1
+   ]
+  },
+  "klzma": {
+   "byte": 3124,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.0,
+    6.56
+   ],
+   "uncall": [
+    0.0,
+    6.85
+   ]
+  }
+ },
+ {
+  "file": "periodico8k.txt",
+  "byte": 8192,
+  "bzip2": 61,
+  "xz": 112,
+  "lzma_raw": 54,
+  "kgzip2": {
+   "byte": 58,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.0,
+    18.41
+   ],
+   "uncall": [
+    0.0,
+    18.5
+   ]
+  },
+  "klzma": {
+   "byte": 42,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.0,
+    2.11
+   ],
+   "uncall": [
+    0.0,
+    2.21
+   ]
+  }
+ },
+ {
+  "file": "readme8k.md",
+  "byte": 8192,
+  "bzip2": 3473,
+  "xz": 3380,
+  "lzma_raw": 3321,
+  "kgzip2": {
+   "byte": 3928,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.0,
+    13.01
+   ],
+   "uncall": [
+    0.01,
+    11.61
+   ]
+  },
+  "klzma": {
+   "byte": 3340,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.0,
+    6.84
+   ],
+   "uncall": [
+    0.01,
+    7.08
+   ]
+  }
+ },
+ {
+  "file": "tesi8k.tex",
+  "byte": 8192,
+  "bzip2": 3343,
+  "xz": 3544,
+  "lzma_raw": 3485,
+  "kgzip2": {
+   "byte": 3816,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.0,
+    12.49
+   ],
+   "uncall": [
+    0.0,
+    11.39
+   ]
+  },
+  "klzma": {
+   "byte": 3483,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.0,
+    7.45
+   ],
+   "uncall": [
+    0.0,
+    7.66
+   ]
+  }
+ },
+ {
+  "file": "zeri4k.bin",
+  "byte": 4096,
+  "bzip2": 43,
+  "xz": 92,
+  "lzma_raw": 32,
+  "kgzip2": {
+   "byte": 25,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.01,
+    0.79
+   ],
+   "uncall": [
+    0.01,
+    0.81
+   ]
+  },
+  "klzma": {
+   "byte": 31,
+   "modello": true,
+   "ritorno": true,
+   "comprimi": [
+    0.02,
+    1.0
+   ],
+   "uncall": [
+    0.02,
+    1.07
+   ]
+  }
+ }
+]

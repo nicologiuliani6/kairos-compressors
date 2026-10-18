@@ -10,8 +10,8 @@
    "modello": true,
    "ritorno": true,
    "comprimi": [
-    0.01,
-    23.12
+    0.0,
+    8.59
    ],
    "uncall": [
     0.0,
@@ -23,8 +23,8 @@
    "modello": true,
    "ritorno": true,
    "comprimi": [
-    0.02,
-    5.34
+    0.0,
+    2.34
    ],
    "uncall": [
     0.0,
@@ -43,12 +43,12 @@
    "modello": true,
    "ritorno": true,
    "comprimi": [
-    0.01,
-    0.27
+    0.0,
+    0.11
    ],
    "uncall": [
-    0.01,
-    0.26
+    0.0,
+    0.1
    ]
   },
   "klzma": {
@@ -56,12 +56,12 @@
    "modello": true,
    "ritorno": true,
    "comprimi": [
-    0.03,
-    0.1
+    0.0,
+    0.06
    ],
    "uncall": [
-    0.02,
-    0.1
+    0.0,
+    0.07
    ]
   }
  },
@@ -76,12 +76,12 @@
    "modello": true,
    "ritorno": true,
    "comprimi": [
-    0.01,
-    3.04
+    0.0,
+    0.74
    ],
    "uncall": [
-    0.01,
-    3.06
+    0.0,
+    0.77
    ]
   },
   "klzma": {
@@ -89,12 +89,12 @@
    "modello": true,
    "ritorno": true,
    "comprimi": [
-    0.02,
-    1.12
+    0.0,
+    0.61
    ],
    "uncall": [
-    0.02,
-    1.18
+    0.0,
+    0.68
    ]
   }
  },
@@ -109,12 +109,12 @@
    "modello": true,
    "ritorno": true,
    "comprimi": [
-    0.02,
-    21.83
+    0.0,
+    8.1
    ],
    "uncall": [
-    0.02,
-    21.3
+    0.0,
+    8.15
    ]
   },
   "klzma": {
@@ -122,12 +122,12 @@
    "modello": true,
    "ritorno": true,
    "comprimi": [
-    0.02,
-    3.86
+    0.0,
+    2.81
    ],
    "uncall": [
-    0.02,
-    4.08
+    0.0,
+    3.13
    ]
   }
  },
@@ -143,11 +143,11 @@
    "ritorno": true,
    "comprimi": [
     0.0,
-    12.32
+    4.92
    ],
    "uncall": [
     0.0,
-    11.1
+    4.67
    ]
   },
   "klzma": {
@@ -156,11 +156,11 @@
    "ritorno": true,
    "comprimi": [
     0.0,
-    6.56
+    4.61
    ],
    "uncall": [
     0.0,
-    6.85
+    4.96
    ]
   }
  },
@@ -176,11 +176,11 @@
    "ritorno": true,
    "comprimi": [
     0.0,
-    18.41
+    7.06
    ],
    "uncall": [
     0.0,
-    18.5
+    7.29
    ]
   },
   "klzma": {
@@ -189,11 +189,11 @@
    "ritorno": true,
    "comprimi": [
     0.0,
-    2.11
+    0.99
    ],
    "uncall": [
     0.0,
-    2.21
+    1.08
    ]
   }
  },
@@ -209,11 +209,11 @@
    "ritorno": true,
    "comprimi": [
     0.0,
-    13.01
+    5.22
    ],
    "uncall": [
-    0.01,
-    11.61
+    0.0,
+    4.99
    ]
   },
   "klzma": {
@@ -222,11 +222,11 @@
    "ritorno": true,
    "comprimi": [
     0.0,
-    6.84
+    4.82
    ],
    "uncall": [
-    0.01,
-    7.08
+    0.0,
+    5.19
    ]
   }
  },
@@ -242,11 +242,11 @@
    "ritorno": true,
    "comprimi": [
     0.0,
-    12.49
+    5.0
    ],
    "uncall": [
     0.0,
-    11.39
+    4.81
    ]
   },
   "klzma": {
@@ -255,11 +255,11 @@
    "ritorno": true,
    "comprimi": [
     0.0,
-    7.45
+    5.5
    ],
    "uncall": [
     0.0,
-    7.66
+    5.81
    ]
   }
  },
@@ -274,12 +274,12 @@
    "modello": true,
    "ritorno": true,
    "comprimi": [
-    0.01,
-    0.79
+    0.0,
+    0.18
    ],
    "uncall": [
-    0.01,
-    0.81
+    0.0,
+    0.22
    ]
   },
   "klzma": {
@@ -287,12 +287,12 @@
    "modello": true,
    "ritorno": true,
    "comprimi": [
-    0.02,
-    1.0
+    0.0,
+    0.49
    ],
    "uncall": [
-    0.02,
-    1.07
+    0.0,
+    0.53
    ]
   }
  }

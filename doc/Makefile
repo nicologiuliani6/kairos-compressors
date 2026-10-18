@@ -5,7 +5,7 @@ PY := $(abspath ../.venv/bin/python)
 
 all: kgzip2.pdf klzma.pdf
 
-COMUNI := riempi_comune.py dati/memoria.json dati/manomissione.json dati/manomissione_prima.json dati/test_completo.log dati/concorrenza.json ../bench/risultati.json
+COMUNI := riempi_comune.py dati/memoria.json dati/manomissione.json dati/manomissione_prima.json dati/preset.json dati/blocchi_nativo.txt dati/risultati_prima_ottimizzazioni.json dati/test_completo.log dati/concorrenza.json ../bench/risultati.json
 
 kgzip2.pdf: kgzip2/kgzip2.tex kgzip2/riempi.py $(COMUNI)
 	cd kgzip2 && $(PY) riempi.py && pdflatex -interaction=nonstopmode -halt-on-error kgzip2_pieno.tex >/dev/null \

@@ -9,7 +9,7 @@ QUI = pathlib.Path(__file__).resolve().parent
 RADICE = QUI.parent.parent
 DATI = RADICE / 'doc' / 'dati'
 sys.path.insert(0, str(QUI.parent))
-from riempi_comune import manomissione, memoria, ntest   # noqa: E402
+from riempi_comune import efficienza, livelli, manomissione, memoria, ntest   # noqa: E402
 tex = (QUI / 'preambolo.tex').read_text().split(r'\title{')[0] + (QUI / 'corpo.tex').read_text()
 B = {r['file']: r for r in json.loads((RADICE / 'bench' / 'risultati.json').read_text())}
 v = lambda s: re.sub(r'(?<=\d)\.(?=\d)', '{,}', s)   # virgola decimale, solo fra cifre
@@ -35,9 +35,9 @@ for f in ORDINE:
     T.append(f"{NOMI[f]} & {r['byte']} & {r['bzip2']} & {r['xz']} & {r['lzma_raw']} & {r['kgzip2']['byte']} & {kk} & "
              + v(f"{100 * k / r['byte']:.1f} & {r['klzma']['comprimi'][1]:.1f} & {r['klzma']['uncall'][1]:.1f}") + r' \\')
 T += [r'\bottomrule', r'\end{tabular}',
-      r'\caption{Byte dopo la compressione, blocchi da 8 KiB, $D = 32$. LZMA è il codificatore di 7-Zip '
+      r'\caption{Byte dopo la compressione con le opzioni predefinite (\kw{-6}: blocchi da 64 KiB, $D = 32$; ogni file è un blocco solo). LZMA è il codificatore di 7-Zip '
       r'senza intestazione (\kw{xz -{}-format=raw}), xz aggiunge la propria; kgzip2 e klzma includono la propria (firma, tipo e lunghezza del frame) e 8 byte '
-      r'di CRC. In grassetto il più piccolo. Tempi della VM in secondi; il blocco casuale è memorizzato e non '
+      r"di CRC. In grassetto il più piccolo. Tempi in secondi del comando \kw{klzma}, dall'avvio alla fine; il blocco casuale è memorizzato e non "
       r'passa per la VM in decompressione. Ritorno identico e uscita uguale al modello in tutte le righe.}',
       r'\label{tab:corpus}', r'\end{table}']
 rel = lambda a, b: v(f'{100 * (a - b) / b:.1f}')
@@ -89,24 +89,31 @@ def profilo(path):
             out.append((m.group(1), float(m.group(2))))
     return out
 
-nuovo, vecchio = profilo(DATI / 'profilo_klzma.txt'), profilo(DATI / 'profilo_klzma_v1.txt')
+nuovo, medio, vecchio = (profilo(DATI / 'profilo_klzma.txt'), profilo(DATI / 'profilo_klzma_v2.txt'),
+                         profilo(DATI / 'profilo_klzma_v1.txt'))
 tot = sum(s for _, s in nuovo)
-P = [r'\begin{table}[t]', r'\centering\small', r'\begin{tabular}{@{}lrrr@{}}', r'\toprule',
-     r'stadio & prima & ora & quota \\', r'\midrule']
-for (nome, s), (_, s0) in zip(nuovo, vecchio):
-    if abs(s) < 0.05 and abs(s0) < 0.05:
+P = [r'\begin{table}[t]', r'\centering\small', r'\begin{tabular}{@{}lrrrr@{}}', r'\toprule',
+     r'stadio & v1 & v2 & ora & quota \\', r'\midrule']
+for (nome, s), (_, s1), (_, s0) in zip(nuovo, medio, vecchio):
+    if abs(s) < 0.05 and abs(s0) < 0.05 and abs(s1) < 0.05:
         continue
-    P.append(f'{nome} & {s0:.2f} & {s:.2f} & {100 * max(s, 0) / tot:.0f}\\%'.replace('.', '{,}') + r' \\')
-P += [r'\midrule', f'totale & {sum(s for _, s in vecchio):.2f} & {tot:.2f} & 100\\%'.replace('.', '{,}') + r' \\',
+    P.append(v(f'{nome} & {s0:.2f} & {s1:.2f} & {s:.2f} & {100 * max(s, 0) / tot:.0f}') + r'\% \\')
+P += [r'\midrule', v(f'totale & {sum(s for _, s in vecchio):.2f} & {sum(s for _, s in medio):.2f} & {tot:.2f} & 100') + r'\% \\',
       r'\bottomrule', r'\end{tabular}',
       r"\caption{Costo per stadio su un blocco di 8 KiB della tesi, andata e ritorno di ogni stadio (secondi "
-      r"di VM). ``prima'': istogramma calcolato rieseguendo la codifica in un modo di conteggio e disfacendola; "
-      r"``ora'': conteggio in sola lettura, e codifica senza i modi.}",
+      r"di VM). v1: istogramma calcolato rieseguendo la codifica in un modo di conteggio e disfacendola; v2: "
+      r"conteggio in sola lettura, codifica senza i modi; ora: probabilità in linea, confronti come valori "
+      r"nella ricerca, procedure calde in testa al bytecode.}",
       r'\label{tab:profilo}', r'\end{table}']
 isto_v, isto_n = [s for n, s in vecchio if n.startswith('istogramma')][0], [s for n, s in nuovo if n.startswith('istogramma')][0]
 profilo_txt = (r'\paragraph{Dove va il tempo.} La Tabella~\ref{tab:profilo} misura ogni stadio con programmi '
-               r'troncati. Dopo le due ottimizzazioni la codifica rANS è la parte più cara: ogni bit è una '
-               r"divisione, un aggiornamento del modello e, all'indietro, la stessa cosa al contrario."
+               r'troncati. La codifica rANS resta la parte più cara: ogni bit è una divisione, un aggiornamento '
+               r"del modello e, all'indietro, la stessa cosa al contrario. Nell'ultima versione la probabilità di "
+               r"ogni bit si calcola in linea in \kw{codbit}, invece che con \kw{call prob} e \kw{uncall prob}; nel "
+               r"ciclo che misura una corrispondenza \kw{if b[i+k] == b[j+k] then l += 1 fi} diventa "
+               r"\kw{l += b[i+k] == b[j+k]}, perché un confronto vale 0 o 1; e le procedure con i cicli più "
+               r"percorsi stanno in testa al bytecode, perché la VM ritrova la riga di ogni salto scorrendo il "
+               r"testo dall'inizio (il rapporto su kgzip2 lo misura)."
                '\n\n' + '\n'.join(P))
 isto = v(f'costava {isto_v:.1f} s su 8 KiB (andata e ritorno), questa ne costa {isto_n:.1f}')
 
@@ -133,7 +140,8 @@ abs_ = (rf"Su file da 8 KB klzma è alla pari con LZMA puro sul testo ({d['tesi8
 for k_, val in {'@@TAB@@': '\n'.join(T), '@@COMMENTO@@': commento, '@@BLOCCHI@@': blocchi, '@@ABS@@': abs_,
                 '@@VARIANTI@@': varianti, '@@PROFILO@@': profilo_txt, '@@ISTO@@': isto,
                 '@@MEMORIA@@': r'\paragraph{Streaming e memoria.} ' + memoria('klzma'), '@@NTEST@@': ntest(),
-                '@@MANOMISSIONE@@': manomissione('klzma')}.items():
+                '@@MANOMISSIONE@@': manomissione('klzma'), '@@EFFICIENZA@@': r'\paragraph{Efficienza.} ' + efficienza('klzma', NOMI),
+                '@@LIVELLI@@': livelli('klzma')}.items():
     assert k_ in tex, k_
     tex = tex.replace(k_, val)
 assert r"e resta a pochi punti da LZMA puro sul testo, dove la differenza viene dalla parse golosa e dai contesti mancanti più che dalla reversibilità." in tex

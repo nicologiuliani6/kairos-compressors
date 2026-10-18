@@ -18,7 +18,7 @@ block --LZ77 (hash chains, rep0, lazy)--> tokens --LZMA contexts, binary rANS-->
 | lengths, distances | LZMA length coder, distance slots, reverse trees, align | the same (slots 12-13 with one direct bit + align) |
 | state machine | 12 states | the same |
 | entropy coder | range coder, shift-updated probabilities | **binary rANS, probabilities from counts** |
-| blocks | LZMA2 chunks, shared dictionary | independent blocks, streamed in groups that are branches of a `par` (like xz multithreaded), stored blocks |
+| blocks | LZMA2 chunks, shared dictionary | independent blocks (8 to 256 KiB with the presets), streamed in groups that are branches of a `par` (like xz multithreaded), stored blocks |
 
 Rep1-3 and the matched literal were measured on the Python model and left out:
 on 8 KiB blocks they cost more contexts than they save
@@ -31,7 +31,9 @@ injective (2016 and 2017 both become 2017), so it cannot be undone without
 garbage. rANS maps the state with
 `x' = (x / f) * 4096 + c + (x mod f)`: an exact bijection on integers, whose
 inverse is the decoder. Probabilities come from two counts per context, which
-backwards are simply subtracted.
+backwards are simply subtracted. The probability of each bit is computed in
+line in `codbit`, before and after the rANS step, instead of with a call and
+an uncall of a separate procedure: same operations, two calls fewer per bit.
 
 ## Why the order matters
 
@@ -49,8 +51,8 @@ already rebuilt, and updates the model after each bit. rANS is a stack and
 | file | content |
 |---|---|
 | `klzma.kairos` | the library: LZ77, histogram, rANS, `comprimi` |
-| `driver.py` | the Kairos program of a group of blocks, data loading as bytecode, frame counters |
-| `__main__.py` | the `klzma` command |
+| `driver.py` | Python reference: the Kairos program of a group of blocks, data as bytecode, frame counters, procedure order |
+| `../nativo/klzma.c` | the `klzma` command (options of xz, presets `-0` .. `-9`), built into `dist/bin/klzma` |
 | `modello.py` | the same pipeline in Python, with an independent forward decoder |
 
 ## KLZ4 format

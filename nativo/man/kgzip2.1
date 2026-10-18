@@ -1,0 +1,94 @@
+.TH KGZIP2 1 "ottobre 2026" "kgzip2 1.0" "Comandi utente"
+.SH NOME
+kgzip2 \- compressore reversibile a blocchi in stile bzip2, scritto in Kairos
+.SH SINTASSI
+.B kgzip2
+.RB [ \-cdfhkLqstvVz123456789 ]
+.RI [ file " ...]"
+.SH DESCRIZIONE
+.B kgzip2
+comprime i file con la pipeline di bzip2 (RLE iniziale, trasformata di
+Burrows e Wheeler, move\-to\-front, RLE degli zeri) e un codice di Elias gamma.
+Tutta la pipeline e' una procedura del linguaggio reversibile Kairos: la
+compressione la esegue in avanti, la decompressione all'indietro
+.RB ( uncall ).
+Il decompressore non esiste come codice a se'.
+.PP
+Ogni
+.I file
+diventa
+.IR file .kgz ,
+con gli stessi permessi e le stesse date, e l'originale viene cancellato; con
+.B \-d
+avviene il contrario. Senza nomi di file, o con
+.BR \- ,
+legge lo standard input e scrive lo standard output.
+.PP
+I dati si leggono in streaming, a blocchi indipendenti: in memoria c'e' solo
+un gruppo di blocchi, uno per core, qualunque sia la dimensione del file. I
+blocchi di un gruppo sono rami di un
+.B par
+di Kairos. Ogni blocco ha un CRC32 che si controlla prima di avviare la VM; in
+fondo c'e' il CRC32 dei dati originali. Piu' file
+.B .kgz
+concatenati si decomprimono nella concatenazione dei dati.
+.SH OPZIONI
+.TP
+.BR \-c ", " \-\-stdout
+Scrive su standard output; i file d'ingresso restano.
+.TP
+.BR \-d ", " \-\-decompress
+Decomprime. Un nome senza
+.B .kgz
+diventa
+.IR nome .out .
+.TP
+.BR \-z ", " \-\-compress
+Comprime (predefinito).
+.TP
+.BR \-t ", " \-\-test
+Verifica l'integrita' dei file decomprimendoli senza scrivere nulla.
+.TP
+.BR \-f ", " \-\-force
+Sovrascrive i file d'uscita, comprime anche file che hanno gia' il suffisso, e
+scrive dati compressi anche su un terminale.
+.TP
+.BR \-k ", " \-\-keep
+Tiene i file d'ingresso.
+.TP
+.BR \-s ", " \-\-small
+Usa meno memoria: un blocco alla volta invece di uno per core.
+.TP
+.BR \-q ", " \-\-quiet
+Sopprime gli avvisi non critici.
+.TP
+.BR \-v ", " \-\-verbose
+Riporta rapporto e dimensioni di ogni file; su un terminale mostra anche
+l'avanzamento.
+.TP
+.BR \-1 " ... " \-9
+Dimensione dei blocchi: 4, 8, 12, 16, 24, 32, 40, 48, 64 KiB (predefinito
+.BR \-9 ).
+Blocchi piu' grandi comprimono meglio. Il massimo e' 64 KiB perche' l'RLE
+iniziale scrive la lunghezza di una corsa in due byte.
+.TP
+.B \-\-fast
+Come
+.BR \-1 .
+.TP
+.B \-\-best
+Come
+.BR \-9 .
+.TP
+.BR \-h ", " \-\-help
+Aiuto.
+.TP
+.BR \-L ", " \-\-license ", " \-V ", " \-\-version
+Licenza e versione.
+.SH CODICI D'USCITA
+0 tutto bene; 1 problema d'ambiente (file mancante, opzione sconosciuta, errore
+di lettura o scrittura); 2 file compresso danneggiato o troncato; 3 errore
+interno.
+.SH VEDI ANCHE
+.BR klzma (1),
+.BR bzip2 (1)

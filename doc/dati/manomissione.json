@@ -9,8 +9,8 @@
     4584
    ],
    "bit": 4584,
-   "secondi_uncall": 1.33,
-   "limite": 13.3
+   "secondi_uncall": 0.59,
+   "limite": 5.9
   },
   "totale": {
    "asserzione": 251,
@@ -43,1561 +43,1561 @@
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.14
+    "secondi": 0.07
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.43
+    "secondi": 0.23
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.07
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "uscita sbagliata",
-    "motivo": "",
-    "secondi": 1.32
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "uscita sbagliata",
     "motivo": "",
-    "secondi": 1.32
+    "secondi": 0.61
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.39
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.42
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.14
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "uscita sbagliata",
     "motivo": "",
-    "secondi": 1.3
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.59
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.16
+    "secondi": 0.05
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.11
+    "secondi": 0.07
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.14
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.39
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.11
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.39
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.41
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.39
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.42
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.05
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.11
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
+    "secondi": 0.07
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.11
+    "secondi": 0.07
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.17
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.14
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.43
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.41
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.13
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.14
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.42
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.4
+    "secondi": 0.05
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.16
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.11
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.13
+    "secondi": 0.21
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.05
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.39
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.41
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.39
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.39
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.1
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.11
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.13
+    "secondi": 0.07
    },
    {
     "tipo": "bit invertito",
     "esito": "uscita sbagliata",
     "motivo": "",
-    "secondi": 1.43
+    "secondi": 0.58
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.21
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.39
+    "secondi": 0.05
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.13
+    "secondi": 0.21
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.1
+    "secondi": 0.05
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.49
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.13
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.13
+    "secondi": 0.05
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.39
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.12
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.26
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.11
+    "secondi": 0.07
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.4
+    "secondi": 0.21
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.11
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "asserzione d'uscita",
-    "secondi": 0.11
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.41
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.08
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.23
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.21
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.27
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.25
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.25
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.24
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.21
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.07
    },
    {
     "tipo": "bit invertito",
     "esito": "uscita sbagliata",
     "motivo": "",
-    "secondi": 1.3
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.39
+    "secondi": 0.6
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.44
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.12
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.14
+    "secondi": 0.05
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.14
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.11
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.39
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.14
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.14
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.14
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.41
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.14
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.41
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.41
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 2.04
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.41
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.47
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.39
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.11
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.14
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.48
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.41
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.41
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.14
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.57
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.39
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.14
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.44
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.39
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.11
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.21
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.12
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.14
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.4
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.39
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.39
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "uscita sbagliata",
     "motivo": "",
-    "secondi": 1.31
+    "secondi": 0.61
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.27
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.11
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.12
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.24
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.85
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.23
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.21
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.23
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.23
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.21
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.12
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "uscita sbagliata",
+    "motivo": "",
+    "secondi": 0.58
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "asserzione d'uscita",
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.12
+    "secondi": 0.05
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.07
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.07
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.07
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.4
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.1
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.11
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.4
+    "secondi": 0.07
    },
    {
-    "tipo": "due bit alterati",
+    "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
+    "secondi": 0.06
    },
    {
-    "tipo": "due bit alterati",
+    "tipo": "bit invertito",
     "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.12
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.05
    },
    {
-    "tipo": "due bit alterati",
+    "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.39
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.39
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.11
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.21
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.11
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.13
+    "secondi": 0.07
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.14
+    "secondi": 0.06
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.24
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.23
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.07
    },
    {
     "tipo": "due bit alterati",
     "esito": "uscita sbagliata",
     "motivo": "",
-    "secondi": 1.33
+    "secondi": 0.6
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.39
+    "secondi": 0.05
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
+    "secondi": 0.22
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.14
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.39
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
+    "secondi": 0.22
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.13
+    "secondi": 0.07
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.15
+    "secondi": 0.07
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
+    "secondi": 0.05
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.12
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.11
+    "secondi": 0.05
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.41
+    "secondi": 0.22
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.4
+    "secondi": 0.05
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.11
+    "secondi": 0.05
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.22
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.12
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.07
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
+    "secondi": 0.05
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.12
+    "secondi": 0.06
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.14
+    "secondi": 0.05
    },
    {
     "tipo": "contatore 0 +1",
     "esito": "uscita sbagliata",
     "motivo": "",
-    "secondi": 1.33
+    "secondi": 0.59
    },
    {
     "tipo": "contatore 0 -1",
     "esito": "uscita sbagliata",
     "motivo": "",
-    "secondi": 1.32
+    "secondi": 0.58
    },
    {
     "tipo": "contatore 1 +1",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.06
    },
    {
     "tipo": "contatore 1 -1",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.07
    },
    {
     "tipo": "contatore 2 +1",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.13
+    "secondi": 0.07
    },
    {
     "tipo": "contatore 2 -1",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.13
+    "secondi": 0.07
    },
    {
     "tipo": "contatore 3 +1",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.11
+    "secondi": 0.06
    },
    {
     "tipo": "contatore 3 -1",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.13
+    "secondi": 0.07
    },
    {
     "tipo": "numero di bit +1",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.1
+    "secondi": 0.06
    },
    {
     "tipo": "numero di bit -1",
     "esito": "asserzione",
     "motivo": "asserzione d'uscita",
-    "secondi": 0.12
+    "secondi": 0.07
    }
   ],
   "reversibilita": 216
@@ -1609,8 +1609,8 @@
     4067
    ],
    "bit": 4067,
-   "secondi_uncall": 1.09,
-   "limite": 10.9
+   "secondi_uncall": 0.74,
+   "limite": 7.4
   },
   "totale": {
    "asserzione": 250,
@@ -1642,73 +1642,19 @@
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.32
+    "secondi": 0.14
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.43
+    "secondi": 0.18
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.67
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.65
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.24
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.55
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.03
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.63
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.58
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.23
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.6
+    "secondi": 0.32
    },
    {
     "tipo": "bit invertito",
@@ -1720,31 +1666,7 @@
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.62
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.24
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.45
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.21
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.35
+    "secondi": 0.12
    },
    {
     "tipo": "bit invertito",
@@ -1755,38 +1677,8 @@
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.94
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.6
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.53
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.48
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.15
+    "secondi": 0.03
    },
    {
     "tipo": "bit invertito",
@@ -1798,61 +1690,103 @@
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.5
+    "secondi": 0.2
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.63
+    "secondi": 0.28
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.05
+    "secondi": 0.11
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.5
+    "secondi": 0.3
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.59
+    "secondi": 0.14
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.59
+    "secondi": 0.31
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.57
+    "secondi": 0.11
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.66
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
+    "secondi": 0.1
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.16
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.12
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
     "secondi": 0.65
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.09
+    "secondi": 0.3
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.2
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.25
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.13
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.25
    },
    {
     "tipo": "bit invertito",
@@ -1864,31 +1798,55 @@
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.07
+    "secondi": 0.24
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.44
+    "secondi": 0.03
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.19
+    "secondi": 0.32
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.52
+    "secondi": 0.24
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.44
+    "secondi": 0.3
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.28
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.28
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.31
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.33
    },
    {
     "tipo": "bit invertito",
@@ -1899,62 +1857,314 @@
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.03
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.2
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.04
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.11
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.27
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.2
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.03
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.32
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.66
+    "secondi": 0.33
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.64
+    "secondi": 0.26
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.54
+    "secondi": 0.31
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.61
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.5
+    "secondi": 0.25
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.66
+    "secondi": 0.33
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.66
+    "secondi": 0.29
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.71
+    "secondi": 0.31
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.42
+    "secondi": 0.2
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.16
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.02
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.04
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.14
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.23
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.24
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.18
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.18
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.13
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.12
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.1
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.17
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.18
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
     "secondi": 0.33
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.21
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.26
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.13
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.14
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.31
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.18
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.03
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.13
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.21
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.15
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.29
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.11
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.18
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.04
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.04
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.21
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.27
    },
    {
     "tipo": "bit invertito",
@@ -1972,133 +2182,25 @@
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.11
+    "secondi": 0.24
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.29
+    "secondi": 0.22
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.47
+    "secondi": 0.09
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.54
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.17
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.38
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.37
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.3
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.26
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.25
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.34
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.38
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.66
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.43
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.52
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.27
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.29
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.59
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.37
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.05
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.27
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.43
+    "secondi": 0.31
    },
    {
     "tipo": "bit invertito",
@@ -2110,13 +2212,25 @@
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.35
+    "secondi": 0.06
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.59
+    "secondi": 0.21
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "uscita sbagliata",
+    "motivo": "",
+    "secondi": 0.73
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.65
    },
    {
     "tipo": "bit invertito",
@@ -2128,85 +2242,49 @@
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.43
+    "secondi": 0.24
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.09
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.27
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.02
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.08
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.09
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.03
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
     "secondi": 0.23
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.46
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.07
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.06
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.44
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.53
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.05
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.17
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.49
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.45
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.21
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.21
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.64
    },
    {
     "tipo": "bit invertito",
@@ -2218,72 +2296,48 @@
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.49
+    "secondi": 0.21
    },
    {
     "tipo": "bit invertito",
     "esito": "uscita sbagliata",
     "motivo": "",
-    "secondi": 1.06
+    "secondi": 0.66
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.25
+    "secondi": 0.23
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.16
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.04
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.33
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.03
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "delocal",
-    "secondi": 0.96
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.5
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.55
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.05
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.22
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.19
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.06
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.2
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
     "secondi": 0.47
    },
    {
@@ -2294,21 +2348,57 @@
    },
    {
     "tipo": "bit invertito",
-    "esito": "uscita sbagliata",
-    "motivo": "",
-    "secondi": 0.94
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.27
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.39
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.41
+    "secondi": 0.11
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.7
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.47
+    "secondi": 0.28
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.71
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.12
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.31
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.29
    },
    {
     "tipo": "bit invertito",
@@ -2320,211 +2410,13 @@
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.07
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.72
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.76
+    "secondi": 0.31
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.04
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.47
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.61
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.61
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.26
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 1.0
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.58
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 1.04
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.28
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.61
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.61
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.73
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.68
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.39
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.45
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.28
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.04
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.69
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.28
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.5
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.65
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.41
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.63
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.48
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.43
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.49
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.55
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.63
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.17
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.43
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.27
+    "secondi": 0.19
    },
    {
     "tipo": "bit invertito",
@@ -2536,79 +2428,61 @@
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.53
+    "secondi": 0.13
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.6
+    "secondi": 0.02
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.63
+    "secondi": 0.12
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "delocal",
+    "secondi": 0.45
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
+    "secondi": 0.24
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.2
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
     "secondi": 0.32
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.27
+    "secondi": 0.19
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.22
+    "secondi": 0.31
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.07
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.65
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.22
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.36
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.34
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.11
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.55
+    "secondi": 0.23
    },
    {
     "tipo": "bit invertito",
@@ -2620,79 +2494,43 @@
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.64
+    "secondi": 0.24
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.62
+    "secondi": 0.3
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.55
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.66
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.67
+    "secondi": 0.09
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.49
+    "secondi": 0.27
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.42
+    "secondi": 0.13
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.35
+    "secondi": 0.2
    },
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.43
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.04
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.55
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.5
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.04
+    "secondi": 0.13
    },
    {
     "tipo": "bit invertito",
@@ -2704,7 +2542,163 @@
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.59
+    "secondi": 0.29
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.29
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.15
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.12
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.11
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.32
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.04
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.11
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.16
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.16
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.26
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.1
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.3
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.31
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.26
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.33
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.33
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.17
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.24
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.16
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.21
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.03
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.27
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.27
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.03
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.12
    },
    {
     "tipo": "bit invertito",
@@ -2721,74 +2715,14 @@
    {
     "tipo": "bit invertito",
     "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.67
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.56
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.33
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.24
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.09
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.65
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.35
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "uscita sbagliata",
-    "motivo": "",
-    "secondi": 1.01
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.5
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.45
+    "secondi": 0.32
    },
    {
     "tipo": "bit invertito",
@@ -2800,7 +2734,73 @@
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.37
+    "secondi": 0.15
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.12
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.04
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.32
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.08
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.17
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.24
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "uscita sbagliata",
+    "motivo": "",
+    "secondi": 0.73
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.13
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.08
    },
    {
     "tipo": "bit invertito",
@@ -2812,61 +2812,37 @@
     "tipo": "bit invertito",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
+    "secondi": 0.1
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.23
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.32
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.11
+   },
+   {
+    "tipo": "bit invertito",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.08
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
     "secondi": 0.19
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.5
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.25
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.65
-   },
-   {
-    "tipo": "bit invertito",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.17
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.43
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.04
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.67
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.37
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.57
    },
    {
     "tipo": "due bit alterati",
@@ -2877,224 +2853,14 @@
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
-    "motivo": "pop da stack vuoto",
-    "secondi": 0.65
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.32
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.55
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.24
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.36
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.47
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.06
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.22
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.66
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.08
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.33
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.44
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.57
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.04
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.65
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.62
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.34
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "uscita sbagliata",
-    "motivo": "",
-    "secondi": 1.02
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.13
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.44
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.58
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.12
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.43
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.53
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.44
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.46
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.29
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.39
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.15
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "delocal",
-    "secondi": 0.59
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.11
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.4
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.17
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.26
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.29
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.49
-   },
-   {
-    "tipo": "due bit alterati",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.54
+    "secondi": 0.18
    },
    {
     "tipo": "due bit alterati",
@@ -3106,19 +2872,175 @@
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.56
+    "secondi": 0.02
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "pop da stack vuoto",
+    "secondi": 0.33
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.39
+    "secondi": 0.27
    },
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.57
+    "secondi": 0.12
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.18
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.23
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.04
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.1
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.04
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.32
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.07
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.14
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.21
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.28
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.03
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.32
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.3
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.16
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.06
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "uscita sbagliata",
+    "motivo": "",
+    "secondi": 0.73
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.26
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.23
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.26
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.21
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.21
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.22
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.14
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.19
    },
    {
     "tipo": "due bit alterati",
@@ -3129,38 +3051,116 @@
    {
     "tipo": "due bit alterati",
     "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.35
+    "motivo": "delocal",
+    "secondi": 0.41
    },
    {
-    "tipo": "contatore 0 +1",
+    "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
-    "secondi": 0.02
+    "secondi": 0.21
    },
    {
-    "tipo": "contatore 0 -1",
-    "esito": "asserzione",
-    "motivo": "indice fuori dai limiti",
-    "secondi": 0.02
-   },
-   {
-    "tipo": "numero di bit +1",
+    "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
     "secondi": 0.06
    },
    {
-    "tipo": "numero di bit -1",
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.09
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.12
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.14
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.24
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.28
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.13
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.31
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.2
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.17
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.28
+   },
+   {
+    "tipo": "due bit alterati",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "contatore 0 +1",
     "esito": "asserzione",
     "motivo": "indice fuori dai limiti",
     "secondi": 0.01
    },
    {
+    "tipo": "contatore 0 -1",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.01
+   },
+   {
+    "tipo": "numero di bit +1",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.05
+   },
+   {
+    "tipo": "numero di bit -1",
+    "esito": "asserzione",
+    "motivo": "indice fuori dai limiti",
+    "secondi": 0.02
+   },
+   {
     "tipo": "due bit alterati",
     "esito": "asserzione",
     "motivo": "pop da stack vuoto",
-    "secondi": 0.65
+    "secondi": 0.32
    }
   ],
   "reversibilita": 8

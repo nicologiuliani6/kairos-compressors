@@ -82,8 +82,8 @@ LIB = {
                           'procedure ordina_rot(int offs[], int tmp[], int blocco[], stack scarto, int n)\n'
                           '    call identita(offs, n)\n    call ordina(offs, tmp, blocco, scarto, n)']),
     'raddoppio': '\n'.join([IDENT, BZIP['car'], BZIP['estrai'], BZIP['cumulata']] +
-                           [RAD[k] for k in ('conta_chiavi', 'per_conteggio', 'ordina_coppie',
-                                             'nuovi_ranghi', 'scarta', 'giro', 'ordina')]),
+                           [RAD[k] for k in ('conta_chiavi', 'per_conteggio', 'ordina_coppie', 'ordina_coppie_succ',
+                                             'nuovi_ranghi', 'scarta', 'coda', 'giro', 'giro_succ', 'ordina')]),
 }
 ARGS = {
     'bolle': 'offs, blocco, scarto, n', 'bolle_ae': 'offs, blocco, scarto, n',

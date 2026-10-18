@@ -14,3 +14,4 @@ doc/kgzip2/*.out
 doc/klzma/*.out
 *.kgz
 *.klz
+nativo/gen/

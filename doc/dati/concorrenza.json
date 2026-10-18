@@ -7,13 +7,13 @@
   "blocchi": 2,
   "par": {
    "byte": 4251,
-   "comprimi": 6.22,
-   "uncall": 5.48
+   "comprimi": 2.64,
+   "uncall": 2.59
   },
   "seq": {
    "byte": 4251,
-   "comprimi": 11.77,
-   "uncall": 10.55
+   "comprimi": 4.94,
+   "uncall": 4.65
   }
  },
  {
@@ -24,13 +24,13 @@
   "blocchi": 4,
   "par": {
    "byte": 4710,
-   "comprimi": 6.65,
-   "uncall": 5.81
+   "comprimi": 2.81,
+   "uncall": 2.61
   },
   "seq": {
    "byte": 4710,
-   "comprimi": 12.39,
-   "uncall": 10.68
+   "comprimi": 5.17,
+   "uncall": 4.78
   }
  },
  {
@@ -41,13 +41,13 @@
   "blocchi": 3,
   "par": {
    "byte": 8648,
-   "comprimi": 9.59,
-   "uncall": 10.42
+   "comprimi": 7.18,
+   "uncall": 7.73
   },
   "seq": {
    "byte": 8648,
-   "comprimi": 18.26,
-   "uncall": 19.14
+   "comprimi": 13.43,
+   "uncall": 14.28
   }
  },
  {
@@ -58,8 +58,8 @@
   "blocchi": 1,
   "par": {
    "byte": 7717,
-   "comprimi": 18.55,
-   "uncall": 19.01
+   "comprimi": 13.95,
+   "uncall": 14.23
   }
  }
 ]

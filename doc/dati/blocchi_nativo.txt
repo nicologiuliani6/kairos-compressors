@@ -1,0 +1,10 @@
+kgzip2 blocco   8 KiB: comprimi 5.2 s 10 MiB, decomprimi 4.9 s 10 MiB
+kgzip2 blocco  32 KiB: comprimi 22.0 s 15 MiB, decomprimi 21.0 s 24 MiB
+kgzip2 blocco  64 KiB: comprimi 46.3 s 31 MiB, decomprimi 44.9 s 47 MiB
+klzma  blocco   8 KiB: comprimi 4.7 s 10 MiB, decomprimi 5.2 s 10 MiB
+klzma  blocco  32 KiB: comprimi 22.9 s 10 MiB, decomprimi 24.4 s 16 MiB
+klzma  blocco  64 KiB: comprimi 46.5 s 12 MiB, decomprimi 47.6 s 30 MiB
+klzma  blocco 128 KiB: comprimi 82.9 s 23 MiB, decomprimi 84.3 s 50 MiB
+klzma  blocco 256 KiB: comprimi 161.8 s 46 MiB, decomprimi 163.2 s 92 MiB
+
+[exited with code 0]

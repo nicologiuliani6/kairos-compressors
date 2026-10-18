@@ -16,67 +16,90 @@ def ntest():
 
 def _dati(alg):
     M = [r for r in json.loads((DATI / 'memoria.json').read_text()) if r['algoritmo'] == alg]
-    ora, prima = {}, {}
+    per = {}
     for r in M:
-        if r['versione'] == 'streaming':
-            ora.setdefault(r['kib'], {})[r['verso']] = r
-        else:
-            prima[r['kib']] = r
-    return ora, prima
+        per.setdefault(r['versione'], {}).setdefault(r['kib'], {})[r['verso']] = r
+    return per
 
 
 def memoria(alg):
-    """Tabella e commento: picco di RAM prima e dopo lo streaming, e throughput."""
-    ora, prima = _dati(alg)
-    kib = sorted(k for k in ora if {'comprimi', 'decomprimi'} <= set(ora[k]))
-    T = [r'\begin{table}[t]', r'\centering\small', r'\begin{tabular}{@{}rrrrrrrr@{}}', r'\toprule',
-         r'& & \multicolumn{2}{c}{prima (MiB)} & \multicolumn{2}{c}{streaming (MiB)} & '
-         r'\multicolumn{2}{c}{secondi} \\',
-         r'\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}',
-         r'KiB & byte compressi & Python & VM & Python & VM & comprimi & \kw{uncall} \\', r'\midrule']
-    for k in kib:
-        c, d = ora[k]['comprimi'], ora[k]['decomprimi']
-        py = max(c['python_mib'], d['python_mib'])
-        vm = max(c['vm_mib'], d['vm_mib'])
-        p = prima.get(k)
-        if p and 'errore' in p:
-            pp = r'\multicolumn{2}{c}{non riesce}'
-        else:
-            pp = (f"{p['python_mib']:.0f} & {p['vm_mib']:.0f}") if p else '-- & --'
-        T.append(v(f"{k} & {c['byte_compressi']} & {pp} & {py:.0f} & {vm:.0f} & "
-                   f"{c['secondi']:.0f} & {d['secondi']:.0f}") + r' \\')
-    T += [r'\bottomrule', r'\end{tabular}',
-          r'\caption{Picco di memoria residente al crescere del file (sorgenti di Kairos concatenati), '
-          r"per il processo Python e per il processo della VM; ``prima'': la versione che leggeva tutto il file "
-          r'e metteva tutti i blocchi in un solo programma (solo compressione). Il processo della VM nasce da un '
-          r"\kw{fork} dell'involucro, e il suo picco comprende le pagine condivise con Python. Blocchi da 8 KiB, "
-          r'gruppi di 2, 2 core.}', rf'\label{{tab:memoria-{alg}}}', r'\end{table}']
-    falliti = sorted(k for k in prima if 'errore' in prima[k])
-    pk = sorted(k for k in prima if 'errore' not in prima[k])
+    """Tabella e commento: picco di memoria nelle tre versioni e throughput del binario."""
+    per = _dati(alg)
+    nat, stre, prima = per.get('nativo', {}), per.get('streaming', {}), per.get('prima', {})
+    kib = sorted(k for k in nat if {'comprimi', 'decomprimi'} <= set(nat[k]))
     tot = lambda r: r['python_mib'] + r['vm_mib']
-    pend = (tot(prima[pk[-1]]) - tot(prima[pk[0]])) * 2 ** 20 / ((pk[-1] - pk[0]) * 1024)
-    pend_vm = (prima[pk[-1]]['vm_mib'] - prima[pk[0]]['vm_mib']) * 2 ** 20 / ((pk[-1] - pk[0]) * 1024)
-    pys = [max(ora[k]['comprimi']['python_mib'], ora[k]['decomprimi']['python_mib']) for k in kib]
-    vms = [max(ora[k]['comprimi']['vm_mib'], ora[k]['decomprimi']['vm_mib']) for k in kib]
+    T = [r'\begin{table}[t]', r'\centering\small', r'\begin{tabular}{@{}rrrrrr@{}}', r'\toprule',
+         r'& \multicolumn{3}{c}{picco di memoria (MiB)} & \multicolumn{2}{c}{secondi (nativo)} \\',
+         r'\cmidrule(lr){2-4}\cmidrule(lr){5-6}',
+         r'KiB & prima & streaming in Python & nativo & comprimi & \kw{uncall} \\', r'\midrule']
+    for k in kib:
+        c, d = nat[k]['comprimi'], nat[k]['decomprimi']
+        p = prima.get(k, {}).get('comprimi')
+        pp = (r'non riesce' if 'errore' in p else f"{tot(p):.0f}") if p else '--'
+        sk = stre.get(k, {})
+        ss = f"{max(tot(x) for x in sk.values()):.0f}" if {'comprimi', 'decomprimi'} <= set(sk) else '--'
+        T.append(v(f"{k} & {pp} & {ss} & {max(c['mib'], d['mib']):.0f} & {c['secondi']:.0f} & "
+                   f"{d['secondi']:.0f}") + r' \\')
+    T += [r'\bottomrule', r'\end{tabular}',
+          r'\caption{Picco di memoria residente al crescere del file (sorgenti di Kairos concatenati). '
+          r"``Prima'': la versione che leggeva tutto il file e metteva tutti i blocchi in un solo programma "
+          r"(solo compressione, Python e VM insieme); ``streaming in Python'': il driver Python a gruppi, blocchi "
+          r"da 8 KiB; ``nativo'': il binario, con le opzioni predefinite (blocchi da 64 KiB, uno per core), "
+          r'massimo fra compressione e decompressione. 2 core.}', rf'\label{{tab:memoria-{alg}}}', r'\end{table}']
+    pk = sorted(k for k in prima if 'errore' not in prima[k]['comprimi'])
+    falliti = sorted(k for k in prima if 'errore' in prima[k]['comprimi'])
+    pend = (tot(prima[pk[-1]]['comprimi']) - tot(prima[pk[0]]['comprimi'])) * 2 ** 20 / ((pk[-1] - pk[0]) * 1024)
+    sm = [max(tot(x) for x in stre[k].values()) for k in stre if {'comprimi', 'decomprimi'} <= set(stre[k])]
+    nm = [max(nat[k]['comprimi']['mib'], nat[k]['decomprimi']['mib']) for k in kib]
     grande = kib[-1]
-    vel_c = grande * 1024 / ora[grande]['comprimi']['secondi']
-    vel_d = grande * 1024 / ora[grande]['decomprimi']['secondi']
+    vel_c = grande * 1024 / nat[grande]['comprimi']['secondi']
+    vel_d = grande * 1024 / nat[grande]['decomprimi']['secondi']
     giorni = 100e9 / vel_c / 86400
     testo = v(
         rf"Prima dello streaming l'involucro leggeva tutto il file e metteva tutti i blocchi in un solo "
-        rf"programma: la memoria cresceva con il file, di circa {pend:.0f} byte di RAM per byte d'ingresso "
-        rf"(Python e VM insieme, di cui {pend_vm:.0f} nella VM), da {tot(prima[pk[0]]):.0f} MiB per "
-        rf"{pk[0]} KiB a {tot(prima[pk[-1]]):.0f} MiB per {pk[-1]} KiB" +
+        rf"programma: la memoria cresceva con il file, di circa {pend:.0f} byte di RAM per byte d'ingresso, "
+        rf"da {tot(prima[pk[0]]['comprimi']):.0f} MiB per {pk[0]} KiB a {tot(prima[pk[-1]]['comprimi']):.0f} MiB "
+        rf"per {pk[-1]} KiB" +
         (rf", e a {falliti[0]} KiB non riusciva affatto: con più di 10 blocchi in un programma i nomi per "
          rf"blocco si sovrapponevano (§\ref{{sec:pipeline}})" if falliti else '') +
-        rf". Con lo streaming, da {kib[0]} a "
-        rf"{grande} KiB il picco resta fra {min(pys):.0f} e {max(pys):.0f} MiB per Python e fra "
-        rf"{min(vms):.0f} e {max(vms):.0f} MiB per la VM (Tabella~\ref{{tab:memoria-{alg}}}): dipende dal "
-        rf"gruppo, non dal file. Il tempo invece resta lineare: {vel_c / 1024:.1f} KiB al secondo in "
-        rf"compressione e {vel_d / 1024:.1f} in decompressione su 2 core, verifica esclusa. Un file da 100 GB ora si comprime "
-        rf"con poche decine di MiB, ma richiederebbe circa {giorni:.0f} giorni: la memoria non è più il "
-        rf"limite, il tempo sì.")
+        rf". Con lo streaming il picco smette di dipendere dal file: col driver Python stava fra "
+        rf"{min(sm):.0f} e {max(sm):.0f} MiB, quasi tutti dell'interprete Python e del frontend; il binario "
+        rf"nativo, che non li contiene, sta fra {min(nm):.0f} e {max(nm):.0f} MiB da {kib[0]} a {grande} KiB "
+        rf"(Tabella~\ref{{tab:memoria-{alg}}}), con blocchi otto volte più grandi. Il tempo invece resta "
+        rf"lineare: {vel_c / 1024:.1f} KiB al secondo in compressione e {vel_d / 1024:.1f} in decompressione "
+        rf"su 2 core. Un file da 100 GB si comprime con poche decine di MiB, ma richiederebbe circa "
+        rf"{giorni:.0f} giorni: la memoria non è più il limite, il tempo sì.")
     return '\n'.join(T) + '\n\n' + testo
+
+
+def efficienza(alg, nomi):
+    """Tempi per file prima e dopo le ottimizzazioni."""
+    prima = {r['file']: r for r in json.loads((DATI / 'risultati_prima_ottimizzazioni.json').read_text())}
+    ora = {r['file']: r for r in json.loads((DATI.parent.parent / 'bench' / 'risultati.json').read_text())}
+    T = [r'\begin{table}[t]', r'\centering\small', r'\begin{tabular}{@{}lrrrr@{}}', r'\toprule',
+         r'& \multicolumn{2}{c}{prima (s)} & \multicolumn{2}{c}{ora (s)} \\',
+         r'\cmidrule(lr){2-3}\cmidrule(lr){4-5}',
+         r'file & comprimi & \kw{uncall} & comprimi & \kw{uncall} \\', r'\midrule']
+    rc, ru = [], []
+    for f, nome in nomi.items():
+        if f not in prima or f not in ora or prima[f][alg]['comprimi'][1] < 0.5:
+            continue
+        a, b = prima[f][alg], ora[f][alg]
+        T.append(v(f"{nome} & {a['comprimi'][1]:.1f} & {a['uncall'][1]:.1f} & {b['comprimi'][1]:.1f} & "
+                   f"{b['uncall'][1]:.1f}") + r' \\')
+        rc.append(a['comprimi'][1] / b['comprimi'][1])
+        if a['uncall'][1] >= 0.5:
+            ru.append(a['uncall'][1] / b['uncall'][1])
+    T += [r'\bottomrule', r'\end{tabular}',
+          r'\caption{Secondi per file prima e dopo le ottimizzazioni, stessa macchina e stessa VM. '
+          r"``Prima'': tempo della VM con il driver Python, prima degli interventi; ``ora'': il comando "
+          r'nativo intero, dall\'avvio alla fine. I file compressi sono identici.}', rf'\label{{tab:efficienza-{alg}}}',
+          r'\end{table}']
+    media = lambda x: sum(x) / len(x)
+    testo = v(rf"Sui file del corpus (Tabella~\ref{{tab:efficienza-{alg}}}) la compressione è in media "
+              rf"{media(rc):.1f} volte più veloce e la decompressione {media(ru):.1f} volte, da {min(rc):.1f} a "
+              rf"{max(rc):.1f} volte secondo il file.")
+    return '\n'.join(T).replace("all\\'avvio", "all'avvio") + '\n\n' + testo
 
 
 # --- file alterati e uncall --------------------------------------------------
@@ -107,7 +130,7 @@ def manomissione(alg):
     if alg == 'klzma':
         return v(
             rf"\paragraph{{Un file alterato.}} Il CRC di ogni frame ferma un file alterato prima della VM. "
-            rf"Senza di esso (lo stesso esperimento del rapporto su kgzip2; dal comando, \kw{{klzma -t -{{}}-salta-crc}}), su {kl['tot']} "
+            rf"Senza di esso (lo stesso esperimento del rapporto su kgzip2, \kw{{bench/manomissione.py}}), su {kl['tot']} "
             rf"alterazioni di un blocco di 1 KiB (bit invertiti, coppie di bit, contatori cambiati di uno) la VM "
             rf"si ferma da sola nel {pc(kl['ass'], kl)} dei casi e non gira mai all'infinito; il "
             rf"{pc(kl['sb'], kl)} termina con dati sbagliati, che il CRC dei dati ferma alla fine. Quasi sempre "
@@ -122,14 +145,14 @@ def manomissione(alg):
          _riga(r'kgzip2, prima della correzione', kgp), _riga('kgzip2', kg), _riga('klzma', kl),
          r'\bottomrule', r'\end{tabular}',
          r'\caption{\kw{uncall comprimi} su un blocco di 1 KiB della tesi alterato, senza il controllo del CRC. '
-         r'Le prove sono le stesse nelle due righe di kgzip2. ``Da controlli di reversibilità'': \kw{delocal} e '
+         r"Le prove sono le stesse nelle due righe di kgzip2. ``Da controlli di reversibilità'': \kw{delocal} e "
          r"asserzioni d'uscita, che esistono solo perché il programma deve potersi invertire; il resto della "
          r"colonna precedente sono \kw{pop} da stack vuoti e indici fuori dai limiti. ``Non termina'': oltre "
          r'dieci volte il tempo normale.}', r'\label{tab:manomissione}', r'\end{table}']
     testo = v(
         r"Il CRC di ogni frame ferma un file alterato prima della VM. Che cosa succederebbe senza? "
         r"L'esperimento (\kw{bench/manomissione.py}) comprime 1 KiB della tesi, lo altera e lancia "
-        r"direttamente \kw{uncall comprimi}, saltando il CRC (lo stesso fa il comando con \kw{-{}-salta-crc}): "
+        r"direttamente \kw{uncall comprimi}, saltando il CRC: "
         r"200 bit invertiti a caso, 50 coppie di bit adiacenti alterate, ogni contatore del frame cambiato "
         rf"di $\pm1$, un bit in più o in meno in fondo. Una decompressione normale dura {base['secondi_uncall']:.1f} s; "
         rf"oltre {base['limite']:.0f} s conta come non terminata (Tabella~\ref{{tab:manomissione}})." "\n\n"
@@ -165,4 +188,70 @@ def manomissione(alg):
         rf"sempre ({idx_kl} casi su {kl['tot']}) per un indice fuori dai limiti, cioè per lo stesso controllo "
         r"che farebbe un decodificatore LZ scritto con cura: i controlli propri della reversibilità lì contano "
         r"poco.")
+    return '\n'.join(T) + '\n\n' + testo
+
+
+# --- preset e dimensione dei blocchi ---------------------------------------
+
+def _blocchi_nativo(alg):
+    """{KiB: (secondi comprimi, MiB comprimi, secondi decomprimi, MiB decomprimi)} di un blocco solo."""
+    out = {}
+    for m in re.finditer(rf'^{alg}\s+blocco\s+(\d+) KiB: comprimi ([\d.]+) s (\d+) MiB, decomprimi ([\d.]+) s (\d+) MiB',
+                         (DATI / 'blocchi_nativo.txt').read_text(), re.M):
+        out[int(m.group(1))] = (float(m.group(2)), int(m.group(3)), float(m.group(4)), int(m.group(5)))
+    return out
+
+
+def livelli(alg):
+    P = json.loads((DATI / 'preset.json').read_text())
+    n = P['kib'] * 1024
+    pc = lambda b: v(f'{100 * b / n:.1f}') + r'\%'
+    bl = _blocchi_nativo(alg)
+    if alg == 'klzma':
+        T = [r'\begin{table}[t]', r'\centering\small', r'\begin{tabular}{@{}lrrrr@{}}', r'\toprule',
+             r'preset & blocco (KiB) & candidati & byte & \% \\', r'\midrule']
+        for p, r in P['klzma'].items():
+            T.append(f"\\kw{{-{p}}} & {r['blocco_kib']} & {r['D']} & {r['byte']} & {pc(r['byte'])}" + r' \\')
+        T += [r'\midrule', f"xz \\kw{{-9e}} & & & {P['xz']} & {pc(P['xz'])}" + r' \\',
+              f"LZMA puro & & & {P['lzma_raw']} & {pc(P['lzma_raw'])}" + r' \\',
+              f"bzip2 \\kw{{-9}} & & & {P['bzip2']} & {pc(P['bzip2'])}" + r' \\',
+              r'\bottomrule', r'\end{tabular}',
+              rf"\caption{{I preset su {P['kib']} KiB di sorgenti di Kairos (C, Python, Markdown), byte dal "
+              r"modello Python, che coincidono con quelli del binario. Il predefinito è \kw{-6}.}",
+              r'\label{tab:preset}', r'\end{table}']
+        k = P['klzma']
+        tempo = ', '.join(f"{b} KiB in {bl[b][0]:.0f} s" for b in sorted(bl))
+        testo = v(
+            r"\paragraph{Preset e dimensione dei blocchi.} I blocchi sono indipendenti, e ognuno riparte da un "
+            r"dizionario vuoto: la dimensione dei blocchi conta molto più della profondità della ricerca. Sui "
+            rf"sorgenti di Kairos (Tabella~\ref{{tab:preset}}) si passa da {k['0']['byte']} byte con \kw{{-0}} a "
+            rf"{k['9']['byte']} con \kw{{-9}}; a parità di blocco, da 32 a 64 candidati (\kw{{-6}} contro \kw{{-7}}) si "
+            rf"guadagna lo {100 * (k['6']['byte'] - k['7']['byte']) / k['6']['byte']:.1f}\%. Il tempo per byte "
+            rf"invece quasi non dipende dal blocco: un blocco solo, con il binario, si comprime in {tempo}, cioè "
+            r"circa in proporzione ai byte. Un blocco grande costa memoria (con 256 KiB la VM arriva a "
+            rf"{max(max(x[1], x[3]) for x in bl.values())} MiB in decompressione, per ogni blocco in parallelo) e, "
+            r"sui file piccoli, parallelismo: per questo il predefinito è 64 KiB. " + (
+                rf"Con \kw{{-9}} klzma fa meglio di xz \kw{{-9e}} su questi file ({k['9']['byte']} contro "
+                rf"{P['xz']} byte, ma xz paga un'intestazione più lunga) "
+                if k['9']['byte'] < P['xz'] else
+                rf"Anche con \kw{{-9}} klzma resta sopra xz \kw{{-9e}} ({k['9']['byte']} contro {P['xz']} byte) "
+            ) + r"e sopra LZMA puro, che vede tutto il file con un dizionario unico.")
+        return '\n'.join(T) + '\n\n' + testo
+    T = [r'\begin{table}[t]', r'\centering\small', r'\begin{tabular}{@{}lrrr@{}}', r'\toprule',
+         r'livello & blocco (KiB) & byte & \% \\', r'\midrule']
+    for p, r in P['kgzip2'].items():
+        T.append(f"\\kw{{-{p}}} & {r['blocco_kib']} & {r['byte']} & {pc(r['byte'])}" + r' \\')
+    T += [r'\midrule', f"bzip2 \\kw{{-9}} & & {P['bzip2']} & {pc(P['bzip2'])}" + r' \\',
+          r'\bottomrule', r'\end{tabular}',
+          rf"\caption{{I livelli su {P['kib']} KiB di sorgenti di Kairos, byte dal modello Python, che "
+          r"coincidono con quelli del binario. Il predefinito è \kw{-9}.}", r'\label{tab:livelli}', r'\end{table}']
+    k = P['kgzip2']
+    tempo = ', '.join(f"{b} KiB in {bl[b][0]:.0f} s" for b in sorted(bl))
+    testo = v(
+        r"\paragraph{Dimensione dei blocchi.} La BWT rende di più su blocchi grandi: sui sorgenti di Kairos "
+        rf"(Tabella~\ref{{tab:livelli}}) si passa da {k['1']['byte']} byte con blocchi da 4 KiB a "
+        rf"{k['9']['byte']} con 64 KiB (bzip2 \kw{{-9}}, con blocchi da 900 KiB e Huffman: {P['bzip2']}). Il tempo "
+        rf"cresce poco più che in proporzione ai byte, per il $\log n$ dell'ordinamento: un blocco solo si "
+        rf"comprime in {tempo}; la memoria arriva a {max(max(x[1], x[3]) for x in bl.values())} MiB per blocco "
+        r"con 64 KiB, in decompressione.")
     return '\n'.join(T) + '\n\n' + testo

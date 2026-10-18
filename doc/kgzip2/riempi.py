@@ -7,7 +7,7 @@ DATI = RADICE / 'doc' / 'dati'
 sys.path.insert(0, str(RADICE))
 from kgzip2 import modello, driver as kgzip
 sys.path.insert(0, str(QUI.parent))
-from riempi_comune import manomissione, memoria, ntest
+from riempi_comune import efficienza, livelli, manomissione, memoria, ntest
 BENCH = {r['file']: r for r in json.loads((RADICE / 'bench' / 'risultati.json').read_text())}
 
 tex = (QUI / 'kgzip2.tex').read_text()
@@ -153,10 +153,10 @@ for r in righe:
            f'{100 * ideale / n:.1f} & {t1:.1f} & {t2:.1f}').replace('.', '{,}')
     corp.append(f'{NOMIF[nome]} & ' + num + r' \\')
 corp += [r'\bottomrule', r'\end{tabular}',
-         r'\caption{Blocchi da 8192 byte. ``\%\'\' è la dimensione compressa rispetto all\'originale; '
+         r'\caption{Opzioni predefinite (\kw{-9}): ogni file è un blocco solo. ``\%\'\' è la dimensione compressa rispetto all\'originale; '
          r'``ordine 0\'\' è la dimensione che avrebbero gli stessi gettoni con un codice entropico ideale '
-         r'd\'ordine 0 (senza intestazioni). Tempi della VM in secondi (il frontend, che ora traduce '
-         r'solo la parte fissa, resta sotto il decimo di secondo). In tutte le righe il '
+         r'd\'ordine 0 (senza intestazioni). Tempi in secondi del comando \kw{kgzip2}, dall\'avvio alla fine. '
+         r'In tutte le righe il '
          r'ritorno è identico byte per byte e l\'uscita compressa coincide con il modello.}',
          r'\label{tab:corpus}', r'\end{table}']
 assert tutti_ok
@@ -195,13 +195,17 @@ tp += [r'\midrule', f'totale & {tot:.2f} & 100\\%'.replace('.', '{,}') + r' \\',
 quota_sort = sum(s for n, s in pr_righe if n.startswith('BWT')) / tot
 nuovo_bwt = sum(s for n, s in pr_righe if n.startswith('BWT'))
 vecchio_bwt = sum(float(x) for x in re.findall(r'BWT[^\n]*?\s(-?[\d.]+) s\s+\(cumulato', (DATI / 'profilo_kgzip2_raddoppio_v1.txt').read_text()))
-tab_profilo = '\n'.join(tp) + '\n\n' + (
+medio_bwt = sum(float(x) for x in re.findall(r'BWT[^\n]*?\s(-?[\d.]+) s\s+\(cumulato', (DATI / 'profilo_kgzip2_v2.txt').read_text()))
+tot_v2 = float(re.findall(r'cumulato\s+([\d.]+) s', (DATI / 'profilo_kgzip2_v2.txt').read_text())[-1])
+virgola = lambda t: re.sub(r'(?<=\d)\.(?=\d)', '{,}', t)
+tab_profilo = '\n'.join(tp) + '\n\n' + virgola(
     rf"La BWT, ordinamento compreso, è il {100 * quota_sort:.0f}\% del tempo. Dentro \kw{{bwt}} "
     r"l'ordinamento si esegue due volte (\kw{call} e \kw{uncall}), e altrettante nel verso opposto: "
-    r"è il prezzo della pulizia. " +
+    r"è il prezzo della pulizia. "
     rf"Nella prima versione del raddoppio, che ripuliva ogni giro ricalcolandolo, le due righe della BWT "
-    rf"costavano {vecchio_bwt:.1f} s; mettendo su \kw{{scarto}} i dati dei giri conclusi scendono a "
-    rf"{nuovo_bwt:.1f} s.".replace('.', '{,}', 2))
+    rf"costavano {vecchio_bwt:.1f} s; mettendo su \kw{{scarto}} i dati dei giri conclusi scendevano a "
+    rf"{medio_bwt:.1f} s, e con un solo counting sort per giro e gli interventi di §\ref{{sec:efficienza}} "
+    rf"sono {nuovo_bwt:.1f} s. L'intera andata e ritorno di tutti gli stadi è passata da {tot_v2:.1f} a {tot:.1f} s.")
 
 # --- concorrenza -------------------------------------------------------------------
 conc = {}
@@ -248,13 +252,15 @@ correttezza = (
     r"limite (file vuoto, di 1 e 2 byte, corse di esattamente 4, corse di 300 byte, quasi-corse, tutti i 256 "
     r"byte, due blocchi in \kw{par}): l'uscita compressa coincide byte per byte con il modello, il ritorno "
     r"con l'originale, e ogni file viene poi alterato e troncato per controllare che sia rifiutato. Prova "
-    r"anche lo streaming: un file a più frame compresso con gruppi diversi dà gli stessi byte, si "
+    r"anche i binari nativi (stesso bytecode del driver Python, stessi byte del modello su tutti i casi) e "
+    r"lo streaming: un file a più frame compresso con gruppi diversi dà gli stessi byte, si "
     r"decomprime con gruppi diversi e concatenato ad altri flussi, rifiuta i dati estranei in coda, e su un "
     r"file a più frame ogni troncamento e un byte alterato in ogni posizione vengono rifiutati. Infine i "
-    r"comandi veri (rimozione dell'ingresso dopo la verifica, \kw{-k}, \kw{-c}, \kw{-T}, filtro da stdin a "
-    r"più blocchi, flussi concatenati da una pipe, \kw{-t} su file alterati e troncati).")
+    r"comandi veri con le opzioni di bzip2 e di xz e i loro codici d'uscita (rimozione dell'ingresso, "
+    r"\kw{-k}, \kw{-f}, \kw{-c}, \kw{-s}, \kw{-T}, filtro da stdin a più blocchi, flussi concatenati, \kw{-t} su "
+    r"file alterati e troncati, suffissi sconosciuti, nessuna uscita parziale).")
 abstract_num = (
-    rf"Su 9 file il ritorno è identico byte per byte. Sul testo, con blocchi da 8 KiB, kgzip2 arriva a "
+    rf"Su 9 file il ritorno è identico byte per byte. Su file di testo da 8 KiB kgzip2 arriva a "
     rf"{pc('janus8k.c')}--{pc('readme8k.md')} della dimensione originale (bzip2: {pz('janus8k.c')}--{pz('readme8k.md')}) "
     r"e sui dati molto regolari fa meglio di bzip2; ordinare un blocco periodico da 64 byte passa da "
     rf"{g(D[('bolle','periodico',64)])} s a {g(D[('raddoppio','periodico',64)])} s, e uno da 8192 byte richiede "
@@ -275,7 +281,8 @@ for k, v in {'@@ABSTRACT_NUMERI@@': abstract_num, '@@CORRETTEZZA@@': correttezza
              '@@TAB_CORPUS@@': tab_corpus, '@@COMMENTO_CORPUS@@': commento_corpus,
              '@@TAB_PROFILO@@': tab_profilo, '@@CONCORRENZA@@': concorrenza,
              '@@CONCLUSIONI@@': conclusioni, '@@MEMORIA@@': memoria('kgzip2'),
-             '@@NTEST@@': ntest(), '@@MANOMISSIONE@@': manomissione('kgzip2')}.items():
+             '@@NTEST@@': ntest(), '@@MANOMISSIONE@@': manomissione('kgzip2'),
+             '@@EFFICIENZA@@': efficienza('kgzip2', NOMIF), '@@LIVELLI@@': livelli('kgzip2')}.items():
     assert k in tex, k
     tex = tex.replace(k, v)
 tex = tex.replace("\\'", "'")

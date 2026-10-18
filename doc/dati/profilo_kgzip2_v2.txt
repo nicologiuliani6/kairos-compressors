@@ -1,0 +1,8 @@
+blocco di 8192 byte
+  (carico e scarico)                     0.01 s   (cumulato   0.01 s)
+  RLE iniziale                           2.38 s   (cumulato   2.39 s)
+  BWT: ordinamento                       7.39 s   (cumulato   9.77 s)
+  BWT: estrazione, inversa, pulizia      8.71 s   (cumulato  18.49 s)
+  move-to-front                          3.00 s   (cumulato  21.48 s)
+  RLE degli zeri                         0.97 s   (cumulato  22.45 s)
+  Elias gamma                            1.49 s   (cumulato  23.94 s)

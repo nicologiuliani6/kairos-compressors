@@ -1,0 +1,106 @@
+{
+ "kib": 256,
+ "bzip2": 64612,
+ "xz": 64124,
+ "lzma_raw": 64056,
+ "klzma": {
+  "0": {
+   "blocco_kib": 8,
+   "D": 4,
+   "byte": 90015
+  },
+  "1": {
+   "blocco_kib": 8,
+   "D": 8,
+   "byte": 88879
+  },
+  "2": {
+   "blocco_kib": 16,
+   "D": 8,
+   "byte": 83771
+  },
+  "3": {
+   "blocco_kib": 16,
+   "D": 16,
+   "byte": 82902
+  },
+  "4": {
+   "blocco_kib": 32,
+   "D": 16,
+   "byte": 78393
+  },
+  "5": {
+   "blocco_kib": 32,
+   "D": 32,
+   "byte": 77711
+  },
+  "6": {
+   "blocco_kib": 64,
+   "D": 32,
+   "byte": 74057
+  },
+  "7": {
+   "blocco_kib": 64,
+   "D": 64,
+   "byte": 73515
+  },
+  "8": {
+   "blocco_kib": 128,
+   "D": 64,
+   "byte": 71671
+  },
+  "9": {
+   "blocco_kib": 256,
+   "D": 128,
+   "byte": 69297
+  },
+  "6e": {
+   "blocco_kib": 64,
+   "D": 64,
+   "byte": 73515
+  },
+  "9e": {
+   "blocco_kib": 256,
+   "D": 256,
+   "byte": 69089
+  }
+ },
+ "kgzip2": {
+  "1": {
+   "blocco_kib": 4,
+   "byte": 111935
+  },
+  "2": {
+   "blocco_kib": 8,
+   "byte": 101202
+  },
+  "3": {
+   "blocco_kib": 12,
+   "byte": 96518
+  },
+  "4": {
+   "blocco_kib": 16,
+   "byte": 93104
+  },
+  "5": {
+   "blocco_kib": 24,
+   "byte": 88924
+  },
+  "6": {
+   "blocco_kib": 32,
+   "byte": 86247
+  },
+  "7": {
+   "blocco_kib": 40,
+   "byte": 84978
+  },
+  "8": {
+   "blocco_kib": 48,
+   "byte": 84148
+  },
+  "9": {
+   "blocco_kib": 64,
+   "byte": 80754
+  }
+ }
+}

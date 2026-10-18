@@ -15,9 +15,17 @@ import sys
 
 from comune import flusso
 from comune import kvm
+from comune import libreria
 
 QUI = pathlib.Path(__file__).resolve().parent
-LIBRERIA = (QUI / 'kgzip2.kairos').read_text()
+# Le procedure con i cicli piu' percorsi vanno in testa al bytecode (vedi
+# comune/libreria.py): l'ordinamento delle rotazioni, poi gli stadi per elemento.
+ORDINE = ('conta_chiavi', 'per_conteggio', 'cumulata', 'scarta', 'nuovi_ranghi',
+          'ordina_coppie_succ', 'identita', 'corsa', 'trova', 'sposta', 'gamma', 'codifica',
+          'rle1', 'rle0', 'mtf', 'rigioca', 'impila', 'disimpila', 'estrai', 'istogramma',
+          'costruisci_T', 'cammina', 'bwt_inversa', 'ordina_coppie', 'coda', 'giro', 'giro_succ',
+          'ordina', 'bwt', 'scarica', 'copia', 'togli_sentinella', 'comprimi')
+LIBRERIA = libreria.riordina((QUI / 'kgzip2.kairos').read_text(), ORDINE)
 MAGIA = b'KGZ4'
 PARAMETRI = ()
 NA = 256
@@ -28,6 +36,9 @@ STACK = ('scarto', 'src', 'dst', 'bit', 'uscita')
 CONT = ('idx', 'n1', 'ng', 'nel', 'nb')
 NCONT = len(CONT)
 BLOCCO = 8192
+# L'RLE iniziale scrive la lunghezza di una corsa in due byte (al piu' 65539):
+# un blocco piu' grande potrebbe contenere una corsa piu' lunga.
+MAX_BLOCCO = 65536
 SEQUENZIALE = False
 
 
@@ -102,6 +113,8 @@ def _dati_bit(blocchi):
 def comprimi_gruppo(blocchi, timeout=None):
     """Un'esecuzione della VM per tutto il gruppo. Un blocco di meno di 2 byte
     non va alla VM e si memorizza."""
+    if any(len(b) > MAX_BLOCCO for b in blocchi):
+        raise ValueError(f'kgzip2: blocchi al piu\' di {MAX_BLOCCO} byte')
     kai = [i for i, b in enumerate(blocchi) if len(b) >= 2]
     ris, tf, tv = [None] * len(blocchi), 0.0, 0.0
     if kai:
@@ -136,8 +149,8 @@ def comprimi_flusso(ingresso, uscita, dim_blocco=BLOCCO, gruppo=None, timeout=No
     return flusso.comprimi(_QUESTO, ingresso, uscita, dim_blocco, gruppo, timeout, (), avanzamento)
 
 
-def decomprimi_flusso(ingresso, uscita, gruppo=None, timeout=None, avanzamento=None, salta_crc=False):
-    return flusso.decomprimi(_QUESTO, ingresso, uscita, gruppo, timeout, avanzamento, salta_crc)
+def decomprimi_flusso(ingresso, uscita, gruppo=None, timeout=None, avanzamento=None):
+    return flusso.decomprimi(_QUESTO, ingresso, uscita, gruppo, timeout, avanzamento)
 
 
 def comprimi(dati, dim_blocco=BLOCCO, timeout=None, gruppo=None):
@@ -145,8 +158,8 @@ def comprimi(dati, dim_blocco=BLOCCO, timeout=None, gruppo=None):
     return flusso.comprimi_dati(_QUESTO, dati, dim_blocco, gruppo, timeout)
 
 
-def decomprimi(buf, timeout=None, gruppo=None, salta_crc=False):
-    return flusso.decomprimi_dati(_QUESTO, buf, gruppo, timeout, salta_crc)
+def decomprimi(buf, timeout=None, gruppo=None):
+    return flusso.decomprimi_dati(_QUESTO, buf, gruppo, timeout)
 
 
 def atteso(dati, dim_blocco=BLOCCO):
