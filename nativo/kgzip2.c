@@ -64,7 +64,7 @@ static void programma(Testo *t, const size_t *len, int k, int inverso,
     if (k > 1) kc_istr(t, "PAR_START");
     for (int i = 0; i < k; i++) {
         if (k > 1) kc_istr(t, "THREAD_%d", i);
-        t_str(t, inverso ? "@1      UNCALL comprimi" : "@1      CALL comprimi");
+        t_str(t, inverso ? "@1      " KGZIP2_UNCALL : "@1      CALL comprimi");
         argomenti(t, i);
         t_str(t, "\n");
     }

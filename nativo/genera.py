@@ -43,12 +43,20 @@ def scrivi(file, testo):
         p.write_text(testo)
 
 
+def uncall_comprimi(righe):
+    """L'istruzione del main per `uncall comprimi`: la chiamata del corpo inverso
+    compilato se la libreria lo ha (kvm.INVERSI_COMPILATI), altrimenti UNCALL."""
+    return 'CALL comprimi__inv' if any(r.split()[1:] == ['PROC', 'comprimi__inv'] for r in righe) else 'UNCALL comprimi'
+
+
 kg = libreria(KG.programma([2], 'call'))
-scrivi('kgzip2_lib.h', '/* generato da nativo/genera.py: non modificare */\n' + stringa_c('KGZIP2_LIBRERIA', kg))
+scrivi('kgzip2_lib.h', '/* generato da nativo/genera.py: non modificare */\n'
+       f'#define KGZIP2_UNCALL "{uncall_comprimi(kg)}"\n' + stringa_c('KGZIP2_LIBRERIA', kg))
 
 kl = libreria(KL.programma([2], KL.D_PREDEFINITO, 'call'))
 slot = ', '.join(str(ML.base_slot(s)) if s else '0' for s in range(64))
 scrivi('klzma_lib.h', '/* generato da nativo/genera.py: non modificare */\n'
        f'#define KLZMA_HSIZE {ML.HSIZE}\n#define KLZMA_NCNT {KL.NCNT}\n'
+       f'#define KLZMA_UNCALL "{uncall_comprimi(kl)}"\n'
        f'static const long long KLZMA_SLOTBASE[64] = {{ {slot} }};\n' + stringa_c('KLZMA_LIBRERIA', kl))
 print(f'kgzip2: {len(kg)} righe di bytecode, klzma: {len(kl)}')

@@ -65,7 +65,7 @@ static void programma(Testo *t, const size_t *len, int k, int64_t D, int inverso
     if (k > 1) kc_istr(t, "PAR_START");
     for (int i = 0; i < k; i++) {
         if (k > 1) kc_istr(t, "THREAD_%d", i);
-        t_str(t, inverso ? "@1      UNCALL comprimi" : "@1      CALL comprimi");
+        t_str(t, inverso ? "@1      " KLZMA_UNCALL : "@1      CALL comprimi");
         for (int a = 0; a < N(NOMI); a++) t_fmt(t, " %s_%d", NOMI[a], i);
         t_str(t, "\n");
     }

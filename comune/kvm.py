@@ -69,6 +69,22 @@ def compila(sorgente):
     return list(_compila(sorgente))
 
 
+# I compressori sono programmi fissi: ogni `uncall` diventa la chiamata del
+# corpo inverso calcolato in compilazione (`CALL f__inv`), che la VM esegue in
+# avanti invece di ricostruire l'inverso a ogni chiamata. Con un Kairos che
+# non conosce l'opzione si torna all'uncall della VM.
+INVERSI_COMPILATI = True
+
+
+def _compilatore():
+    if INVERSI_COMPILATI:
+        try:
+            return ByteCode_Compiler(compiled_uncall=True)
+        except TypeError:
+            pass
+    return ByteCode_Compiler()
+
+
 def _traduci(sorgente):
     lexer.lineno = 1
     try:
@@ -77,7 +93,7 @@ def _traduci(sorgente):
             raise ErroreKairos('il parser non ha prodotto un albero')
         albero = desugar_try(albero)
         run_static_checks(albero)
-        bc = ByteCode_Compiler()
+        bc = _compilatore()
         bc.process(albero)
     except KairosCompileError as e:
         raise ErroreKairos(str(e))
