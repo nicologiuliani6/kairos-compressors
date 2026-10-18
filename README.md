@@ -39,6 +39,32 @@ On every file the compressed output is identical, byte for byte, to an
 independent Python model, and the round trip restores the original.
 `make bench` regenerates the table (`bench/risultati.md`).
 
+### Against bzip2 and xz on a larger input
+
+256 KiB of Kairos sources (C, Python, Markdown, no repeated content), default
+options, bzip2 1.0.8 and xz 5.4.5 on the same machine
+(`bench/canonici.py`, `doc/dati/canonici.json`). Times are the whole command;
+kgzip2 and klzma use both cores, bzip2 and xz one.
+
+| | bytes | ratio | compress | decompress | peak memory |
+|---|---|---|---|---|---|
+| bzip2 -9 | 64612 | 24.6% | 0.015 s | 0.007 s | 11 MiB |
+| kgzip2 -9 | 80754 | 30.8% | 97 s | 96 s | 104 MiB |
+| xz -6 | 64172 | 24.5% | 0.063 s | 0.004 s | 21 MiB |
+| klzma -6 | 74057 | 28.3% | 87 s | 93 s | 52 MiB |
+| xz -9e | 64124 | 24.5% | 0.088 s | 0.005 s | 48 MiB |
+| klzma -9e | 69089 | 26.4% | | | |
+
+kgzip2 writes 25% more bytes than bzip2: a fixed Elias gamma code instead of
+Huffman tables, and blocks of at most 64 KiB instead of 900 KiB. klzma writes
+15% more than xz at the default preset and 8% more at `-9e`: independent
+blocks of at most 256 KiB instead of a dictionary of several MiB. On files of a
+few KiB the gap closes (table above). Both are three to four orders of
+magnitude slower: the time is the interpreter's (about 1.4 KiB/s per core),
+not the format's, since an LZMA decoder written by hand performs the same
+steps. Memory is 2 to 5 times higher, mostly because the VM keeps every byte
+as a 64-bit integer.
+
 ## Quick start
 
 ```bash

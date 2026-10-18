@@ -1,0 +1,54 @@
+{
+ "kib": 256,
+ "versioni": {
+  "bzip2": "bzip2, a block-sorting file compressor.  Version 1.0.8, 13-Jul-2019.",
+  "xz": "xz (XZ Utils) 5.4.5"
+ },
+ "righe": [
+  {
+   "nome": "bzip2 -9",
+   "byte": 64612,
+   "comprimi": 0.015142576000016561,
+   "decomprimi": 0.0068733460000203195,
+   "mib": 11.43359375
+  },
+  {
+   "nome": "xz -6",
+   "byte": 64172,
+   "comprimi": 0.06296505700004218,
+   "decomprimi": 0.004381050000006326,
+   "mib": 20.66796875
+  },
+  {
+   "nome": "xz -9e",
+   "byte": 64124,
+   "comprimi": 0.08840211099999351,
+   "decomprimi": 0.004640942999969866,
+   "mib": 48.29296875
+  },
+  {
+   "nome": "kgzip2 -9",
+   "byte": 80754,
+   "comprimi": 97.3,
+   "decomprimi": 96.3,
+   "mib": 103.7
+  },
+  {
+   "nome": "klzma -6",
+   "byte": 74057,
+   "comprimi": 86.8,
+   "decomprimi": 93.0,
+   "mib": 51.8
+  },
+  {
+   "nome": "klzma -9e",
+   "byte": 69089
+  }
+ ],
+ "binari": {
+  "bzip2": 39296,
+  "xz": 89008,
+  "kgzip2": 1060296,
+  "klzma": 1072584
+ }
+}
