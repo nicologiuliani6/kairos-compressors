@@ -1,4 +1,4 @@
-# kairos-compressori
+# kairos-compressors
 
 Real file compressors written in [Kairos](https://github.com/nicologiuliani6/kairos),
 a reversible concurrent language: every program runs forwards and backwards.
@@ -68,8 +68,8 @@ as a 64-bit integer.
 ## Quick start
 
 ```bash
-git clone --recursive https://github.com/nicologiuliani6/kairos-compressori
-cd kairos-compressori
+git clone --recursive https://github.com/nicologiuliani6/kairos-compressors
+cd kairos-compressors
 make eseguibili              # dist/bin/kgzip2 and dist/bin/klzma
 sudo make installa           # /usr/local/bin and the man pages
 klzma file.txt               # file.txt.klz, file.txt removed

@@ -1,4 +1,4 @@
-# kairos-compressori
+# kairos-compressors
 #
 #   make prepara      Python environment (.venv) and Kairos VM (kairos/build/libvm.so)
 #   make test-rapido  quick test suite (edge cases, commands, rotation sorts)
