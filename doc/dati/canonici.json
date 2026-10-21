@@ -7,48 +7,48 @@
  "righe": [
   {
    "nome": "bzip2 -9",
-   "byte": 64612,
-   "comprimi": 0.015142576000016561,
-   "decomprimi": 0.0068733460000203195,
-   "mib": 11.43359375
+   "byte": 64878,
+   "comprimi": 0.01575138200001902,
+   "decomprimi": 0.0072236999999972795,
+   "mib": 11.51953125
   },
   {
    "nome": "xz -6",
-   "byte": 64172,
-   "comprimi": 0.06296505700004218,
-   "decomprimi": 0.004381050000006326,
+   "byte": 64348,
+   "comprimi": 0.0669000839999967,
+   "decomprimi": 0.004558615000007649,
    "mib": 20.66796875
   },
   {
    "nome": "xz -9e",
-   "byte": 64124,
-   "comprimi": 0.08840211099999351,
-   "decomprimi": 0.004640942999969866,
-   "mib": 48.29296875
+   "byte": 64312,
+   "comprimi": 0.0959952709999925,
+   "decomprimi": 0.0045949439999617425,
+   "mib": 48.41796875
   },
   {
    "nome": "kgzip2 -9",
-   "byte": 80754,
-   "comprimi": 97.3,
-   "decomprimi": 96.3,
-   "mib": 103.7
+   "byte": 81223,
+   "comprimi": 4.7,
+   "decomprimi": 4.9,
+   "mib": 152.8
   },
   {
    "nome": "klzma -6",
-   "byte": 74057,
-   "comprimi": 86.8,
-   "decomprimi": 93.0,
-   "mib": 51.8
+   "byte": 74370,
+   "comprimi": 4.3,
+   "decomprimi": 4.2,
+   "mib": 103.2
   },
   {
    "nome": "klzma -9e",
-   "byte": 69089
+   "byte": 69304
   }
  ],
  "binari": {
   "bzip2": 39296,
   "xz": 89008,
-  "kgzip2": 1060296,
-  "klzma": 1072584
+  "kgzip2": 1125832,
+  "klzma": 1150408
  }
 }

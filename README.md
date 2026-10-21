@@ -26,14 +26,14 @@ decompression, on 2 vCPUs.
 
 | file | bytes | bzip2 -9 | xz -9e | LZMA | kgzip2 | klzma | kgzip2 s | klzma s |
 |---|---|---|---|---|---|---|---|---|
-| thesis (LaTeX) | 8192 | **3343** | 3544 | 3485 | 3816 | 3483 | 5.0 / 4.8 | 5.5 / 5.8 |
-| Janus.c | 8192 | 3214 | 3172 | **3113** | 3601 | 3124 | 4.9 / 4.7 | 4.6 / 5.0 |
-| README | 8192 | 3473 | 3380 | **3321** | 3928 | 3340 | 5.2 / 5.0 | 4.8 / 5.2 |
-| text repeated twice | 8192 | 2182 | 1956 | 1899 | 2934 | **1830** | 8.1 / 8.2 | 2.8 / 3.1 |
-| periodic | 8192 | 61 | 112 | 54 | 58 | **42** | 7.1 / 7.3 | 1.0 / 1.1 |
-| image 64x64 | 4109 | 124 | 168 | **109** | 116 | 123 | 0.7 / 0.8 | 0.6 / 0.7 |
-| zeros | 4096 | 43 | 92 | 32 | **25** | 31 | 0.2 / 0.2 | 0.5 / 0.5 |
-| random | 4096 | 4580 | 4156 | 4158 | **4111** | 4112 | 8.6 / 0.0 | 2.3 / 0.0 |
+| thesis (LaTeX) | 8192 | **3343** | 3544 | 3485 | 3816 | 3483 | 0.2 / 0.2 | 0.1 / 0.2 |
+| Janus.c | 8192 | 3214 | 3172 | **3113** | 3601 | 3124 | 0.2 / 0.2 | 0.1 / 0.1 |
+| README | 8192 | 3473 | 3380 | **3321** | 3928 | 3340 | 0.2 / 0.2 | 0.1 / 0.1 |
+| text repeated twice | 8192 | 2182 | 1956 | 1899 | 2934 | **1830** | 0.4 / 0.4 | 0.1 / 0.1 |
+| periodic | 8192 | 61 | 112 | 54 | 58 | **42** | 0.3 / 0.3 | 0.1 / 0.1 |
+| image 64x64 | 4109 | 124 | 168 | **109** | 116 | 123 | 0.0 / 0.0 | 0.1 / 0.1 |
+| zeros | 4096 | 43 | 92 | 32 | **25** | 31 | 0.0 / 0.0 | 0.0 / 0.0 |
+| random | 4096 | 4580 | 4156 | 4158 | **4111** | 4112 | 0.1 / 0.0 | 0.1 / 0.0 |
 
 On every file the compressed output is identical, byte for byte, to an
 independent Python model, and the round trip restores the original.
@@ -48,21 +48,21 @@ kgzip2 and klzma use both cores, bzip2 and xz one.
 
 | | bytes | ratio | compress | decompress | peak memory |
 |---|---|---|---|---|---|
-| bzip2 -9 | 64612 | 24.6% | 0.015 s | 0.007 s | 11 MiB |
-| kgzip2 -9 | 80754 | 30.8% | 97 s | 96 s | 104 MiB |
-| xz -6 | 64172 | 24.5% | 0.063 s | 0.004 s | 21 MiB |
-| klzma -6 | 74057 | 28.3% | 87 s | 93 s | 52 MiB |
-| xz -9e | 64124 | 24.5% | 0.088 s | 0.005 s | 48 MiB |
-| klzma -9e | 69089 | 26.4% | | | |
+| bzip2 -9 | 64878 | 24.7% | 0.015 s | 0.007 s | 12 MiB |
+| kgzip2 -9 | 81223 | 31.0% | 4.8 s | 4.9 s | 153 MiB |
+| xz -6 | 64348 | 24.5% | 0.066 s | 0.005 s | 21 MiB |
+| klzma -6 | 74370 | 28.4% | 4.2 s | 4.2 s | 103 MiB |
+| xz -9e | 64312 | 24.5% | 0.096 s | 0.005 s | 48 MiB |
+| klzma -9e | 69304 | 26.4% | | | |
 
 kgzip2 writes 25% more bytes than bzip2: a fixed Elias gamma code instead of
 Huffman tables, and blocks of at most 64 KiB instead of 900 KiB. klzma writes
 15% more than xz at the default preset and 8% more at `-9e`: independent
 blocks of at most 256 KiB instead of a dictionary of several MiB. On files of a
-few KiB the gap closes (table above). Both are three to four orders of
-magnitude slower: the time is the interpreter's (about 1.4 KiB/s per core),
+few KiB the gap closes (table above). Both are one to two orders of
+magnitude slower: the time is the interpreter's (about 30 KiB/s per core),
 not the format's, since an LZMA decoder written by hand performs the same
-steps. Memory is 2 to 5 times higher, mostly because the VM keeps every byte
+steps. Memory is 2 to 13 times higher, mostly because the VM keeps every byte
 as a 64-bit integer.
 
 ## Quick start
@@ -142,7 +142,7 @@ that the binaries produce the same bytecode and the same bytes.
 ## Optimizations
 
 Every change keeps the compressed output identical (the tests compare it with
-the Python model); the VM is unchanged. Seconds per corpus file, compression /
+the Python model); the VM is unchanged (its own speedup is below the table). Seconds per corpus file, compression /
 decompression, before and after:
 
 | file | kgzip2 before | kgzip2 now | klzma before | klzma now |
@@ -180,6 +180,23 @@ whole native command. The files compressed are identical.
   `.kairos` sources keep their reading order. With a VM that resolves jumps
   once this would no longer matter, and would do no harm.
 
+### The VM (branch `vm-veloce` of Kairos)
+
+The VM itself was made faster without changing the language: an index of
+bytecode lines (constant-time jumps and calls), instructions decoded once per
+thread, compiled expressions with a cached variable lookup, and loop guards
+with the same semantics as Janus but cheaper. `uncall` still rebuilds the
+inverse at run time by default. With `--compiled-uncall` the frontend emits an
+inverse `p__inv` for every procedure without `par` or channels and `uncall p`
+becomes a plain call; the native kgzip2 and klzma are built that way.
+Compressed bytes are identical in every variant. Seconds for the 8 KiB thesis
+file, compression / decompression:
+
+| | original VM | original VM + flag | new VM | new VM + flag |
+|---|---|---|---|---|
+| kgzip2 | 5.11 / 4.76 | 12.67 / 13.09 | 0.31 / 0.34 | 0.18 / 0.19 |
+| klzma | 5.60 / 5.97 | 11.26 / 12.02 | 0.25 / 0.37 | 0.15 / 0.16 |
+
 ## Memory and speed
 
 Peak resident memory of the whole command (the binary and its VM processes),
@@ -191,10 +208,10 @@ in groups of 8 KiB blocks.
 
 | input | before | Python streaming | native kgzip2 | native klzma | kgzip2 s (c/u) | klzma s (c/u) |
 |---|---|---|---|---|---|---|
-| 16 KiB | 78 MiB (kgzip2), 72 MiB (klzma) | 83 MiB (kgzip2), 78 MiB (klzma) | 13 MiB | 11 MiB | 10 / 10 | 11 / 11 |
-| 64 KiB | 126 MiB (kgzip2), 104 MiB (klzma) | 87 MiB (kgzip2), 81 MiB (klzma) | 48 MiB | 30 MiB | 46 / 44 | 47 / 47 |
-| 256 KiB | fails (kgzip2), 222 MiB (klzma) | 89 MiB (kgzip2), 81 MiB (klzma) | 104 MiB | 52 MiB | 97 / 96 | 87 / 93 |
-| 1024 KiB | - | 86 MiB (klzma) | - | 52 MiB | - | 322 / 344 |
+| 16 KiB | 78 MiB (kgzip2), 72 MiB (klzma) | 83 MiB (kgzip2), 78 MiB (klzma) | 19 MiB | 15 MiB | 0.4 / 0.4 | 0.3 / 0.3 |
+| 64 KiB | 126 MiB (kgzip2), 104 MiB (klzma) | 87 MiB (kgzip2), 81 MiB (klzma) | 71 MiB | 53 MiB | 1.9 / 2.0 | 1.5 / 1.7 |
+| 256 KiB | fails (kgzip2), 222 MiB (klzma) | 89 MiB (kgzip2), 81 MiB (klzma) | 153 MiB | 103 MiB | 4.8 / 4.9 | 4.2 / 4.2 |
+| 1024 KiB | - | 86 MiB (klzma) | 167 MiB | 111 MiB | 19.7 / 20.3 | 15.5 / 15.2 |
 
 The first version failed above 80 KiB with kgzip2: with more than 10 blocks in one
 program the per-block names overlapped (`n1` of block 0 and `n` of block 10 were
@@ -202,9 +219,11 @@ both `n10`), which Kairos rejects as a race in the `par`. Names now carry a
 separator (`n1_0`, `n_10`), and the tests run 25 blocks in one `par`.
 
 Memory depends on the group (block size times cores), not on the file: with the
-default 64 KiB blocks on 2 cores it peaks at about 52 MiB for klzma and 104 MiB for
-kgzip2, whose BWT keeps more arrays per byte. Time is linear: about 3.2 KiB/s for klzma and 2.6 KiB/s for kgzip2 on 2 cores,
-so a 100 GB file would take about 356 days with klzma. Memory is no
+default 64 KiB blocks on 2 cores it peaks at about 110 MiB for klzma and 170 MiB for
+kgzip2, whose BWT keeps more arrays per byte (the faster VM keeps decoded
+instructions and a line index per program, about 2x the memory of the
+previous VM at 256 KiB). Time is linear: about 66 KiB/s for klzma and 52 KiB/s for kgzip2 on 2 cores,
+so a 100 GB file would take about 17 days with klzma. Memory is no
 longer the limit; the speed of the VM is.
 
 ## Damaged files and `uncall`
