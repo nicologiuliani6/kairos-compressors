@@ -204,7 +204,7 @@
   "kib": 16,
   "byte_compressi": 6514,
   "secondi": 0.3,
-  "mib": 13.6
+  "mib": 11.4
  },
  {
   "versione": "nativo",
@@ -213,7 +213,7 @@
   "kib": 16,
   "byte_compressi": 6514,
   "secondi": 0.3,
-  "mib": 15.4
+  "mib": 13.2
  },
  {
   "versione": "nativo",
@@ -222,7 +222,7 @@
   "kib": 16,
   "byte_compressi": 7326,
   "secondi": 0.4,
-  "mib": 17.3
+  "mib": 14.9
  },
  {
   "versione": "nativo",
@@ -231,25 +231,25 @@
   "kib": 16,
   "byte_compressi": 7326,
   "secondi": 0.4,
-  "mib": 19.2
+  "mib": 16.7
  },
  {
   "versione": "nativo",
   "algoritmo": "klzma",
   "verso": "comprimi",
+  "kib": 64,
+  "byte_compressi": 23398,
+  "secondi": 1.5,
+  "mib": 37.3
+ },
+ {
+  "versione": "nativo",
+  "algoritmo": "klzma",
+  "verso": "decomprimi",
   "kib": 64,
   "byte_compressi": 23398,
   "secondi": 1.6,
-  "mib": 48.5
- },
- {
-  "versione": "nativo",
-  "algoritmo": "klzma",
-  "verso": "decomprimi",
-  "kib": 64,
-  "byte_compressi": 23398,
-  "secondi": 1.7,
-  "mib": 52.5
+  "mib": 40.5
  },
  {
   "versione": "nativo",
@@ -257,8 +257,8 @@
   "verso": "comprimi",
   "kib": 64,
   "byte_compressi": 26095,
-  "secondi": 1.9,
-  "mib": 66.9
+  "secondi": 1.8,
+  "mib": 55.6
  },
  {
   "versione": "nativo",
@@ -266,8 +266,8 @@
   "verso": "decomprimi",
   "kib": 64,
   "byte_compressi": 26095,
-  "secondi": 2.1,
-  "mib": 71.0
+  "secondi": 1.9,
+  "mib": 58.1
  },
  {
   "versione": "nativo",
@@ -275,8 +275,8 @@
   "verso": "comprimi",
   "kib": 256,
   "byte_compressi": 74370,
-  "secondi": 4.3,
-  "mib": 95.7
+  "secondi": 4.0,
+  "mib": 73.0
  },
  {
   "versione": "nativo",
@@ -285,7 +285,7 @@
   "kib": 256,
   "byte_compressi": 74370,
   "secondi": 4.2,
-  "mib": 103.2
+  "mib": 68.3
  },
  {
   "versione": "nativo",
@@ -293,8 +293,8 @@
   "verso": "comprimi",
   "kib": 256,
   "byte_compressi": 81223,
-  "secondi": 4.7,
-  "mib": 152.8
+  "secondi": 4.5,
+  "mib": 117.9
  },
  {
   "versione": "nativo",
@@ -302,43 +302,43 @@
   "verso": "decomprimi",
   "kib": 256,
   "byte_compressi": 81223,
-  "secondi": 4.9,
-  "mib": 132.2
+  "secondi": 4.6,
+  "mib": 112.8
  },
  {
   "versione": "nativo",
   "algoritmo": "klzma",
   "verso": "comprimi",
   "kib": 1024,
-  "byte_compressi": 284964,
+  "byte_compressi": 285222,
   "secondi": 15.7,
-  "mib": 96.3
+  "mib": 72.9
  },
  {
   "versione": "nativo",
   "algoritmo": "klzma",
   "verso": "decomprimi",
   "kib": 1024,
-  "byte_compressi": 284964,
+  "byte_compressi": 285222,
   "secondi": 15.1,
-  "mib": 111.0
+  "mib": 71.1
  },
  {
   "versione": "nativo",
   "algoritmo": "kgzip2",
   "verso": "comprimi",
   "kib": 1024,
-  "byte_compressi": 309531,
-  "secondi": 19.5,
-  "mib": 155.5
+  "byte_compressi": 309641,
+  "secondi": 19.0,
+  "mib": 130.0
  },
  {
   "versione": "nativo",
   "algoritmo": "kgzip2",
   "verso": "decomprimi",
   "kib": 1024,
-  "byte_compressi": 309531,
-  "secondi": 20.1,
-  "mib": 167.2
+  "byte_compressi": 309641,
+  "secondi": 19.5,
+  "mib": 125.0
  }
 ]

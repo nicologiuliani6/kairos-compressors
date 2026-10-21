@@ -49,9 +49,9 @@ kgzip2 and klzma use both cores, bzip2 and xz one.
 | | bytes | ratio | compress | decompress | peak memory |
 |---|---|---|---|---|---|
 | bzip2 -9 | 64878 | 24.7% | 0.015 s | 0.007 s | 12 MiB |
-| kgzip2 -9 | 81223 | 31.0% | 4.8 s | 4.9 s | 153 MiB |
+| kgzip2 -9 | 81223 | 31.0% | 4.5 s | 4.6 s | 118 MiB |
 | xz -6 | 64348 | 24.5% | 0.066 s | 0.005 s | 21 MiB |
-| klzma -6 | 74370 | 28.4% | 4.2 s | 4.2 s | 103 MiB |
+| klzma -6 | 74370 | 28.4% | 4.0 s | 4.2 s | 73 MiB |
 | xz -9e | 64312 | 24.5% | 0.096 s | 0.005 s | 48 MiB |
 | klzma -9e | 69304 | 26.4% | | | |
 
@@ -62,7 +62,7 @@ blocks of at most 256 KiB instead of a dictionary of several MiB. On files of a
 few KiB the gap closes (table above). Both are one to two orders of
 magnitude slower: the time is the interpreter's (about 30 KiB/s per core),
 not the format's, since an LZMA decoder written by hand performs the same
-steps. Memory is 2 to 13 times higher, mostly because the VM keeps every byte
+steps. Memory is 1.5 to 10 times higher, mostly because the VM keeps every byte
 as a 64-bit integer.
 
 ## Quick start
@@ -208,10 +208,10 @@ in groups of 8 KiB blocks.
 
 | input | before | Python streaming | native kgzip2 | native klzma | kgzip2 s (c/u) | klzma s (c/u) |
 |---|---|---|---|---|---|---|
-| 16 KiB | 78 MiB (kgzip2), 72 MiB (klzma) | 83 MiB (kgzip2), 78 MiB (klzma) | 19 MiB | 15 MiB | 0.4 / 0.4 | 0.3 / 0.3 |
-| 64 KiB | 126 MiB (kgzip2), 104 MiB (klzma) | 87 MiB (kgzip2), 81 MiB (klzma) | 71 MiB | 53 MiB | 1.9 / 2.0 | 1.5 / 1.7 |
-| 256 KiB | fails (kgzip2), 222 MiB (klzma) | 89 MiB (kgzip2), 81 MiB (klzma) | 153 MiB | 103 MiB | 4.8 / 4.9 | 4.2 / 4.2 |
-| 1024 KiB | - | 86 MiB (klzma) | 167 MiB | 111 MiB | 19.7 / 20.3 | 15.5 / 15.2 |
+| 16 KiB | 78 MiB (kgzip2), 72 MiB (klzma) | 83 MiB (kgzip2), 78 MiB (klzma) | 17 MiB | 13 MiB | 0.4 / 0.4 | 0.3 / 0.3 |
+| 64 KiB | 126 MiB (kgzip2), 104 MiB (klzma) | 87 MiB (kgzip2), 81 MiB (klzma) | 58 MiB | 41 MiB | 1.8 / 1.9 | 1.5 / 1.6 |
+| 256 KiB | fails (kgzip2), 222 MiB (klzma) | 89 MiB (kgzip2), 81 MiB (klzma) | 118 MiB | 73 MiB | 4.5 / 4.6 | 4.0 / 4.2 |
+| 1024 KiB | - | 86 MiB (klzma) | 130 MiB | 73 MiB | 19.0 / 19.5 | 15.7 / 15.1 |
 
 The first version failed above 80 KiB with kgzip2: with more than 10 blocks in one
 program the per-block names overlapped (`n1` of block 0 and `n` of block 10 were
@@ -219,10 +219,10 @@ both `n10`), which Kairos rejects as a race in the `par`. Names now carry a
 separator (`n1_0`, `n_10`), and the tests run 25 blocks in one `par`.
 
 Memory depends on the group (block size times cores), not on the file: with the
-default 64 KiB blocks on 2 cores it peaks at about 110 MiB for klzma and 170 MiB for
+default 64 KiB blocks on 2 cores it peaks at about 75 MiB for klzma and 130 MiB for
 kgzip2, whose BWT keeps more arrays per byte (the faster VM keeps decoded
-instructions and a line index per program, about 2x the memory of the
-previous VM at 256 KiB). Time is linear: about 66 KiB/s for klzma and 52 KiB/s for kgzip2 on 2 cores,
+instructions and a line index per program, up to 1.5x the memory of the
+previous VM). Time is linear: about 65 KiB/s for klzma and 54 KiB/s for kgzip2 on 2 cores,
 so a 100 GB file would take about 17 days with klzma. Memory is no
 longer the limit; the speed of the VM is.
 
