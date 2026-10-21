@@ -180,7 +180,7 @@ whole native command. The files compressed are identical.
   `.kairos` sources keep their reading order. With a VM that resolves jumps
   once this would no longer matter, and would do no harm.
 
-### The VM (branch `vm-veloce` of Kairos)
+### The VM (Kairos `main`, from commit `8e6cd9e`)
 
 The VM itself was made faster without changing the language: an index of
 bytecode lines (constant-time jumps and calls), instructions decoded once per
